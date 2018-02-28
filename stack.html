@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DSAV - Stack</title>
+</head>
+<body>
+<form>
+
+
+    <input type="button" onclick="createADT();" value="Create">
+    <select>
+        <option>Array</option>
+        <option>Linked list</option>
+    </select>
+    <select id="dataStructure">
+        <option value="simple-array">Simple array</option>
+        <option value="singly-linked-list">Singly linked list</option>
+    </select>
+</form>
+<br/>
+<canvas id="myCanvas" style="border:1px solid #c3c3c3;"></canvas>
+<br/>
+<input type="text" name="add_value" id="add_value" />
+<button onclick="add();">Push</button>
+<button onclick="remove();">Pop</button>
+<button onclick="peek();">Peek</button>
+<label id="output_msg"></label>
+
+<script src="DSAV.js"></script>
+
+<script src="canvasMan.js"></script>
+</body>
+</html>
