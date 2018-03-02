@@ -1,7 +1,3 @@
-class Node{
-
-}
-
 let datastructure = null;
 
 function createADT(){
