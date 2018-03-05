@@ -84,11 +84,17 @@ class SinglyLinkedList{
             node.setNext(this.head);
             this.head = node;
         }
-        this.size++;
+        this.numElements++;
         this.draw();
     }
+    getFirst(){
+        return this.head.getElement();
+    }
     removeFirst(){
-
+        let first = this.head;
+        this.head = first.getNext();
+        outputLabel.innerText = first.getElement();
+        this.numElements = this.numElements-1;
     }
     addLast(node){
 

@@ -48,17 +48,19 @@ class SinglyLinkedListStack{
         this.dataStructure.addFirst(new SinglyLinkedListNode(element,null));
     }
     pop(){
-        if (this.isEmpty()) {
+        if (this.dataStructure.isEmpty()) {
             outputLabel.innerText = "Stack is empty";
             return;
         }
-        var first = this.head;
+        this.dataStructure.removeFirst();
+/*        let first = this.dataStructure.head;
         this.head = first.getNext();
         outputLabel.innerText = first.getElement();
-        this.size = this.size-1;
-        this.draw();
+        this.size = this.size-1;*/
+        this.dataStructure.draw();
     }
     peek(){
-        outputLabel.innerText = this.head.getElement();
+        outputLabel.innerText = this.dataStructure.getFirst();
     }
+
 }

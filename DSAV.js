@@ -1,4 +1,4 @@
-let datastructure = null;
+let dataStructure = null;
 let adt = null;
 let canvas;
 let ctx;
@@ -20,7 +20,10 @@ function createADT(type){
     let selected = dtSelect.options[dtSelect.selectedIndex].value;
     switch (selected + "-" + type){
         case "simple-array-stack":
-            datastructure = new SimpleArrayStack();
+            dataStructure = new SimpleArrayStack();
+            break;
+        case "singly-linked-list-stack":
+            dataStructure = new SinglyLinkedListStack();
             break;
     }
 }
