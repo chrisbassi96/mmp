@@ -130,6 +130,56 @@ class DoublyLinkedList{
     }
 }
 
+class SimpleArray{
+    constructor(size=20){
+        this.size = size;
+        this.numElements = 0;
+        this.content = [];
+    }
+    setValue(index, value){
+        let adding = Boolean(this.content[index] === undefined || this.content[index] == null);
+
+        this.content[index] = value;
+        this.draw();
+
+        if (adding){
+            this.numElements++;
+        }else{
+            this.numElements--;
+        }
+    }
+
+    // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
+    getElement(index){
+        if (index > 0 && index < this.content.length){
+            return this.content[index];
+        }
+        // Give some sort of error
+    }
+    getNumElements(){
+        return this.numElements;
+    }
+    getSize(){
+        return this.size;
+    }
+    isEmpty(){
+        return this.numElements === 0;
+    }
+    draw() {
+        clearCanvas();
+        for (let i=0; i<this.size; i++){
+            ctx.strokeRect(50+(50*i), 50, 50, 50);
+            ctx.fillText(this.content[i]==null?"null":this.content[i], (50+(50*i))+25, 75);
+            ctx.fillText(i, (50+(50*i))+25, 125);
+        }
+    }
+}
+
+class CircularArray extends SimpleArray{
+    constructor(size=20){
+        super(size);
+    }
+}
 
 
 class BinarySearchTree{

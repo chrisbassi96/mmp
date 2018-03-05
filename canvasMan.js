@@ -15,13 +15,13 @@ function clearCanvas(){
 
 class VizuArray{
     constructor(size=20){
-        this.capacity = size;
+        this.size = size;
         this.elements = 0;
         this.content = [];
     }
     draw() {
         clearCanvas();
-        for (let i=0; i<this.capacity; i++){
+        for (let i=0; i<this.size; i++){
             ctx.strokeRect(50+(50*i), 50, 50, 50);
             ctx.fillText(this.content[i]==null?"null":this.content[i], (50+(50*i))+25, 75);
             ctx.fillText(i, (50+(50*i))+25, 125);
@@ -153,7 +153,7 @@ class ArrayStack extends VizuArray{
         return this.elements <= 0;
     }
     push(element){
-        if (this.content.length < this.capacity){
+        if (this.content.length < this.size){
             this.changeIndexValue(this.elements, element);
             this.elements++;
             outputLabel.innerText = "Element inserted"

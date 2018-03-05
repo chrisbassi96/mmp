@@ -8,7 +8,7 @@
 <form>
 
 
-    <input type="button" onclick="createADT();" value="Create">
+    <input type="button" onclick="createADT('stack');" value="Create">
     <select>
         <option>Array</option>
         <option>Linked list</option>
@@ -22,13 +22,17 @@
 <canvas id="myCanvas" style="border:1px solid #c3c3c3;"></canvas>
 <br/>
 <input type="text" name="add_value" id="add_value" />
-<button onclick="add();">Push</button>
-<button onclick="remove();">Pop</button>
-<button onclick="peek();">Peek</button>
+<button onclick="datastructure.push(document.getElementById('add_value').value);">Push</button>
+<button onclick="datastructure.pop();">Pop</button>
+<button onclick="datastructure.peek();">Peek</button>
 <label id="output_msg"></label>
 
+<script src="dataStructures.js"></script>
+<script src="adt_implementations.js"></script>
 <script src="DSAV.js"></script>
 
-<script src="canvasMan.js"></script>
+
+
+<!--<script src="canvasMan.js"></script>-->
 </body>
 </html>
