@@ -29,9 +29,10 @@ class BTNode extends Node{
 }
 
 class SinglyLinkedListNode extends Node{
-    constructor(){
+    constructor(element, next){
         super();
-        this.next = new SinglyLinkedListNode();
+        this.element = element;
+        this.next = next;
     }
     getNext(){
         return this.next;
@@ -64,13 +65,27 @@ class DoublyLinkedListNode extends Node{
 class SinglyLinkedList{
     constructor(){
         this.head = null;
-        this.size = 0;
+        this.tail = null;
+        this.numElements = 0;
     }
     find(element){
-
+        let cur = this.head;
+        while (cur.getElement() !== element) {
+            cur = cur.getNext();
+        }
+        return cur;
     }
-    addFirst(node){
-
+    addFirst(node) {
+        if (this.head == null) {
+            node.setNext(null);
+            this.head = node;
+            this.tail = node;
+        } else {
+            node.setNext(this.head);
+            this.head = node;
+        }
+        this.size++;
+        this.draw();
     }
     removeFirst(){
 
@@ -88,10 +103,31 @@ class SinglyLinkedList{
 
     }
     getSize(){
-
+        return this.numElements;
     }
     isEmpty(){
+        return this.numElements === 0;
+    }
+    draw(){
+        clearCanvas();
+        ctx.strokeRect(50, 50, 50, 50);
+        ctx.fillText("head", 75, 125);
 
+        let cur = this.head;
+        let count = 1;
+        console.log("test");
+        while(cur!=null){
+            console.log("test2");
+
+            ctx.strokeRect(50+(50*count), 50, 50, 50);
+            ctx.fillText(cur.getElement(), (50+(50*count))+25, 75);
+            //ctx.fillText(count, (50+(50*count))+25, 125);
+
+            cur = cur.getNext();
+            count++;
+        }
+        ctx.strokeRect(50+(50*(count)), 50, 50, 50);
+        ctx.fillText("tail", (50+(50*(count)))+25, 75);
     }
 }
 
@@ -132,6 +168,7 @@ class DoublyLinkedList{
 
 class SimpleArray{
     constructor(size=20){
+        // Do these need renaming?
         this.size = size;
         this.numElements = 0;
         this.content = [];

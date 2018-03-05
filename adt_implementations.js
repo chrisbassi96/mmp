@@ -11,13 +11,13 @@ class SimpleArrayStack{
             outputLabel.innerText = "Stack is full";
         }
         this.dataStructure.draw();
-/*        if (this.content.length < this.size){
-            this.changeIndexValue(this.elements, element);
-            this.elements++;
-            outputLabel.innerText = "Element inserted"
-        }else{
-            outputLabel.innerText = "Stack is full"
-        }*/
+        /*        if (this.content.length < this.size){
+                    this.changeIndexValue(this.elements, element);
+                    this.elements++;
+                    outputLabel.innerText = "Element inserted"
+                }else{
+                    outputLabel.innerText = "Stack is full"
+                }*/
     }
     pop(){
         if (this.dataStructure.isEmpty()){
@@ -36,5 +36,29 @@ class SimpleArrayStack{
         }
         outputLabel.innerText = this.dataStructure.getElement(this.dataStructure.getNumElements()-1);
         this.dataStructure.draw();
+    }
+}
+
+class SinglyLinkedListStack{
+    constructor(){
+        this.dataStructure = new SinglyLinkedList();
+        this.dataStructure.draw();
+    }
+    push(element){
+        this.dataStructure.addFirst(new SinglyLinkedListNode(element,null));
+    }
+    pop(){
+        if (this.isEmpty()) {
+            outputLabel.innerText = "Stack is empty";
+            return;
+        }
+        var first = this.head;
+        this.head = first.getNext();
+        outputLabel.innerText = first.getElement();
+        this.size = this.size-1;
+        this.draw();
+    }
+    peek(){
+        outputLabel.innerText = this.head.getElement();
     }
 }
