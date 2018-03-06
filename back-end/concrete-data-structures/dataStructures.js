@@ -102,9 +102,6 @@ class SinglyLinkedList{
     removeLast(){
 
     }
-    addAfter(prev, node){
-
-    }
     removeNext(){
 
     }
@@ -150,16 +147,19 @@ class DoublyLinkedList{
 
     }
     removeFirst(){
-
+        
     }
     addLast(node){
-
+        this.addAfter(this.tail, node);
     }
     removeLast(){
 
     }
     addAfter(prev, node){
-
+        node.setPrev(prev);
+        node.setNext(prev.getNext());
+        prev.setNext(node);
+        node.getNext().setPrev(node);
     }
     removeNext(){
 
@@ -186,17 +186,22 @@ class SimpleArray{
         this.draw();
 
         if (adding){
+            outputLabel.innerText = "Added " + this.content[index];
             this.numElements++;
         }else{
+            outputLabel.innerText = "Removed " + this.content[index];
             this.numElements--;
         }
     }
 
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
     getElement(index){
-        if (index > 0 && index < this.content.length){
+        console.log(index);
+        if (index >= 0 && index < this.content.length){
+
             return this.content[index];
         }
+
         // Give some sort of error
     }
     getNumElements(){
@@ -213,7 +218,8 @@ class SimpleArray{
         for (let i=0; i<this.size; i++){
             ctx.strokeRect(50+(50*i), 50, 50, 50);
             ctx.fillText(this.content[i]==null?"null":this.content[i], (50+(50*i))+25, 75);
-            ctx.fillText(i, (50+(50*i))+25, 125);
+            //ctx.fillText(i, (50+(50*i))+25, 125);
+            ctx.fillText(i, 75+(50*i), 125);
         }
     }
 }
@@ -221,6 +227,13 @@ class SimpleArray{
 class CircularArray extends SimpleArray{
     constructor(size=20){
         super(size);
+        this.head = 0;
+    }
+    getHead(){
+        return this.head;
+    }
+    setHead(newHead){
+        this.head = newHead;
     }
 }
 

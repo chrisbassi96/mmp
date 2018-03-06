@@ -5,16 +5,19 @@
     <title>DSAV - Stack</title>
 </head>
 <body>
+<script src="../DSAV.js"></script>
 <form>
-    <input type="button" onclick="createADT('stack');" value="Create">
-    <select>
-        <option>Array</option>
-        <option>Linked list</option>
-    </select>
-    <select id="dataStructure">
+    <input type="button" onclick="createADT('stack'); document.getElementById('null_toggle').disabled = false;" value="Create Stack" id="create_adt" disabled />
+    <select id="dataStructure" onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
+        <option value="select">Select implementation</option>
         <option value="simple-array">Simple array</option>
         <option value="singly-linked-list">Singly linked list</option>
     </select>
+    <br/>
+    <label>
+        <input type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
+        Show null values
+    </label>
 </form>
 <br/>
 <canvas id="myCanvas" style="border:1px solid #c3c3c3;"></canvas>
@@ -26,8 +29,9 @@
 <label id="output_msg"></label>
 
 <script src="../back-end/concrete-data-structures/dataStructures.js"></script>
-<script src="../back-end/adt/stack_implementation.js"></script>
-<script src="../DSAV.js"></script>
+<script src="../back-end/adt/stack_implementations.js"></script>
+
+
 
 
 

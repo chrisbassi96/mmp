@@ -1,19 +1,8 @@
 let dataStructure = null;
+let showNulls = false;
 let adt = null;
 let canvas;
 let ctx;
-
-canvas = document.getElementById("myCanvas");
-ctx = canvas.getContext("2d");
-canvas.width = 1200;
-canvas.height = 300;
-
-let outputLabel = document.getElementById("output_msg");
-let drawScale = 1;
-
-function clearCanvas(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
 
 function createADT(type){
     let dtSelect = document.getElementById("dataStructure");
@@ -25,6 +14,14 @@ function createADT(type){
         case "singly-linked-list-stack":
             dataStructure = new SinglyLinkedListStack();
             break;
+        case "circular-array-queue":
+            dataStructure = new CircularArrayQueue();
+            break;
+        case "doubly-linked-list-queue":
+            dataStructure = new DoublyLinkedListQueue();
+            break;
+        default:
+            console.log("Error in createADT function. type = " + type);
     }
 }
 
