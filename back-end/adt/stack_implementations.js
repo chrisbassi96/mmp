@@ -1,6 +1,6 @@
 class SimpleArrayStack{
-    constructor(){
-        this.dataStructure = new SimpleArray();
+    constructor(size){
+        this.dataStructure = new SimpleArray(size);
         this.dataStructure.draw();
     }
     push(element){

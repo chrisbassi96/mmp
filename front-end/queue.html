@@ -9,12 +9,19 @@
 <form>
     <input type="button" onclick="createADT('queue'); document.getElementById('null_toggle').disabled = false;"
            value="Create Queue" id="create_adt" disabled/>
-    <select id="dataStructure"
-            onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
-        <option value="select">Select implementation</option>
-        <option value="circular-array">Circular array</option>
-        <option value="doubly-linked-list">Doubly linked list</option>
-    </select>
+    <label>
+        using
+        <select id="dataStructure"
+                onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
+            <option value="select">Select implementation</option>
+            <option value="circular-array">Circular array</option>
+            <option value="doubly-linked-list">Doubly linked list</option>
+        </select>
+    </label>
+    <label>
+        of size
+        <input type="number" id="adt_size" value="5" min="5" max="20"/>
+    </label>
     <br/>
     <label>
         <input type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>

@@ -147,7 +147,7 @@ class DoublyLinkedList{
 
     }
     removeFirst(){
-        
+
     }
     addLast(node){
         this.addAfter(this.tail, node);
@@ -170,6 +170,26 @@ class DoublyLinkedList{
     isEmpty(){
 
     }
+    // Created 07/03/18
+    draw(){
+
+    }
+}
+
+class ArrayElement{
+    constructor(value){
+        this.value = value;
+    }
+    draw(containerX, containerY, index){
+        ctx.fillText(this.value, containerX+elementBoxMiddleX, elementBoxMiddleY);
+        ctx.fillText(index, containerX+elementBoxMiddleX, elementBoxIndexY);
+    }
+    getValue(){
+        return this.value;
+    }
+    setValue(value){
+        this.value = value;
+    }
 }
 
 class SimpleArray{
@@ -178,18 +198,21 @@ class SimpleArray{
         this.size = size;
         this.numElements = 0;
         this.content = [];
+        for (let i=0; i<size; i++){
+            this.content[i] = new ArrayElement(null);
+        }
     }
     setValue(index, value){
-        let adding = Boolean(this.content[index] === undefined || this.content[index] == null);
-
-        this.content[index] = value;
+        let adding = Boolean(this.content[index].getValue() == null);
+        this.content[index].setValue(value);
+        //this.content[index] = value;
         this.draw();
 
         if (adding){
-            outputLabel.innerText = "Added " + this.content[index];
+            outputLabel.innerText = "Added " + this.content[index].getValue();
             this.numElements++;
         }else{
-            outputLabel.innerText = "Removed " + this.content[index];
+            outputLabel.innerText = "Removed " + this.content[index].getValue();
             this.numElements--;
         }
     }
@@ -199,7 +222,7 @@ class SimpleArray{
         console.log(index);
         if (index >= 0 && index < this.content.length){
 
-            return this.content[index];
+            return this.content[index].getValue();
         }
 
         // Give some sort of error
@@ -216,10 +239,14 @@ class SimpleArray{
     draw() {
         clearCanvas();
         for (let i=0; i<this.size; i++){
-            ctx.strokeRect(50+(50*i), 50, 50, 50);
-            ctx.fillText(this.content[i]==null?"null":this.content[i], (50+(50*i))+25, 75);
+            // Draw the box that visualizes the index
+            drawElementBox(leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
+            //ctx.strokeRect(50+(50*i), topMargin*2, 50, 50);
+            // The value of the element at that index
+            //ctx.fillText(this.content[i]==null?"null":this.content[i], (elementBoxX +(elementBoxWidth*i))+elementBoxWidth*0.5, elementBoxMiddleY);
             //ctx.fillText(i, (50+(50*i))+25, 125);
-            ctx.fillText(i, 75+(50*i), 125);
+            // The index number
+            //ctx.fillText(i, leftMargin*1.5 + (elementBoxWidth*i), topMargin*4);
         }
     }
 }
@@ -234,6 +261,25 @@ class CircularArray extends SimpleArray{
     }
     setHead(newHead){
         this.head = newHead;
+    }
+    // Created 07/03/18
+    draw(){
+        // Draw the common parts of any array structure
+        super.draw();
+        // Then draw the parts specific to CircularArray, points to head and tail
+        ctx.fillText("head", 75, 25);
+        ctx.beginPath();
+        ctx.moveTo(75, 30); // Margin of 5 pixels
+        ctx.lineTo(75,elementBoxY-20);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(70, elementBoxY-20); // Margin of 5 pixels
+        ctx.lineTo(75,elementBoxY-10);
+        ctx.lineTo(80, elementBoxY-20)
+        ctx.closePath();
+        ctx.fill();
+
     }
 }
 

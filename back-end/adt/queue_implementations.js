@@ -1,6 +1,6 @@
 class CircularArrayQueue{
-    constructor(){
-        this.dataStructure = new CircularArray(5);
+    constructor(size){
+        this.dataStructure = new CircularArray(size);
         this.dataStructure.draw();
     }
     enqueue(element){
