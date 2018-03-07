@@ -19,7 +19,6 @@ function createADT(type){
             dataStructure = new SinglyLinkedListStack();
             break;
         case "circular-array-queue":
-            console.log("hello!");
             dataStructure = new CircularArrayQueue(size);
             break;
         case "doubly-linked-list-queue":

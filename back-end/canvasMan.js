@@ -11,6 +11,7 @@ let topMargin = 100;
 let leftMargin = 50;
 
 // Canvas elements
+let elementBoxLabelY = topMargin;
 let elementBoxWidth = 50;
 let elementBoxHeight = 50;
 let elementBoxX = leftMargin*1;

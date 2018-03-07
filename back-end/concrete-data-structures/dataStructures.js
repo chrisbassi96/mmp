@@ -179,10 +179,28 @@ class DoublyLinkedList{
 class ArrayElement{
     constructor(value){
         this.value = value;
+        this.valueX = 0;
+        this.valueY = 0;
     }
     draw(containerX, containerY, index){
-        ctx.fillText(this.value, containerX+elementBoxMiddleX, elementBoxMiddleY);
-        ctx.fillText(index, containerX+elementBoxMiddleX, elementBoxIndexY);
+        this.valueX = containerX+elementBoxMiddleX;
+        this.valueY = elementBoxMiddleY;
+        ctx.fillText(this.value, this.valueX, this.valueY);
+        ctx.fillText(index, this.valueX, elementBoxIndexY);
+    }
+    drawLabelledPointer(labelText){
+        ctx.fillText(labelText, this.valueX, elementBoxLabelY);
+        ctx.beginPath();
+        ctx.moveTo(this.valueX, elementBoxLabelY+5); // Margin of 5 pixels
+        ctx.lineTo(this.valueX, elementBoxY-20);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(this.valueX-5, elementBoxY-20); // Margin of 5 pixels
+        ctx.lineTo(this.valueX,elementBoxY-10); // Instead of elementBoxY, perhaps the Y of the exact container?
+        ctx.lineTo(this.valueX+5, elementBoxY-20)
+        ctx.closePath();
+        ctx.fill();
     }
     getValue(){
         return this.value;
@@ -255,19 +273,23 @@ class CircularArray extends SimpleArray{
     constructor(size=20){
         super(size);
         this.head = 0;
+        this.tail = 1;
     }
     getHead(){
         return this.head;
     }
     setHead(newHead){
         this.head = newHead;
+        this.tail = (this.head + this.size) % this.numElements;
     }
     // Created 07/03/18
     draw(){
         // Draw the common parts of any array structure
         super.draw();
         // Then draw the parts specific to CircularArray, points to head and tail
-        ctx.fillText("head", 75, 25);
+        content[head].drawLabelledPointer("head");
+        content[tail].drawLabelledPointer("tail");
+/*        ctx.fillText("head", 75, 25);
         ctx.beginPath();
         ctx.moveTo(75, 30); // Margin of 5 pixels
         ctx.lineTo(75,elementBoxY-20);
@@ -278,7 +300,7 @@ class CircularArray extends SimpleArray{
         ctx.lineTo(75,elementBoxY-10);
         ctx.lineTo(80, elementBoxY-20)
         ctx.closePath();
-        ctx.fill();
+        ctx.fill();*/
 
     }
 }
