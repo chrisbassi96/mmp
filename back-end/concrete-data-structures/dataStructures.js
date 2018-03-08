@@ -179,28 +179,52 @@ class DoublyLinkedList{
 class ArrayElement{
     constructor(value){
         this.value = value;
-        this.valueX = 0;
-        this.valueY = 0;
+        this.valueTextX = 0;
+        this.valueTextY = 0;
+        this.middleX = 0;
+        this.middleY = 0;
+        this.index = 0;
     }
-    draw(containerX, containerY, index){
-        this.valueX = containerX+elementBoxMiddleX;
-        this.valueY = elementBoxMiddleY;
-        ctx.fillText(this.value, this.valueX, this.valueY);
-        ctx.fillText(index, this.valueX, elementBoxIndexY);
+    setXY(x, y){
+        this.middleX = x;
+        this.middleY = y;
+    }
+    setIndex(newIndex){
+        this.index = newIndex;
+    }
+    draw(){
+        // Draw the actual box
+        ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+
+        // Draw the actual value
+        ctx.fillText(this.value, this.middleX, this.middleY);
+
+        // Draw the index
+        ctx.fillText(this.index, this.middleX, elementBoxIndexY);
+
+        //leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
+/*        this.valueTextX = leftMargin +(elementBoxWidth*i);
+
+        this.valueTextX = containerX+elementBoxMiddleX;
+        this.valueTextY = elementBoxMiddleY;
+        ctx.fillText(this.value, this.valueTextX, this.valueTextY);
+        ctx.fillText(index, this.valueTextX, elementBoxIndexY);*/
     }
     drawLabelledPointer(labelText){
-        ctx.fillText(labelText, this.valueX, elementBoxLabelY);
+        drawLabelledArrow(labelText, this.middleX, elementBoxLabelY, this.middleX, this.middleY-(elementBoxHeight/2));
+/*        ctx.fillText(labelText, this.valueTextX, elementBoxLabelY, );
+
         ctx.beginPath();
-        ctx.moveTo(this.valueX, elementBoxLabelY+5); // Margin of 5 pixels
-        ctx.lineTo(this.valueX, elementBoxY-20);
+        ctx.moveTo(this.valueTextX, elementBoxLabelY+5); // Margin of 5 pixels
+        ctx.lineTo(this.valueTextX, elementBoxY-20);
         ctx.closePath();
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(this.valueX-5, elementBoxY-20); // Margin of 5 pixels
-        ctx.lineTo(this.valueX,elementBoxY-10); // Instead of elementBoxY, perhaps the Y of the exact container?
-        ctx.lineTo(this.valueX+5, elementBoxY-20)
+        ctx.moveTo(this.valueTextX-5, elementBoxY-20); // Margin of 5 pixels
+        ctx.lineTo(this.valueTextX,elementBoxY-10); // Instead of elementBoxY, perhaps the Y of the exact container?
+        ctx.lineTo(this.valueTextX+5, elementBoxY-20)
         ctx.closePath();
-        ctx.fill();
+        ctx.fill();*/
     }
     getValue(){
         return this.value;
@@ -218,13 +242,15 @@ class SimpleArray{
         this.content = [];
         for (let i=0; i<size; i++){
             this.content[i] = new ArrayElement(null);
+            this.content[i].setXY(leftMargin +(elementBoxWidth*i), elementBoxY);
+            this.content[i].setIndex(i);
         }
     }
     setValue(index, value){
         let adding = Boolean(this.content[index].getValue() == null);
-        this.content[index].setValue(value);
+
+
         //this.content[index] = value;
-        this.draw();
 
         if (adding){
             outputLabel.innerText = "Added " + this.content[index].getValue();
@@ -233,6 +259,8 @@ class SimpleArray{
             outputLabel.innerText = "Removed " + this.content[index].getValue();
             this.numElements--;
         }
+        this.content[index].setValue(value);
+        this.draw();
     }
 
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
@@ -258,7 +286,8 @@ class SimpleArray{
         clearCanvas();
         for (let i=0; i<this.size; i++){
             // Draw the box that visualizes the index
-            drawElementBox(leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
+            this.content[i].draw();
+            //drawElementBox(leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
             //ctx.strokeRect(50+(50*i), topMargin*2, 50, 50);
             // The value of the element at that index
             //ctx.fillText(this.content[i]==null?"null":this.content[i], (elementBoxX +(elementBoxWidth*i))+elementBoxWidth*0.5, elementBoxMiddleY);
@@ -273,22 +302,31 @@ class CircularArray extends SimpleArray{
     constructor(size=20){
         super(size);
         this.head = 0;
-        this.tail = 1;
+        this.tail = 0;
     }
     getHead(){
         return this.head;
     }
     setHead(newHead){
         this.head = newHead;
-        this.tail = (this.head + this.size) % this.numElements;
+    }
+    getTail(){
+        return this.tail;
+    }
+    setTail(newTail){
+        this.tail = newTail;
+    }
+    setValue(index, value){
+        super.setValue(index, value);
+
     }
     // Created 07/03/18
     draw(){
         // Draw the common parts of any array structure
         super.draw();
         // Then draw the parts specific to CircularArray, points to head and tail
-        content[head].drawLabelledPointer("head");
-        content[tail].drawLabelledPointer("tail");
+        this.content[this.head].drawLabelledPointer("head");
+        this.content[this.tail].drawLabelledPointer("tail");
 /*        ctx.fillText("head", 75, 25);
         ctx.beginPath();
         ctx.moveTo(75, 30); // Margin of 5 pixels

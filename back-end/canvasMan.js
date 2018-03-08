@@ -11,11 +11,11 @@ let topMargin = 100;
 let leftMargin = 50;
 
 // Canvas elements
-let elementBoxLabelY = topMargin;
+let elementBoxLabelY = 10;
 let elementBoxWidth = 50;
 let elementBoxHeight = 50;
 let elementBoxX = leftMargin*1;
-let elementBoxY = topMargin*1;
+let elementBoxY = topMargin*1.5;
 let elementBoxMiddleX = elementBoxWidth*0.5;
 let elementBoxMiddleY = elementBoxY + elementBoxHeight*0.5;
 let elementBoxIndexY = elementBoxMiddleY + elementBoxHeight;
@@ -29,12 +29,24 @@ function clearCanvas(){
 
 // Should comment on using this in the report, why is this a better method?
 function drawElementBox(x, y, element, index){
-    console.log("x: " + x + " y: " + y + " + element: " + element + " index: " + index);
     ctx.strokeRect(x, y, elementBoxWidth, elementBoxHeight);
-/*    if (element === undefined || element == null){
-
-    }*/
     element.draw(x, y, index);
-/*    ctx.fillText(element, x+elementBoxMiddleX, elementBoxMiddleY);
-    ctx.fillText(index, x+elementBoxMiddleX, elementBoxIndexY);*/
+}
+
+function drawLabelledArrow(label, fromX, fromY, toX, toY){
+    ctx.fillText(label, fromX, fromY);
+
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY+5); // Margin of 5 pixels
+    ctx.lineTo(fromX, toY-20);
+    ctx.closePath();
+    ctx.stroke();
+
+    // Draw pointer triangle
+    ctx.beginPath();
+    ctx.moveTo(toX-5, toY-20); // Margin of 5 pixels
+    ctx.lineTo(toX, toY); // Instead of elementBoxY, perhaps the Y of the exact container?
+    ctx.lineTo(toX+5, toY-20);
+    ctx.closePath();
+    ctx.fill();
 }
