@@ -63,8 +63,18 @@ class SinglyLinkedListNode extends Node{
         // Draw the actual box
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
-        // Draw the actual value
-        ctx.fillText(this.element, this.middleX, this.middleY);
+        if (this.element==null){
+            // Draw a slanted line to indicate no object referenced
+            ctx.beginPath();
+            ctx.moveTo(this.middleX - (elementBoxWidth/2), this.middleY + (elementBoxHeight/2)); // Margin of 5 pixels
+            ctx.lineTo(this.middleX + (elementBoxWidth/2), this.middleY - (elementBoxHeight/2));
+            ctx.closePath();
+            ctx.stroke();
+        }else {
+            // Draw the actual value
+            ctx.fillText(this.element, this.middleX, this.middleY);
+        }
+
     }
     getNext(){
         return this.next;
