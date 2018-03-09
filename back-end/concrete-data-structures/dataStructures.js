@@ -33,6 +33,32 @@ class SinglyLinkedListNode extends Node{
         super();
         this.element = element;
         this.next = next;
+        this.middleX = 0;
+        this.middleY = 0;
+        this.index = 0;
+    }
+    setXY(x, y){
+        this.middleX = x;
+        this.middleY = y;
+    }
+    getX(){
+        return this.middleX;
+    }
+    getY(){
+        return this.middleY;
+    }
+    setIndex(index){
+        this.index = index;
+    }
+    draw(){
+        // Draw the actual box
+        ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+
+        // Draw the actual value
+        ctx.fillText(this.value, this.middleX, this.middleY);
+
+        // Draw the index
+        ctx.fillText(this.index, this.middleX, elementBoxIndexY);
     }
     getNext(){
         return this.next;
@@ -64,9 +90,15 @@ class DoublyLinkedListNode extends Node{
 
 class SinglyLinkedList{
     constructor(){
-        this.head = null;
-        this.tail = null;
+        let root = new SinglyLinkedListNode(null, null);
+        this.tail = new SinglyLinkedListNode(root, null);
+        this.head = new SinglyLinkedListNode(root, null);
+        root.setXY(leftMargin, elementBoxY);
+        root.setIndex(0);
+/*        this.head = null;
+        this.tail = null;*/
         this.numElements = 0;
+        this.draw();
     }
     find(element){
         let cur = this.head;
@@ -84,7 +116,12 @@ class SinglyLinkedList{
             node.setNext(this.head);
             this.head = node;
         }
+
         this.numElements++;
+
+        node.setXY(leftMargin +(elementBoxWidth*i), elementBoxY);
+        node.setIndex(this.numElements);
+
         this.draw();
     }
     getFirst(){
@@ -95,6 +132,7 @@ class SinglyLinkedList{
         this.head = first.getNext();
         outputLabel.innerText = first.getElement();
         this.numElements = this.numElements-1;
+        this.draw();
     }
     addLast(node){
 
@@ -113,8 +151,11 @@ class SinglyLinkedList{
     }
     draw(){
         clearCanvas();
-        ctx.strokeRect(50, 50, 50, 50);
-        ctx.fillText("head", 75, 125);
+        drawLabelledArrow("head", this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2));
+        drawLabelledArrow("tail", this.tail.getX(), elementBoxLabelY, this.tail.getX(), this.tail.getY()-(elementBoxHeight/2));
+
+/*        ctx.strokeRect(50, 50, 50, 50);
+        ctx.fillText("head", 75, 125);*/
 
         let cur = this.head;
         let count = 1;
@@ -129,8 +170,8 @@ class SinglyLinkedList{
             cur = cur.getNext();
             count++;
         }
-        ctx.strokeRect(50+(50*(count)), 50, 50, 50);
-        ctx.fillText("tail", (50+(50*(count)))+25, 75);
+/*        ctx.strokeRect(50+(50*(count)), 50, 50, 50);
+        ctx.fillText("tail", (50+(50*(count)))+25, 75);*/
     }
 }
 
@@ -179,8 +220,6 @@ class DoublyLinkedList{
 class ArrayElement{
     constructor(value){
         this.value = value;
-        this.valueTextX = 0;
-        this.valueTextY = 0;
         this.middleX = 0;
         this.middleY = 0;
         this.index = 0;

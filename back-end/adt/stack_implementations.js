@@ -35,7 +35,7 @@ class SimpleArrayStack{
 class SinglyLinkedListStack{
     constructor(){
         this.dataStructure = new SinglyLinkedList();
-        this.dataStructure.draw();
+        //this.dataStructure.draw();
     }
     push(element){
         this.dataStructure.addFirst(new SinglyLinkedListNode(element,null));
@@ -46,7 +46,7 @@ class SinglyLinkedListStack{
             return;
         }
         this.dataStructure.removeFirst();
-        this.dataStructure.draw();
+        //this.dataStructure.draw();
     }
     peek(){
         outputLabel.innerText = this.dataStructure.getFirst();
