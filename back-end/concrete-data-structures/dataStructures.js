@@ -189,6 +189,12 @@ class ArrayElement{
         this.middleX = x;
         this.middleY = y;
     }
+    getX(){
+        return this.middleX;
+    }
+    getY(){
+        return this.middleY;
+    }
     setIndex(newIndex){
         this.index = newIndex;
     }
@@ -324,9 +330,14 @@ class CircularArray extends SimpleArray{
     draw(){
         // Draw the common parts of any array structure
         super.draw();
+        let headElement = this.content[this.head];
+        let tailElement = this.content[this.tail];
+        //drawLabelledArrow(labelText, this.middleX, elementBoxLabelY, this.middleX, this.middleY-(elementBoxHeight/2));
+        drawLabelledArrow("head", headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
+        drawLabelledArrow("tail", tailElement.getX(), elementBoxLabelY, tailElement.getX(), tailElement.getY()-(elementBoxHeight/2));
+
         // Then draw the parts specific to CircularArray, points to head and tail
-        this.content[this.head].drawLabelledPointer("head");
-        this.content[this.tail].drawLabelledPointer("tail");
+
 /*        ctx.fillText("head", 75, 25);
         ctx.beginPath();
         ctx.moveTo(75, 30); // Margin of 5 pixels

@@ -27,12 +27,6 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// Should comment on using this in the report, why is this a better method?
-function drawElementBox(x, y, element, index){
-    ctx.strokeRect(x, y, elementBoxWidth, elementBoxHeight);
-    element.draw(x, y, index);
-}
-
 function drawLabelledArrow(label, fromX, fromY, toX, toY){
     ctx.fillText(label, fromX, fromY);
 
