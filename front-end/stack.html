@@ -7,12 +7,21 @@
 <body>
 <script src="../DSAV.js"></script>
 <form>
-    <input type="button" onclick="createADT('stack'); document.getElementById('null_toggle').disabled = false;" value="Create Stack" id="create_adt" disabled />
-    <select id="dataStructure" onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
-        <option value="select">Select implementation</option>
-        <option value="simple-array">Simple array</option>
-        <option value="singly-linked-list">Singly linked list</option>
-    </select>
+    <input type="button" onclick="createADT('stack'); document.getElementById('null_toggle').disabled = false;"
+           value="Create Stack" id="create_adt" disabled/>
+    <label>
+        using
+        <select id="dataStructure"
+                onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
+            <option value="select">Select implementation</option>
+            <option value="simple-array">Simple array</option>
+            <option value="singly-linked-list">Singly linked list</option>
+        </select>
+    </label>
+    <label>
+        of size
+        <input type="number" id="adt_size" value="5" min="5" max="20"/>
+    </label>
     <br/>
     <label>
         <input type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
@@ -28,6 +37,7 @@
 <button onclick="dataStructure.peek();">Peek</button>
 <label id="output_msg"></label>
 
+<script src="../back-end/canvasMan.js"></script>
 <script src="../back-end/concrete-data-structures/dataStructures.js"></script>
 <script src="../back-end/adt/stack_implementations.js"></script>
 
