@@ -43,6 +43,9 @@ class SinglyLinkedListNode extends Node{
     setElement(element){
         this.element = element;
     }
+    equals(otherNode){
+        return (this.middleX === otherNode.getX()) && (this.middleY === otherNode.getY());
+    }
     setXY(x, y){
         this.middleX = x;
         this.middleY = y;
@@ -153,7 +156,11 @@ class SinglyLinkedList{
     draw(){
         clearCanvas();
 
-        if (this.numElements===0){
+        // If the thing is empty, draw an empty element with head/tail arrow
+
+        // If not empty,
+
+        if(this.isEmpty()){
             let dummy = new SinglyLinkedListNode(null, null);
             dummy.setXY(leftMargin, elementBoxY);
             dummy.setIndex(0);
@@ -162,8 +169,16 @@ class SinglyLinkedList{
             return;
         }
 
-        drawLabelledArrow("head", this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2));
-        drawLabelledArrow("tail", this.tail.getX(), elementBoxLabelY, this.tail.getX(), this.tail.getY()-(elementBoxHeight/2));
+        if (this.head.equals(this.tail)){
+            /*            let dummy = new SinglyLinkedListNode(null, null);
+                        dummy.setXY(leftMargin, elementBoxY);
+                        dummy.setIndex(0);*/
+            drawLabelledArrow("head/tail", this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2));
+            //head.draw();
+        }else{
+            drawLabelledArrow("head", this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2));
+            drawLabelledArrow("tail", this.tail.getX(), elementBoxLabelY, this.tail.getX(), this.tail.getY()-(elementBoxHeight/2));
+        }
 
 /*        ctx.strokeRect(50, 50, 50, 50);
         ctx.fillText("head", 75, 125);*/
