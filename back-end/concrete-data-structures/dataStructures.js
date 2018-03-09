@@ -40,6 +40,9 @@ class SinglyLinkedListNode extends Node{
     getElement(){
         return this.element;
     }
+    setElement(element){
+        this.element = element;
+    }
     setXY(x, y){
         this.middleX = x;
         this.middleY = y;
@@ -90,12 +93,12 @@ class DoublyLinkedListNode extends Node{
 
 class SinglyLinkedList{
     constructor(){
-        this.head = new SinglyLinkedListNode(null, null);
+/*        this.head = new SinglyLinkedListNode(null, null);
         this.tail = this.head;
         this.head.setXY(leftMargin, elementBoxY);
-        this.head.setIndex(0);
-/*        this.head = null;
-        this.tail = null;*/
+        this.head.setIndex(0);*/
+        this.head = null;
+        this.tail = null;
         this.numElements = 0;
         this.draw();
     }
@@ -107,18 +110,18 @@ class SinglyLinkedList{
         return cur;
     }
     addFirst(node) {
-        if (this.head.getElement() == null) {
+        if (this.head == null) {
             node.setNext(null);
             this.head = node;
             this.tail = node;
         } else {
             node.setNext(this.head);
             this.head = node;
-            this.numElements++;
-        }
 
+        }
         node.setXY(leftMargin +(elementBoxWidth*this.numElements), elementBoxY);
         node.setIndex(this.numElements);
+        this.numElements++;
 
         this.draw();
     }
@@ -149,6 +152,16 @@ class SinglyLinkedList{
     }
     draw(){
         clearCanvas();
+
+        if (this.numElements===0){
+            let dummy = new SinglyLinkedListNode(null, null);
+            dummy.setXY(leftMargin, elementBoxY);
+            dummy.setIndex(0);
+            drawLabelledArrow("head/tail", dummy.getX(), elementBoxLabelY, dummy.getX(), dummy.getY()-(elementBoxHeight/2));
+            dummy.draw();
+            return;
+        }
+
         drawLabelledArrow("head", this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2));
         drawLabelledArrow("tail", this.tail.getX(), elementBoxLabelY, this.tail.getX(), this.tail.getY()-(elementBoxHeight/2));
 
