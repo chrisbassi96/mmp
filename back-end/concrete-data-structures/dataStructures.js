@@ -37,6 +37,9 @@ class SinglyLinkedListNode extends Node{
         this.middleY = 0;
         this.index = 0;
     }
+    getElement(){
+        return this.element;
+    }
     setXY(x, y){
         this.middleX = x;
         this.middleY = y;
@@ -55,10 +58,7 @@ class SinglyLinkedListNode extends Node{
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
         // Draw the actual value
-        ctx.fillText(this.value, this.middleX, this.middleY);
-
-        // Draw the index
-        ctx.fillText(this.index, this.middleX, elementBoxIndexY);
+        ctx.fillText(this.element, this.middleX, this.middleY);
     }
     getNext(){
         return this.next;
@@ -90,11 +90,10 @@ class DoublyLinkedListNode extends Node{
 
 class SinglyLinkedList{
     constructor(){
-        let root = new SinglyLinkedListNode(null, null);
-        this.tail = new SinglyLinkedListNode(root, null);
-        this.head = new SinglyLinkedListNode(root, null);
-        root.setXY(leftMargin, elementBoxY);
-        root.setIndex(0);
+        this.head = new SinglyLinkedListNode(null, null);
+        this.tail = this.head;
+        this.head.setXY(leftMargin, elementBoxY);
+        this.head.setIndex(0);
 /*        this.head = null;
         this.tail = null;*/
         this.numElements = 0;
@@ -108,18 +107,17 @@ class SinglyLinkedList{
         return cur;
     }
     addFirst(node) {
-        if (this.head == null) {
+        if (this.head.getElement() == null) {
             node.setNext(null);
             this.head = node;
             this.tail = node;
         } else {
             node.setNext(this.head);
             this.head = node;
+            this.numElements++;
         }
 
-        this.numElements++;
-
-        node.setXY(leftMargin +(elementBoxWidth*i), elementBoxY);
+        node.setXY(leftMargin +(elementBoxWidth*this.numElements), elementBoxY);
         node.setIndex(this.numElements);
 
         this.draw();
@@ -162,13 +160,14 @@ class SinglyLinkedList{
         console.log("test");
         while(cur!=null){
             console.log("test2");
+            cur.draw();
 
-            ctx.strokeRect(50+(50*count), 50, 50, 50);
-            ctx.fillText(cur.getElement(), (50+(50*count))+25, 75);
+/*            ctx.strokeRect(50+(50*count), 50, 50, 50);
+            ctx.fillText(cur.getElement(), (50+(50*count))+25, 75);*/
             //ctx.fillText(count, (50+(50*count))+25, 125);
 
             cur = cur.getNext();
-            count++;
+            /*count++;*/
         }
 /*        ctx.strokeRect(50+(50*(count)), 50, 50, 50);
         ctx.fillText("tail", (50+(50*(count)))+25, 75);*/
