@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DSAV - Stack</title>
+</head>
+<body>
+<script src="../DSAV.js"></script>
+<form>
+    <input type="button" onclick="createADT('queue'); document.getElementById('null_toggle').disabled = false;"
+           value="Create Queue" id="create_adt" disabled/>
+    <label>
+        using
+        <select id="dataStructure"
+                onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
+            <option value="select">Select implementation</option>
+            <option value="circular-array">Circular array</option>
+            <option value="doubly-linked-list">Doubly linked list</option>
+        </select>
+    </label>
+    <label>
+        of size
+        <input type="number" id="adt_size" value="5" min="5" max="20"/>
+    </label>
+    <br/>
+    <label>
+        <input type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
+        Show null values
+    </label>
+</form>
+<br/>
+<canvas id="myCanvas" style="border:1px solid #c3c3c3;"></canvas>
+<br/>
+<input type="text" name="add_value" id="add_value"/>
+<button onclick="dataStructure.enqueue(document.getElementById('add_value').value);">Enqueue</button>
+<button onclick="dataStructure.dequeue();">Dequeue</button>
+<button onclick="dataStructure.peek();">Peek</button>
+<label id="output_msg"></label>
+
+<script src="../back-end/canvasMan.js"></script>
+<script src="../back-end/concrete-data-structures/dataStructures.js"></script>
+<script src="../back-end/adt/queue_implementations.js"></script>
+
+
+<!--<script src="canvasMan.js"></script>-->
+</body>
+</html>
