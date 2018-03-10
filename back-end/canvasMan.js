@@ -31,11 +31,11 @@ function drawLabelledArrow(label, fromX, fromY, toX, toY){
     ctx.fillText(label, fromX, fromY);
 
     ctx.beginPath();
-    ctx.moveTo(fromX, fromY+5); // Margin of 5 pixels
-    ctx.lineTo(fromX, toY-20);
+    ctx.moveTo(fromX, fromY); // Margin of 5 pixels
+    ctx.lineTo(toX, toY);
     ctx.closePath();
     ctx.stroke();
-
+    // Need to determine our direction: going up, right, down, left?
     // Draw pointer triangle
     ctx.beginPath();
     ctx.moveTo(toX-5, toY-20); // Margin of 5 pixels

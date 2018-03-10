@@ -61,7 +61,9 @@ class SinglyLinkedListNode extends Node{
     }
     draw(){
         // Draw the actual box
-        ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        // Draw the box for "next"
+        ctx.strokeRect(this.middleX, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
         if (this.element==null){
             // Draw a slanted line to indicate no object referenced
@@ -72,7 +74,10 @@ class SinglyLinkedListNode extends Node{
             ctx.stroke();
         }else {
             // Draw the actual value
-            ctx.fillText(this.element, this.middleX, this.middleY);
+            ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
+            // Draw the "next"
+            ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
+            drawLabelledArrow("next", this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
         }
 
     }
@@ -132,7 +137,7 @@ class SinglyLinkedList{
             this.head = node;
         }
 
-        node.setXY(leftMargin +(elementBoxWidth*this.numElements), elementBoxY);
+        node.setXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), elementBoxY);
         node.setIndex(this.numElements);
         this.numElements++;
 
@@ -175,7 +180,7 @@ class SinglyLinkedList{
             dummy.setXY(leftMargin, elementBoxY);
             dummy.setIndex(0);
             dummy.draw();*/
-            drawLabelledArrow("head/tail", leftMargin, elementBoxLabelY, leftMargin, elementBoxY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head/tail", leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, elementBoxY-(elementBoxHeight/2)-10);
             return;
         }
 
