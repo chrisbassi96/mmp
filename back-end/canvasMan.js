@@ -28,9 +28,58 @@ function clearCanvas(){
 }
 
 function drawLabelledArrow(label, fromX, fromY, toX, toY){
+    let pointerOrientation = "test";
+    let labelWidth = ctx.measureText(label).width;
+
+
+    // Only works for arrows that are running along a constant plane, i.e. one going up and right is not possible
+    if (fromX < toX){
+        pointerOrientation = "right";
+    }else if (fromX > toX){
+        pointerOrientation = "left";
+    }else if (fromY < toY){
+        pointerOrientation = "down";
+    }else if (fromY > toY){
+        pointerOrientation = "up";
+    }
+
     ctx.fillText(label, fromX, fromY);
 
-    ctx.beginPath();
+    // Need to find a more elegant solution to replace this switch
+    switch (pointerOrientation){
+        case "down":
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY+5); // Margin of 5 pixels
+            ctx.lineTo(toX, toY-10);
+            ctx.closePath();
+            ctx.stroke();
+            // Need to determine our direction: going up, right, down, left?
+            // Draw pointer triangle
+            ctx.beginPath();
+            ctx.moveTo(toX-5, toY-10); // Margin of 5 pixels
+            ctx.lineTo(toX, toY); // Instead of elementBoxY, perhaps the Y of the exact container?
+            ctx.lineTo(toX+5, toY-10);
+            ctx.closePath();
+            ctx.fill();
+            break;
+        case "right":
+            ctx.beginPath();
+            ctx.moveTo(fromX+(labelWidth/2)+5, fromY); // Margin of 5 pixels
+            ctx.lineTo(toX-10, toY);
+            ctx.closePath();
+            ctx.stroke();
+            // Need to determine our direction: going up, right, down, left?
+            // Draw pointer triangle
+            ctx.beginPath();
+            ctx.moveTo(toX-10, toY+5); // Margin of 5 pixels
+            ctx.lineTo(toX, toY); // Instead of elementBoxY, perhaps the Y of the exact container?
+            ctx.lineTo(toX-10, toY-5);
+            ctx.closePath();
+            ctx.fill();
+            break;
+    }
+
+/*    ctx.beginPath();
     ctx.moveTo(fromX, fromY); // Margin of 5 pixels
     ctx.lineTo(toX, toY);
     ctx.closePath();
@@ -42,5 +91,5 @@ function drawLabelledArrow(label, fromX, fromY, toX, toY){
     ctx.lineTo(toX, toY); // Instead of elementBoxY, perhaps the Y of the exact container?
     ctx.lineTo(toX+5, toY-20);
     ctx.closePath();
-    ctx.fill();
+    ctx.fill();*/
 }
