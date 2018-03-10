@@ -27,10 +27,9 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawLabelledArrow(label, fromX, fromY, toX, toY){
+function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
     let pointerOrientation = "test";
     let labelWidth = ctx.measureText(label).width;
-
 
     // Only works for arrows that are running along a constant plane, i.e. one going up and right is not possible
     if (fromX < toX){
@@ -50,15 +49,15 @@ function drawLabelledArrow(label, fromX, fromY, toX, toY){
         case "down":
             ctx.beginPath();
             ctx.moveTo(fromX, fromY+5); // Margin of 5 pixels
-            ctx.lineTo(toX, toY-10);
+            ctx.lineTo(toX, toY-pointerGap-10); // toY - pointerGap - size of pointer
             ctx.closePath();
             ctx.stroke();
             // Need to determine our direction: going up, right, down, left?
             // Draw pointer triangle
             ctx.beginPath();
-            ctx.moveTo(toX-5, toY-10); // Margin of 5 pixels
-            ctx.lineTo(toX, toY); // Instead of elementBoxY, perhaps the Y of the exact container?
-            ctx.lineTo(toX+5, toY-10);
+            ctx.moveTo(toX-5, toY-pointerGap-10); // Margin of 5 pixels
+            ctx.lineTo(toX, toY-pointerGap); // Instead of elementBoxY, perhaps the Y of the exact container?
+            ctx.lineTo(toX+5, toY-pointerGap-10);
             ctx.closePath();
             ctx.fill();
             break;

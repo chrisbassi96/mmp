@@ -77,7 +77,7 @@ class SinglyLinkedListNode extends Node{
             ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
             // Draw the "next"
             ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
-            drawLabelledArrow("next", this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
+            drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
         }
 
     }
@@ -180,7 +180,7 @@ class SinglyLinkedList{
             dummy.setXY(leftMargin, elementBoxY);
             dummy.setIndex(0);
             dummy.draw();*/
-            drawLabelledArrow("head/tail", leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, elementBoxY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head/tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, elementBoxY-(elementBoxHeight/2)-10);
             return;
         }
 
@@ -188,11 +188,11 @@ class SinglyLinkedList{
             /*            let dummy = new SinglyLinkedListNode(null, null);
                         dummy.setXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);*/
-            drawLabelledArrow("head/tail", this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head/tail", 5, this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
             //head.draw();
         }else{
-            drawLabelledArrow("head", this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
-            drawLabelledArrow("tail", this.tail.getX(), elementBoxLabelY, this.tail.getX(), this.tail.getY()-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head", 5, this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
+            drawLabelledArrow("tail", 5, this.tail.getX(), elementBoxLabelY, this.tail.getX(), this.tail.getY()-(elementBoxHeight/2)-10);
         }
 
 /*        ctx.strokeRect(50, 50, 50, 50);
@@ -297,22 +297,6 @@ class ArrayElement{
         ctx.fillText(this.value, this.valueTextX, this.valueTextY);
         ctx.fillText(index, this.valueTextX, elementBoxIndexY);*/
     }
-    drawLabelledPointer(labelText){
-        drawLabelledArrow(labelText, this.middleX, elementBoxLabelY, this.middleX, this.middleY-(elementBoxHeight/2));
-/*        ctx.fillText(labelText, this.valueTextX, elementBoxLabelY, );
-
-        ctx.beginPath();
-        ctx.moveTo(this.valueTextX, elementBoxLabelY+5); // Margin of 5 pixels
-        ctx.lineTo(this.valueTextX, elementBoxY-20);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(this.valueTextX-5, elementBoxY-20); // Margin of 5 pixels
-        ctx.lineTo(this.valueTextX,elementBoxY-10); // Instead of elementBoxY, perhaps the Y of the exact container?
-        ctx.lineTo(this.valueTextX+5, elementBoxY-20)
-        ctx.closePath();
-        ctx.fill();*/
-    }
     getValue(){
         return this.value;
     }
@@ -415,11 +399,11 @@ class CircularArray extends SimpleArray{
         let tailElement = this.content[this.tail];
 
         if (this.head === this.tail){
-            drawLabelledArrow("head / tail", headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
+            drawLabelledArrow("head / tail", 5, headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
         }else{
             //drawLabelledArrow(labelText, this.middleX, elementBoxLabelY, this.middleX, this.middleY-(elementBoxHeight/2));
-            drawLabelledArrow("head", headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
-            drawLabelledArrow("tail", tailElement.getX(), elementBoxLabelY, tailElement.getX(), tailElement.getY()-(elementBoxHeight/2));
+            drawLabelledArrow("head", 5, headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
+            drawLabelledArrow("tail", 5, tailElement.getX(), elementBoxLabelY, tailElement.getX(), tailElement.getY()-(elementBoxHeight/2));
         }
 
         // Then draw the parts specific to CircularArray, points to head and tail
