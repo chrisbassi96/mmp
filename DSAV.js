@@ -25,7 +25,7 @@ function createADT(type){
             dataStructure = new DoublyLinkedListQueue();
             break;
         case "heap-array-priority-queue":
-            dataStructure = new HeapArrayPriorityQueue();
+            dataStructure = new HeapArrayPriorityQueue(size);
             break;
         default:
             console.log("Error in createADT function. type = " + type);

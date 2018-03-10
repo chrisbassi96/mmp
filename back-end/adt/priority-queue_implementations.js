@@ -1,9 +1,9 @@
-class CircularArrayQueue{
+class HeapArrayPriorityQueue{
     constructor(size){
-        this.dataStructure = new CircularArray(size);
+        this.dataStructure = new HeapArray(size);
         this.dataStructure.draw();
     }
-    enqueue(element){
+    insert(element){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
             let avail = (this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize();
@@ -15,10 +15,9 @@ class CircularArrayQueue{
         }else{
             outputLabel.innerText = "Queue is full";
         }
-
         this.dataStructure.draw();
     }
-    dequeue(){
+    removeMin(){
         if (this.dataStructure.isEmpty()){
             outputLabel.innerText = "Queue is empty";
             return;
@@ -28,33 +27,12 @@ class CircularArrayQueue{
         this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
         this.dataStructure.draw();
     }
-    peek(){
+    getMin(){
         if (this.dataStructure.isEmpty()) {
             outputLabel.innerText = "Queue is empty";
             return;
         }
         outputLabel.innerText = this.dataStructure.getElement(this.dataStructure.getHead());
         this.dataStructure.draw();
-    }
-}
-
-class DoublyLinkedListQueue{
-    constructor(){
-        this.dataStructure = new DoublyLinkedList();
-        this.dataStructure.draw();
-    }
-    push(element){
-        this.dataStructure.addLast(new DoublyLinkedListNode(element, null));
-    }
-    pop(){
-        if (this.dataStructure.isEmpty()) {
-            outputLabel.innerText = "Stack is empty";
-            return;
-        }
-        this.dataStructure.removeFirst();
-        this.dataStructure.draw();
-    }
-    peek(){
-        outputLabel.innerText = this.dataStructure.getFirst();
     }
 }

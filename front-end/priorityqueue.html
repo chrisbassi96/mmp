@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>DSAV - Stack</title>
+
 </head>
 <body>
 <script src="../DSAV.js"></script>
 <form>
-    <input type="button" onclick="createADT('priority_queue'); document.getElementById('null_toggle').disabled = false;"
-           value="Create Queue" id="create_adt" disabled/>
+    <input type="button" onclick="createADT('priority-queue'); document.getElementById('null_toggle').disabled = false;"
+           value="Create Priority Queue" id="create_adt" disabled/>
     <label>
         using
         <select id="dataStructure"
                 onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
             <option value="select">Select implementation</option>
-            <option value="circular-array">Heap array</option>
+            <option value="heap-array">Heap array</option>
         </select>
     </label>
     <label>

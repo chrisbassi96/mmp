@@ -473,8 +473,8 @@ class CircularArray extends SimpleArray{
 }
 
 class HeapArray extends SimpleArray{
-    constructor(){
-        super();
+    constructor(size=20){
+        super(size);
     }
 }
 
