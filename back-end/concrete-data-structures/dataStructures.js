@@ -472,6 +472,11 @@ class CircularArray extends SimpleArray{
     }
 }
 
+class HeapArray extends SimpleArray{
+    constructor(){
+        super();
+    }
+}
 
 class BinarySearchTree{
     constructor(){

@@ -7,15 +7,14 @@
 <body>
 <script src="../DSAV.js"></script>
 <form>
-    <input type="button" onclick="createADT('queue'); document.getElementById('null_toggle').disabled = false;"
+    <input type="button" onclick="createADT('priority_queue'); document.getElementById('null_toggle').disabled = false;"
            value="Create Queue" id="create_adt" disabled/>
     <label>
         using
         <select id="dataStructure"
                 onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
             <option value="select">Select implementation</option>
-            <option value="circular-array">Circular array</option>
-            <option value="doubly-linked-list">Doubly linked list</option>
+            <option value="circular-array">Heap array</option>
         </select>
     </label>
     <label>
@@ -32,15 +31,14 @@
 <canvas id="myCanvas" style="border:1px solid #c3c3c3;"></canvas>
 <br/>
 <input type="text" name="add_value" id="add_value"/>
-<button onclick="dataStructure.enqueue(document.getElementById('add_value').value);">Enqueue</button>
-<button onclick="dataStructure.dequeue();">Dequeue</button>
-<button onclick="dataStructure.peek();">Peek</button>
+<button onclick="dataStructure.insert(document.getElementById('add_value').value);">Insert</button>
+<button onclick="dataStructure.removeMin();">Remove minimum</button>
+<button onclick="dataStructure.getMin();">Get minimum</button>
 <label id="output_msg"></label>
 
 <script src="../back-end/canvasMan.js"></script>
 <script src="../back-end/concrete-data-structures/dataStructures.js"></script>
-<script src="../back-end/adt/queue_implementations.js"></script>
-
+<script src="../back-end/adt/priority-queue_implementations.js"></script>
 
 <!--<script src="canvasMan.js"></script>-->
 </body>
