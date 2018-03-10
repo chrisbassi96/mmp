@@ -68,16 +68,26 @@ class SinglyLinkedListNode extends Node{
         if (this.element==null){
             // Draw a slanted line to indicate no object referenced
             ctx.beginPath();
-            ctx.moveTo(this.middleX - (elementBoxWidth/2), this.middleY + (elementBoxHeight/2)); // Margin of 5 pixels
-            ctx.lineTo(this.middleX + (elementBoxWidth/2), this.middleY - (elementBoxHeight/2));
+            ctx.moveTo(this.middleX, this.middleY + (elementBoxHeight/2));
+            ctx.lineTo(this.middleX + elementBoxWidth, this.middleY - (elementBoxHeight/2));
             ctx.closePath();
             ctx.stroke();
         }else {
             // Draw the actual value
-            ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
+            ctx.fillText(this.element, this.middleX+(elementBoxWidth/2), this.middleY);
             // Draw the "next"
-            ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
-            drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
+            ctx.fillText("next", this.middleX-(elementBoxWidth/2), this.middleY);
+            if (this.next==null){
+
+                ctx.beginPath();
+                ctx.moveTo(this.middleX - elementBoxWidth, this.middleY + (elementBoxHeight/2)); // Margin of 5 pixels
+                ctx.lineTo(this.middleX, this.middleY - (elementBoxHeight/2));
+                ctx.closePath();
+                ctx.stroke();
+            }else{
+                drawLabelledArrow("next", 0, this.middleX-(elementBoxWidth/2), this.middleY, this.middleX-(elementBoxWidth*2), this.middleY);
+            }
+
         }
 
     }
@@ -94,6 +104,44 @@ class DoublyLinkedListNode extends Node{
         super();
         this.next = null;
         this.prev = null;
+    }
+    equals(otherNode){
+        return (this.middleX === otherNode.getX()) && (this.middleY === otherNode.getY());
+    }
+    setXY(x, y){
+        this.middleX = x;
+        this.middleY = y;
+    }
+    getX(){
+        return this.middleX;
+    }
+    getY(){
+        return this.middleY;
+    }
+    setIndex(index){
+        this.index = index;
+    }
+    draw(){
+        // Draw the actual box
+        ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        // Draw the box for "next"
+        ctx.strokeRect(this.middleX, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+
+        if (this.element==null){
+            // Draw a slanted line to indicate no object referenced
+            ctx.beginPath();
+            ctx.moveTo(this.middleX - (elementBoxWidth/2), this.middleY + (elementBoxHeight/2)); // Margin of 5 pixels
+            ctx.lineTo(this.middleX + (elementBoxWidth/2), this.middleY - (elementBoxHeight/2));
+            ctx.closePath();
+            ctx.stroke();
+        }else {
+            // Draw the actual value
+            ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
+            // Draw the "next"
+            ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
+            drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
+        }
+
     }
     getNext(){
         return this.next;

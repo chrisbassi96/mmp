@@ -43,7 +43,7 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
     }
 
     ctx.fillText(label, fromX, fromY);
-
+    console.log(pointerOrientation);
     // Need to find a more elegant solution to replace this switch
     switch (pointerOrientation){
         case "down":
@@ -55,9 +55,24 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
             // Need to determine our direction: going up, right, down, left?
             // Draw pointer triangle
             ctx.beginPath();
-            ctx.moveTo(toX-5, toY-pointerGap-10); // Margin of 5 pixels
+            ctx.moveTo(toX+5, toY-pointerGap-10); // Margin of 5 pixels
             ctx.lineTo(toX, toY-pointerGap); // Instead of elementBoxY, perhaps the Y of the exact container?
-            ctx.lineTo(toX+5, toY-pointerGap-10);
+            ctx.lineTo(toX-5, toY-pointerGap-10);
+            ctx.closePath();
+            ctx.fill();
+            break;
+        case "left":
+            ctx.beginPath();
+            ctx.moveTo(fromX-(labelWidth/2)-5, fromY); // Margin of 5 pixels
+            ctx.lineTo(toX+10, toY);
+            ctx.closePath();
+            ctx.stroke();
+            // Need to determine our direction: going up, right, down, left?
+            // Draw pointer triangle
+            ctx.beginPath();
+            ctx.moveTo(toX+10, toY-5); // Margin of 5 pixels
+            ctx.lineTo(toX, toY); // Instead of elementBoxY, perhaps the Y of the exact container?
+            ctx.lineTo(toX+10, toY+5);
             ctx.closePath();
             ctx.fill();
             break;
@@ -77,18 +92,4 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
             ctx.fill();
             break;
     }
-
-/*    ctx.beginPath();
-    ctx.moveTo(fromX, fromY); // Margin of 5 pixels
-    ctx.lineTo(toX, toY);
-    ctx.closePath();
-    ctx.stroke();
-    // Need to determine our direction: going up, right, down, left?
-    // Draw pointer triangle
-    ctx.beginPath();
-    ctx.moveTo(toX-5, toY-20); // Margin of 5 pixels
-    ctx.lineTo(toX, toY); // Instead of elementBoxY, perhaps the Y of the exact container?
-    ctx.lineTo(toX+5, toY-20);
-    ctx.closePath();
-    ctx.fill();*/
 }
