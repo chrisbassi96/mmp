@@ -158,7 +158,7 @@ class DoublyLinkedListNode extends Node{
 }
 
 class SinglyLinkedList{
-    constructor(){
+    constructor(elementBoxY=topMargin){
 /*        this.head = new SinglyLinkedListNode(null, null);
         this.tail = this.head;
         this.head.setXY(leftMargin, elementBoxY);
@@ -166,6 +166,7 @@ class SinglyLinkedList{
         this.head = null;
         this.tail = null;
         this.numElements = 0;
+        this.elementBoxY = elementBoxY;
         this.draw();
     }
     find(element){
@@ -185,7 +186,7 @@ class SinglyLinkedList{
             this.head = node;
         }
 
-        node.setXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), elementBoxY);
+        node.setXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), this.elementBoxY);
         node.setIndex(this.numElements);
         this.numElements++;
 
@@ -228,7 +229,7 @@ class SinglyLinkedList{
             dummy.setXY(leftMargin, elementBoxY);
             dummy.setIndex(0);
             dummy.draw();*/
-            drawLabelledArrow("head/tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, elementBoxY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head/tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-(elementBoxHeight/2)-10);
             return;
         }
 
@@ -308,11 +309,12 @@ class DoublyLinkedList{
 }
 
 class ArrayElement{
-    constructor(value){
+    constructor(value, showIndexNum=false){
         this.value = value;
         this.middleX = 0;
         this.middleY = 0;
         this.index = 0;
+        this.showIndexNum = showIndexNum;
     }
     setXY(x, y){
         this.middleX = x;
@@ -335,7 +337,9 @@ class ArrayElement{
         ctx.fillText(this.value, this.middleX, this.middleY);
 
         // Draw the index
-        ctx.fillText(this.index, this.middleX, elementBoxIndexY);
+        if (this.showIndexNum){
+            ctx.fillText(this.index, this.middleX, this.middleY + elementBoxHeight);
+        }
 
         //leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
 /*        this.valueTextX = leftMargin +(elementBoxWidth*i);
@@ -354,14 +358,14 @@ class ArrayElement{
 }
 
 class SimpleArray{
-    constructor(size=20){
+    constructor(size=20, elementBoxY=topMargin, showIndex=false){
         // Do these need renaming?
         this.size = size;
         this.numElements = 0;
         this.content = [];
         for (let i=0; i<size; i++){
-            this.content[i] = new ArrayElement(null);
-            this.content[i].setXY(leftMargin +(elementBoxWidth*i), elementBoxY);
+            this.content[i] = new ArrayElement(null, showIndex);
+            this.content[i].setXY(leftMargin +(elementBoxWidth*i), elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
     }
@@ -418,8 +422,8 @@ class SimpleArray{
 }
 
 class CircularArray extends SimpleArray{
-    constructor(size=20){
-        super(size);
+    constructor(size=20, elementBoxY=topMargin, showIndex=false){
+        super(size, elementBoxY, showIndex);
         this.head = 0;
         this.tail = 0;
     }
@@ -473,8 +477,8 @@ class CircularArray extends SimpleArray{
 }
 
 class HeapArray extends SimpleArray{
-    constructor(size=20){
-        super(size);
+    constructor(size=20, elementBoxY=topMargin, showIndex=true){
+        super(size, elementBoxY, showIndex);
     }
 }
 

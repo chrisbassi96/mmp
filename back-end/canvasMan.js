@@ -7,18 +7,13 @@ ctx.textBaseline = "middle";
 ctx.font="10px Arial";
 
 //Visualization settings
-let topMargin = 100;
+let topMargin = 10;
 let leftMargin = 50;
 
 // Canvas elements
 let elementBoxLabelY = 10;
 let elementBoxWidth = 50;
 let elementBoxHeight = 50;
-let elementBoxX = leftMargin*1;
-let elementBoxY = topMargin*1.5;
-let elementBoxMiddleX = elementBoxWidth*0.5;
-let elementBoxMiddleY = elementBoxY + elementBoxHeight*0.5;
-let elementBoxIndexY = elementBoxMiddleY + elementBoxHeight;
 
 let outputLabel = document.getElementById("output_msg");
 let drawScale = 1;
