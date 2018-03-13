@@ -476,9 +476,57 @@ class CircularArray extends SimpleArray{
     }
 }
 
+class HeapElement{
+
+}
+
 class HeapArray extends SimpleArray{
     constructor(size=20, elementBoxY=topMargin, showIndex=true){
         super(size, elementBoxY, showIndex);
+    }
+    parent(j){
+        return (j-1) / 2;
+    }
+    left(j){
+        return 2*j + 1;
+    }
+    right(j){
+        return 2*j + 2;
+    }
+    hasLeft(j){
+        return this.left(j) < this.size;
+    }
+    hasRight(j){
+        return this.right(j) < this.size;
+    }
+    swap(i, j){
+
+    }
+    insert
+    draw() {
+        super.draw();
+        let radiusOfNode = 5;
+        let gapUnit = 10;
+
+        let height = Math.floor(Math.sqrt(this.size));
+        let unitsToStart = (2 ^ height) - 1;
+        let startingX = canvas.width / 2 - radiusOfNode - (unitsToStart * gapUnit);
+        for (let i = height; i > 0; i--) {
+            let currLevel = height - i;
+            let distanceBetweenNodes = ((this.size + 1) / 2) / i;
+            let distanceFromLeftToFirstNode = (2 ^ i) - 1; // Works!
+
+            let numOnThisLevel = 2 ^ currLevel; // Works!
+            let currX = startingX + distanceFromLeftToFirstNode * 10;
+            for (let j = 0; j < numOnThisLevel; j++) {
+                ctx.beginPath();
+                // Draw root
+                ctx.arc(currX + (j * distanceBetweenNodes), canvas.height / 2, 20, 0, 2 * Math.PI);
+                ctx.stroke();
+                currX = currX + (2 ^ (i + 1));
+            }
+
+        }
     }
 }
 
