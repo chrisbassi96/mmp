@@ -62,7 +62,6 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
             ctx.lineTo(toX+10, toY);
             ctx.closePath();
             ctx.stroke();
-            // Need to determine our direction: going up, right, down, left?
             // Draw pointer triangle
             ctx.beginPath();
             ctx.moveTo(toX+10, toY-5); // Margin of 5 pixels
@@ -77,7 +76,6 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
             ctx.lineTo(toX-10, toY);
             ctx.closePath();
             ctx.stroke();
-            // Need to determine our direction: going up, right, down, left?
             // Draw pointer triangle
             ctx.beginPath();
             ctx.moveTo(toX-10, toY+5); // Margin of 5 pixels

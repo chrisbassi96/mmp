@@ -35,7 +35,6 @@ class SinglyLinkedListNode extends Node{
         this.next = next;
         this.middleX = 0;
         this.middleY = 0;
-        this.index = 0;
     }
     getElement(){
         return this.element;
@@ -60,10 +59,10 @@ class SinglyLinkedListNode extends Node{
         this.index = index;
     }
     draw(){
-        // Draw the actual box
-        ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
         // Draw the box for "next"
         ctx.strokeRect(this.middleX, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        // Draw the actual box
+        ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
         if (this.element==null){
             // Draw a slanted line to indicate no object referenced
@@ -73,19 +72,21 @@ class SinglyLinkedListNode extends Node{
             ctx.closePath();
             ctx.stroke();
         }else {
-            // Draw the actual value
-            ctx.fillText(this.element, this.middleX+(elementBoxWidth/2), this.middleY);
             // Draw the "next"
-            ctx.fillText("next", this.middleX-(elementBoxWidth/2), this.middleY);
-            if (this.next==null){
+            //ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
+            // Draw the actual value
+            ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
 
+            if (this.next==null){
+                ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
+                // Draw slanted line within box to indicate no object referenced
                 ctx.beginPath();
-                ctx.moveTo(this.middleX - elementBoxWidth, this.middleY + (elementBoxHeight/2)); // Margin of 5 pixels
+                ctx.moveTo(this.middleX + elementBoxWidth, this.middleY + (elementBoxHeight/2)); // Margin of 5 pixels
                 ctx.lineTo(this.middleX, this.middleY - (elementBoxHeight/2));
                 ctx.closePath();
                 ctx.stroke();
             }else{
-                drawLabelledArrow("next", 0, this.middleX-(elementBoxWidth/2), this.middleY, this.middleX-(elementBoxWidth*2), this.middleY);
+                drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
             }
 
         }
@@ -158,7 +159,7 @@ class DoublyLinkedListNode extends Node{
 }
 
 class SinglyLinkedList{
-    constructor(elementBoxY=topMargin){
+    constructor(){
 /*        this.head = new SinglyLinkedListNode(null, null);
         this.tail = this.head;
         this.head.setXY(leftMargin, elementBoxY);
@@ -166,7 +167,7 @@ class SinglyLinkedList{
         this.head = null;
         this.tail = null;
         this.numElements = 0;
-        this.elementBoxY = elementBoxY;
+        this.elementBoxY = topMargin+90;
         this.draw();
     }
     find(element){
@@ -177,6 +178,8 @@ class SinglyLinkedList{
         return cur;
     }
     addFirst(node) {
+        this.shiftNodes();
+
         if (this.head == null) {
             node.setNext(null);
             this.head = node;
@@ -185,8 +188,9 @@ class SinglyLinkedList{
             node.setNext(this.head);
             this.head = node;
         }
-
-        node.setXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), this.elementBoxY);
+        // this.content[i].setXY(leftMargin +(elementBoxWidth*i), elementBoxY+(elementBoxHeight/2));
+        //node.setXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), this.elementBoxY+(elementBoxHeight/2));
+        node.setXY(leftMargin+elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
         node.setIndex(this.numElements);
         this.numElements++;
 
@@ -217,6 +221,13 @@ class SinglyLinkedList{
     isEmpty(){
         return this.numElements === 0;
     }
+    shiftNodes(){
+        let curr = this.head;
+        while (curr!=null){
+            curr.setXY(curr.getX()+3*elementBoxWidth, curr.getY());
+            curr = curr.getNext();
+        }
+    }
     draw(){
         clearCanvas();
 
@@ -229,7 +240,7 @@ class SinglyLinkedList{
             dummy.setXY(leftMargin, elementBoxY);
             dummy.setIndex(0);
             dummy.draw();*/
-            drawLabelledArrow("head/tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head/tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-10);
             return;
         }
 
@@ -248,10 +259,7 @@ class SinglyLinkedList{
         ctx.fillText("head", 75, 125);*/
 
         let cur = this.head;
-        let count = 1;
-        console.log("test");
         while(cur!=null){
-            console.log("test2");
             cur.draw();
 
 /*            ctx.strokeRect(50+(50*count), 50, 50, 50);
@@ -330,6 +338,7 @@ class ArrayElement{
         this.index = newIndex;
     }
     draw(){
+
         // Draw the actual box
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
@@ -365,14 +374,12 @@ class SimpleArray{
         this.content = [];
         for (let i=0; i<size; i++){
             this.content[i] = new ArrayElement(null, showIndex);
-            this.content[i].setXY(leftMargin +(elementBoxWidth*i), elementBoxY+(elementBoxHeight/2));
+            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), elementBoxY+elementBoxHeight+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
     }
     setValue(index, value){
         let adding = Boolean(this.content[index].getValue() == null);
-
-
         //this.content[index] = value;
 
         if (adding){
@@ -422,8 +429,8 @@ class SimpleArray{
 }
 
 class CircularArray extends SimpleArray{
-    constructor(size=20, elementBoxY=topMargin, showIndex=false){
-        super(size, elementBoxY, showIndex);
+    constructor(size=20, showIndex=false){
+        super(size, topMargin+90, showIndex);
         this.head = 0;
         this.tail = 0;
     }
@@ -502,7 +509,9 @@ class HeapArray extends SimpleArray{
     swap(i, j){
 
     }
-    insert
+    insert(){
+
+    }
     draw() {
         super.draw();
         let radiusOfNode = 5;
