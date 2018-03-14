@@ -178,7 +178,7 @@ class SinglyLinkedList{
         return cur;
     }
     addFirst(node) {
-        this.shiftNodes();
+        this.shiftNodes("right");
 
         if (this.head == null) {
             node.setNext(null);
@@ -188,7 +188,6 @@ class SinglyLinkedList{
             node.setNext(this.head);
             this.head = node;
         }
-        // this.content[i].setXY(leftMargin +(elementBoxWidth*i), elementBoxY+(elementBoxHeight/2));
         //node.setXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), this.elementBoxY+(elementBoxHeight/2));
         node.setXY(leftMargin+elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
         node.setIndex(this.numElements);
@@ -204,6 +203,9 @@ class SinglyLinkedList{
         this.head = first.getNext();
         outputLabel.innerText = first.getElement();
         this.numElements = this.numElements-1;
+
+        this.shiftNodes("left");
+
         this.draw();
     }
     addLast(node){
@@ -221,10 +223,14 @@ class SinglyLinkedList{
     isEmpty(){
         return this.numElements === 0;
     }
-    shiftNodes(){
+    shiftNodes(direction){
         let curr = this.head;
         while (curr!=null){
-            curr.setXY(curr.getX()+3*elementBoxWidth, curr.getY());
+            if (direction === "right"){
+                curr.setXY(curr.getX()+3*elementBoxWidth, curr.getY());
+            }else{
+                curr.setXY(curr.getX()-3*elementBoxWidth, curr.getY());
+            }
             curr = curr.getNext();
         }
     }
@@ -367,19 +373,23 @@ class ArrayElement{
 }
 
 class SimpleArray{
-    constructor(size=20, elementBoxY=topMargin, showIndex=false){
+    constructor(size=20, elementBoxY=topMargin+elementBoxHeight, showIndex=false){
         // Do these need renaming?
         this.size = size;
         this.numElements = 0;
         this.content = [];
+        this.showIndex = showIndex;
+        this.elementBoxY = elementBoxY;
         for (let i=0; i<size; i++){
-            this.content[i] = new ArrayElement(null, showIndex);
-            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), elementBoxY+elementBoxHeight+(elementBoxHeight/2));
+            this.content[i] = new ArrayElement(null, this.showIndex);
+            //this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), elementBoxY+elementBoxHeight+(elementBoxHeight/2));
+            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
     }
     setValue(index, value){
         let adding = Boolean(this.content[index].getValue() == null);
+        console.log(adding);
         //this.content[index] = value;
 
         if (adding){
@@ -411,6 +421,15 @@ class SimpleArray{
     }
     isEmpty(){
         return this.numElements === 0;
+    }
+    expand(){
+        this.size = this.size*2;
+        for (let i=this.size/2; i<this.size; i++){
+            this.content[i] = new ArrayElement(null, this.showIndex);
+            //this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), elementBoxY+elementBoxHeight+(elementBoxHeight/2));
+            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setIndex(i);
+        }
     }
     draw() {
         clearCanvas();
@@ -484,15 +503,21 @@ class CircularArray extends SimpleArray{
 }
 
 class HeapElement{
-
+    constructor(key, value){
+        this.key = key;
+        this.value = value;
+    }
+    getValue(){
+        return this.value;
+    }
 }
 
 class HeapArray extends SimpleArray{
-    constructor(size=20, elementBoxY=topMargin, showIndex=true){
+    constructor(size=20, elementBoxY=topMargin+elementBoxHeight, showIndex=true){
         super(size, elementBoxY, showIndex);
     }
     parent(j){
-        return (j-1) / 2;
+        return Math.ceil((j-1) / 2);
     }
     left(j){
         return 2*j + 1;
@@ -507,14 +532,16 @@ class HeapArray extends SimpleArray{
         return this.right(j) < this.size;
     }
     swap(i, j){
-
-    }
-    insert(){
-
+        let temp = this.content[i].getValue();
+        this.content[i].setValue(this.content[j].getValue());
+        this.content[j].setValue(temp);
+        //this.setValue(i, this.content[j].getValue());
+        //this.setValue(j, temp.getValue());
+        //this.draw();
     }
     draw() {
         super.draw();
-        let radiusOfNode = 5;
+/*        let radiusOfNode = 5;
         let gapUnit = 10;
 
         let height = Math.floor(Math.sqrt(this.size));
@@ -535,7 +562,7 @@ class HeapArray extends SimpleArray{
                 currX = currX + (2 ^ (i + 1));
             }
 
-        }
+        }*/
     }
 }
 

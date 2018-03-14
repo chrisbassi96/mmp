@@ -7,7 +7,7 @@ function createADT(type){
     let dtSelect = document.getElementById("dataStructure");
     let selected = dtSelect.options[dtSelect.selectedIndex].value;
     // below might set size as a String type...
-    let size = document.getElementById("adt_size").value === ""?20:document.getElementById("adt_size").value;
+    let size = document.getElementById("adt_size").value === ""?20:parseInt(document.getElementById("adt_size").value);
 
     //ctx.textAlign = "center";
 

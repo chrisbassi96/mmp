@@ -4,17 +4,27 @@ class HeapArrayPriorityQueue{
         this.dataStructure.draw();
     }
     insert(element){
-        if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
-            this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
-            let avail = (this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize();
-            //console.log(avail);
-            //this.dataStructure.setValue(avail, element);
-            this.dataStructure.setValue(avail, element);
-            this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
-            outputLabel.innerText = "Element inserted";
-        }else{
-            outputLabel.innerText = "Queue is full";
+        if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){
+
+            this.dataStructure.expand();
         }
+        let newest = new ArrayElement(element, true);
+        // May need to expand content
+        this.dataStructure.content[this.dataStructure.getNumElements()].setValue(element);
+        //this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
+        this.dataStructure.numElements++;
+        let j = this.dataStructure.getNumElements()-1;
+        while (j > 0){
+
+            let p = this.dataStructure.parent(j);
+            // This won't work with strings...
+            if (this.dataStructure.content[j].getValue() >= this.dataStructure.content[p].getValue()){
+                break;
+            }
+            this.dataStructure.swap(j, p);
+            j = p;
+        }
+        //return newest;
         this.dataStructure.draw();
     }
     removeMin(){
@@ -22,9 +32,7 @@ class HeapArrayPriorityQueue{
             outputLabel.innerText = "Queue is empty";
             return;
         }
-        let element = this.dataStructure.getElement(this.dataStructure.getHead());
-        this.dataStructure.setValue(this.dataStructure.getHead(), null);
-        this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
+
         this.dataStructure.draw();
     }
     getMin(){
