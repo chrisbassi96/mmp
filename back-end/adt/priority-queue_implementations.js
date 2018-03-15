@@ -4,11 +4,9 @@ class HeapArrayPriorityQueue{
         this.dataStructure.draw();
     }
     insert(element){
-        if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){
+        if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){ this.dataStructure.expand(); }
 
-            this.dataStructure.expand();
-        }
-        let newest = new ArrayElement(element, true);
+        //let newest = new ArrayElement(element, true);
         // May need to expand content
         this.dataStructure.content[this.dataStructure.getNumElements()].setValue(element);
         //this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
