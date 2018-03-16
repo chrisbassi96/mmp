@@ -23,7 +23,7 @@ class CircularArrayQueue{
             outputLabel.innerText = "Queue is empty";
             return;
         }
-        let element = this.dataStructure.getElement(this.dataStructure.getHead());
+        let element = this.dataStructure.getElementValue(this.dataStructure.getHead());
         this.dataStructure.setValue(this.dataStructure.getHead(), null);
         this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
         this.dataStructure.draw();
@@ -33,7 +33,7 @@ class CircularArrayQueue{
             outputLabel.innerText = "Queue is empty";
             return;
         }
-        outputLabel.innerText = this.dataStructure.getElement(this.dataStructure.getHead());
+        outputLabel.innerText = this.dataStructure.getElementValue(this.dataStructure.getHead());
         this.dataStructure.draw();
     }
 }

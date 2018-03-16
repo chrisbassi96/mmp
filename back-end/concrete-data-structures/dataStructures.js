@@ -172,7 +172,7 @@ class SinglyLinkedList{
     }
     find(element){
         let cur = this.head;
-        while (cur.getElement() !== element) {
+        while (cur.getElementValue() !== element) {
             cur = cur.getNext();
         }
         return cur;
@@ -196,12 +196,12 @@ class SinglyLinkedList{
         this.draw();
     }
     getFirst(){
-        return this.head.getElement();
+        return this.head.getElementValue();
     }
     removeFirst(){
         let first = this.head;
         this.head = first.getNext();
-        outputLabel.innerText = first.getElement();
+        outputLabel.innerText = first.getElementValue();
         this.numElements = this.numElements-1;
 
         this.shiftNodes("left");
@@ -269,7 +269,7 @@ class SinglyLinkedList{
             cur.draw();
 
 /*            ctx.strokeRect(50+(50*count), 50, 50, 50);
-            ctx.fillText(cur.getElement(), (50+(50*count))+25, 75);*/
+            ctx.fillText(cur.getElementValue(), (50+(50*count))+25, 75);*/
             //ctx.fillText(count, (50+(50*count))+25, 125);
 
             cur = cur.getNext();
@@ -327,6 +327,8 @@ class ArrayElement{
         this.value = value;
         this.middleX = 0;
         this.middleY = 0;
+        this.treeX = 0;
+        this.treeY = 0;
         this.index = 0;
         this.showIndexNum = showIndexNum;
     }
@@ -339,6 +341,16 @@ class ArrayElement{
     }
     getY(){
         return this.middleY;
+    }
+    setTreeXY(x, y){
+        this.treeX = x;
+        this.treeY = y;
+    }
+    getTreeX(){
+        return this.treeX;
+    }
+    getTreeY(){
+        return this.treeY;
     }
     setIndex(newIndex){
         this.index = newIndex;
@@ -354,6 +366,13 @@ class ArrayElement{
         // Draw the index
         if (this.showIndexNum){
             ctx.fillText(this.index, this.middleX, this.middleY + elementBoxHeight);
+        }
+
+        if (this.treeX !== 0 && this.treeY !== 0){
+            ctx.beginPath();
+            // Draw root
+            ctx.arc(this.treeX, this.treeY, 20, 0, 2 * Math.PI);
+            ctx.stroke();
         }
 
         //leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
@@ -404,7 +423,7 @@ class SimpleArray{
     }
 
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
-    getElement(index){
+    getElementValue(index){
         console.log(index);
         if (index >= 0 && index < this.content.length){
 
@@ -412,6 +431,9 @@ class SimpleArray{
         }
 
         // Give some sort of error
+    }
+    getElement(index){
+        return this.content[index];
     }
     getNumElements(){
         return this.numElements;
@@ -436,6 +458,7 @@ class SimpleArray{
         for (let i=0; i<this.size; i++){
             // Draw the box that visualizes the index
             this.content[i].draw();
+
             //drawElementBox(leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
             //ctx.strokeRect(50+(50*i), topMargin*2, 50, 50);
             // The value of the element at that index
@@ -502,10 +525,9 @@ class CircularArray extends SimpleArray{
     }
 }
 
-class HeapElement{
-    constructor(key, value){
-        this.key = key;
-        this.value = value;
+class HeapElement extends ArrayElement{
+    constructor(value, showIndex){
+        super(value, showIndex);
     }
     getValue(){
         return this.value;
@@ -517,7 +539,7 @@ class HeapArray extends SimpleArray{
         super(size, elementBoxY, showIndex);
     }
     parent(j){
-        return Math.ceil((j-1) / 2);
+        return Math.floor((j-1) / 2);
     }
     left(j){
         return 2*j + 1;
@@ -538,6 +560,9 @@ class HeapArray extends SimpleArray{
         //this.setValue(i, this.content[j].getValue());
         //this.setValue(j, temp.getValue());
         //this.draw();
+
+        this.content[i].setTreeXY(this.content[j].getTreeX(), this.content[j].getTreeY());
+        this.content[j].setTreeXY(temp.getTreeX(), temp.getTreeY());
     }
     draw() {
         super.draw();

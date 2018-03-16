@@ -17,7 +17,7 @@ class SimpleArrayStack{
             outputLabel.innerText = "Stack is empty";
             return;
         }
-        let element = this.dataStructure.getElement(this.dataStructure.getNumElements()-1);
+        let element = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
         this.dataStructure.setValue(this.dataStructure.getNumElements()-1, null);
         outputLabel.innerText = "Element removed";
         this.dataStructure.draw();
@@ -27,7 +27,7 @@ class SimpleArrayStack{
             outputLabel.innerText = "Stack is empty";
             return;
         }
-        outputLabel.innerText = this.dataStructure.getElement(this.dataStructure.getNumElements()-1);
+        outputLabel.innerText = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
         this.dataStructure.draw();
     }
 }

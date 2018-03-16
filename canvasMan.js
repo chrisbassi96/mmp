@@ -75,7 +75,7 @@ class VizuLinkedList{
             console.log("test2");
 
             ctx.strokeRect(50+(50*count), 50, 50, 50);
-            ctx.fillText(cur.getElement(), (50+(50*count))+25, 75);
+            ctx.fillText(cur.getElementValue(), (50+(50*count))+25, 75);
             //ctx.fillText(count, (50+(50*count))+25, 125);
 
             cur = cur.getNext();
@@ -90,7 +90,7 @@ class VizuLinkedList{
     }
     find(element) {
         var cur = this.head;
-        while (cur.getElement() !== element) {
+        while (cur.getElementValue() !== element) {
             cur = cur.getNext();
         }
         return cur;
@@ -132,12 +132,12 @@ class LinkedListStack extends VizuLinkedList{
         }
         var first = this.head;
         this.head = first.getNext();
-        outputLabel.innerText = first.getElement();
+        outputLabel.innerText = first.getElementValue();
         this.size = this.size-1;
         this.draw();
     }
     peek(){
-        outputLabel.innerText = this.head.getElement();
+        outputLabel.innerText = this.head.getElementValue();
     }
 }
 
