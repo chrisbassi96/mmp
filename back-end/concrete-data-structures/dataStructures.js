@@ -201,7 +201,7 @@ class SinglyLinkedList{
     removeFirst(){
         let first = this.head;
         this.head = first.getNext();
-        outputLabel.innerText = first.getElementValue();
+        outputLabel.innerText = first.getElement();
         this.numElements = this.numElements-1;
 
         this.shiftNodes("left");
@@ -246,7 +246,7 @@ class SinglyLinkedList{
             dummy.setXY(leftMargin, elementBoxY);
             dummy.setIndex(0);
             dummy.draw();*/
-            drawLabelledArrow("head/tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-10);
+            drawLabelledArrow("head / tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-10);
             return;
         }
 
@@ -327,8 +327,6 @@ class ArrayElement{
         this.value = value;
         this.middleX = 0;
         this.middleY = 0;
-        this.treeX = 0;
-        this.treeY = 0;
         this.index = 0;
         this.showIndexNum = showIndexNum;
     }
@@ -341,16 +339,6 @@ class ArrayElement{
     }
     getY(){
         return this.middleY;
-    }
-    setTreeXY(x, y){
-        this.treeX = x;
-        this.treeY = y;
-    }
-    getTreeX(){
-        return this.treeX;
-    }
-    getTreeY(){
-        return this.treeY;
     }
     setIndex(newIndex){
         this.index = newIndex;
@@ -410,7 +398,6 @@ class SimpleArray{
         let adding = Boolean(this.content[index].getValue() == null);
         console.log(adding);
         //this.content[index] = value;
-
         if (adding){
             outputLabel.innerText = "Added " + this.content[index].getValue();
             this.numElements++;
@@ -418,13 +405,12 @@ class SimpleArray{
             outputLabel.innerText = "Removed " + this.content[index].getValue();
             this.numElements--;
         }
-        this.content[index].setValue(value);
+        this.content[index].value = value;
         this.draw();
     }
 
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
     getElementValue(index){
-        console.log(index);
         if (index >= 0 && index < this.content.length){
 
             return this.content[index].getValue();
@@ -555,39 +541,141 @@ class HeapArray extends SimpleArray{
     }
     swap(i, j){
         let temp = this.content[i].getValue();
-        this.content[i].setValue(this.content[j].getValue());
-        this.content[j].setValue(temp);
-        //this.setValue(i, this.content[j].getValue());
-        //this.setValue(j, temp.getValue());
-        //this.draw();
+        console.log(temp);
+        console.log(this.content[j].getValue())
+/*        this.setValue(i, this.content[j].getValue());
+        this.setValue(j, temp);*/
 
-        this.content[i].setTreeXY(this.content[j].getTreeX(), this.content[j].getTreeY());
-        this.content[j].setTreeXY(temp.getTreeX(), temp.getTreeY());
+        //this.content[i].setValue(this.content[j].getValue());
+        //this.content[j].setValue(temp.getValue());
+        this.content[i].value = this.content[j].getValue();
+        this.content[j].value = temp;
+        this.draw();
     }
     draw() {
         super.draw();
-/*        let radiusOfNode = 5;
-        let gapUnit = 10;
+        let radiusOfNode = 20;
+        let gapUnit = radiusOfNode;
+        let nodeXSpacingFactor = 0;
+        let nodeYSpacingFactor = 0;
 
-        let height = Math.floor(Math.sqrt(this.size));
-        let unitsToStart = (2 ^ height) - 1;
-        let startingX = canvas.width / 2 - radiusOfNode - (unitsToStart * gapUnit);
-        for (let i = height; i > 0; i--) {
-            let currLevel = height - i;
-            let distanceBetweenNodes = ((this.size + 1) / 2) / i;
-            let distanceFromLeftToFirstNode = (2 ^ i) - 1; // Works!
+        let numLevels = Math.floor(Math.log2(this.size-1));
+        let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
+        let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
 
-            let numOnThisLevel = 2 ^ currLevel; // Works!
-            let currX = startingX + distanceFromLeftToFirstNode * 10;
+        //let startingX = canvas.width / 2 - radiusOfNode - (unitsToStart * radiusOfNode);
+        let startingX = canvas.width / 2 - (unitsToStart * radiusOfNode);
+        let startingY = (canvas.height / 2);
+        ctx.fillRect(startingX,startingY,1,1);
+/*        ctx.beginPath();
+        // Draw root
+        ctx.arc(canvas.width / 2 , canvas.height / 2, radiusOfNode, 0, 2 * Math.PI);
+        ctx.stroke();*/
+        console.log(Math.sqrt(this.size));
+        let currX = 0;
+        let currY = startingY;
+/*        for (let i = numLevels; i >= 1; i--) {
+            let currLevel = (numLevels - i)+1;
+            let distanceBetweenNodes = Math.pow(2, i)-1;
+            //distanceBetweenNodes -= 1;
+            console.log("Current i: " + i);
+            let distanceFromLeftToFirstNode = Math.pow(2, i-1) - 1; // Works!
+            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
+            let numOnThisLevel = Math.pow(2, currLevel); // Works !
+            console.log("currLevel: " + currLevel);
+            console.log("numOnThisLevel: " + numOnThisLevel);
+            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
+            currX = startingX + (distanceFromLeftToFirstNode * gapUnit);
+            currY = startingY + (gapUnit*2*currLevel);
+            ctx.fillRect(currX,currY,5,5);
+            console.log("Height loop: " + currX + " " + currY);
             for (let j = 0; j < numOnThisLevel; j++) {
                 ctx.beginPath();
-                // Draw root
-                ctx.arc(currX + (j * distanceBetweenNodes), canvas.height / 2, 20, 0, 2 * Math.PI);
+                ctx.arc(currX + (j * distanceBetweenNodes * gapUnit) + radiusOfNode, currY, radiusOfNode, 0, 2 * Math.PI);
                 ctx.stroke();
-                currX = currX + (2 ^ (i + 1));
+                //currX = currX + ((2 ^ (i + 1))*gapUnit);
+                //ctx.fillRect(currX + radiusOfNode + (j * distanceBetweenNodes * gapUnit),currY,5,5);
+                currX = currX + radiusOfNode;
             }
-
         }*/
+/*        for (let i = 0; i <= numLevels; i++) {
+            let reverseCurrLevel = (numLevels + 1) - i;
+            let distanceBetweenNodes = Math.pow(2, reverseCurrLevel)-1;
+            //let distanceFromLeftToFirstNode = Math.pow(2, reverseCurrLevel-1) - 1;
+            let distanceFromLeftToFirstNode = (Math.pow(2, reverseCurrLevel-1) - 1);
+            let numOnThisLevel = Math.pow(2, i);
+
+            //currX = startingX + (distanceFromLeftToFirstNode * gapUnit);
+            //currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode*nodeXSpacingFactor);
+            currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
+            currY = startingY + (radiusOfNode*3*i);
+            console.log("Current i: " + i);
+            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
+            console.log("currLevel: " + i);
+            console.log("numOnThisLevel: " + numOnThisLevel);
+            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
+            ctx.fillRect(currX,currY,5,5);
+            ctx.fillRect(currX+radiusOfNode,currY,5,5);
+            ctx.fillRect(currX+radiusOfNode+(distanceBetweenNodes * radiusOfNode),currY,5,5);
+            console.log("Height loop: " + currX + " " + currY);
+
+            for (let j = 0; j < numOnThisLevel; j++) {
+                ctx.beginPath();
+                //ctx.arc(currX + radiusOfNode + ((j * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor), currY, radiusOfNode, 0, 2 * Math.PI);
+                ctx.arc(currX, currY, radiusOfNode, 0, 2 * Math.PI);
+                ctx.stroke();
+                //currX = currX + radiusOfNode;
+                //currX = currX + (((j+1) * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor);
+                //currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode * nodeXSpacingFactor) + radiusOfNode;
+                currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode);
+            }
+        }*/
+        let currNodeIndex = 0;
+        for (let i = 0; i <= numLevels; i++) {
+            let reverseCurrLevel = (numLevels + 1) - i;
+            let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel)*nodeXSpacingFactor);
+            //let extraGap = unitsToStart / (i+1);
+            //console.log("totalExtraGap: " + totalExtraGap);
+            //console.log("extraGap: " + currLevelExtraNodeGap);
+            let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
+            //let distanceFromLeftToFirstNode = Math.pow(2, reverseCurrLevel-1) - 1;
+            let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
+            let numOnThisLevel = Math.pow(2, i);
+
+            //currX = startingX + (distanceFromLeftToFirstNode * gapUnit);
+            //currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode*nodeXSpacingFactor);
+            currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
+            currY = currY + (radiusOfNode*2) + (radiusOfNode*nodeYSpacingFactor);
+/*            console.log("Current i: " + i);
+            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
+            console.log("currLevel: " + i);
+            console.log("numOnThisLevel: " + numOnThisLevel);
+            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
+            ctx.fillRect(currX,currY,5,5);
+            ctx.fillRect(currX+radiusOfNode,currY,5,5);
+            ctx.fillRect(currX+radiusOfNode+(distanceBetweenNodes * radiusOfNode),currY,5,5);
+            console.log("Height loop: " + currX + " " + currY);*/
+
+            for (let j = 0; j < numOnThisLevel; j++) {
+                //console.log("numOnThisLevel: " + numOnThisLevel);
+                //console.log("currNodeIndex: " + currNodeIndex);
+                if (currNodeIndex >= this.size) { break; }
+                if (this.content[currNodeIndex].getValue() != null){
+                    ctx.beginPath();
+                    //ctx.arc(currX + radiusOfNode + ((j * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor), currY, radiusOfNode, 0, 2 * Math.PI);
+                    ctx.arc(currX, currY, radiusOfNode, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.fillText(this.content[currNodeIndex].getValue(), currX, currY);
+                }
+
+                currNodeIndex = currNodeIndex + 1;
+
+                //currX = currX + radiusOfNode;
+                //currX = currX + (((j+1) * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor);
+                //currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode * nodeXSpacingFactor) + radiusOfNode;
+                currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode);
+            }
+        }
     }
 }
 

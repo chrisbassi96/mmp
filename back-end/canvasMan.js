@@ -1,7 +1,7 @@
 let canvas = document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
 canvas.width = 1200;
-canvas.height = 300;
+canvas.height = 500;
 ctx.textAlign = "center";
 ctx.textBaseline = "middle";
 ctx.font="10px Arial";
