@@ -6,7 +6,8 @@ class SimpleArrayStack{
     push(element){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
             this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
-            outputLabel.innerText = "Element inserted";
+            this.dataStructure.numElements++;
+            outputLabel.innerText = "Pushed " + element;
         }else{
             outputLabel.innerText = "Stack is full";
         }
@@ -19,7 +20,8 @@ class SimpleArrayStack{
         }
         let element = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
         this.dataStructure.setValue(this.dataStructure.getNumElements()-1, null);
-        outputLabel.innerText = "Element removed";
+        this.dataStructure.numElements--;
+        outputLabel.innerText = "Popped " + element;
         this.dataStructure.draw();
     }
     peek(){

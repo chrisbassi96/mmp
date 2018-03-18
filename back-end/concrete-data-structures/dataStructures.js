@@ -398,13 +398,13 @@ class SimpleArray{
         let adding = Boolean(this.content[index].getValue() == null);
         console.log(adding);
         //this.content[index] = value;
-        if (adding){
+/*        if (adding){
             outputLabel.innerText = "Added " + this.content[index].getValue();
             this.numElements++;
         }else{
             outputLabel.innerText = "Removed " + this.content[index].getValue();
             this.numElements--;
-        }
+        }*/
         this.content[index].value = value;
         this.draw();
     }

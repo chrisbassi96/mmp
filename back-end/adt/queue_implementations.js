@@ -10,8 +10,10 @@ class CircularArrayQueue{
             //console.log(avail);
             //this.dataStructure.setValue(avail, element);
             this.dataStructure.setValue(avail, element);
+            this.dataStructure.numElements += 1;
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
-            outputLabel.innerText = "Element inserted";
+
+            outputLabel.innerText = "Enqueued " + element;
         }else{
             outputLabel.innerText = "Queue is full";
         }
@@ -25,7 +27,10 @@ class CircularArrayQueue{
         }
         let element = this.dataStructure.getElementValue(this.dataStructure.getHead());
         this.dataStructure.setValue(this.dataStructure.getHead(), null);
+
         this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
+        this.dataStructure.numElements--;
+        outputLabel.innerText = "Dequeued " + element;
         this.dataStructure.draw();
     }
     peek(){

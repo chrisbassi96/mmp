@@ -44,6 +44,7 @@ class HeapArrayPriorityQueue{
             this.dataStructure.swap(j, p);
             j = p;
         }
+        outputLabel.innerText = "Inserted " + element;
         //return newest;
         this.dataStructure.draw();
     }
