@@ -201,12 +201,13 @@ class SinglyLinkedList{
     removeFirst(){
         let first = this.head;
         this.head = first.getNext();
-        outputLabel.innerText = first.getElement();
+
         this.numElements = this.numElements-1;
 
         this.shiftNodes("left");
 
         this.draw();
+        return first.getElement();
     }
     addLast(node){
 
@@ -254,7 +255,7 @@ class SinglyLinkedList{
             /*            let dummy = new SinglyLinkedListNode(null, null);
                         dummy.setXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);*/
-            drawLabelledArrow("head/tail", 5, this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head / tail", 5, this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
             //head.draw();
         }else{
             drawLabelledArrow("head", 5, this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
@@ -411,6 +412,7 @@ class SimpleArray{
 
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
     getElementValue(index){
+        console.log(index);
         if (index >= 0 && index < this.content.length){
 
             return this.content[index].getValue();

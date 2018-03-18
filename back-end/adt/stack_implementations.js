@@ -7,7 +7,7 @@ class SimpleArrayStack{
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
             this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
             this.dataStructure.numElements++;
-            outputLabel.innerText = "Pushed " + element;
+            outputLabel.innerText = "Push " + element;
         }else{
             outputLabel.innerText = "Stack is full";
         }
@@ -21,7 +21,7 @@ class SimpleArrayStack{
         let element = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
         this.dataStructure.setValue(this.dataStructure.getNumElements()-1, null);
         this.dataStructure.numElements--;
-        outputLabel.innerText = "Popped " + element;
+        outputLabel.innerText = "Pop " + element;
         this.dataStructure.draw();
     }
     peek(){
@@ -41,13 +41,14 @@ class SinglyLinkedListStack{
     }
     push(element){
         this.dataStructure.addFirst(new SinglyLinkedListNode(element,null));
+        outputLabel.innerText = "Pushed " + element;
     }
     pop(){
         if (this.dataStructure.isEmpty()) {
             outputLabel.innerText = "Stack is empty";
             return;
         }
-        this.dataStructure.removeFirst();
+        outputLabel.innerText = "Popped " + this.dataStructure.removeFirst();
         //this.dataStructure.draw();
     }
     peek(){

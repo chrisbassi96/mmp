@@ -13,7 +13,7 @@ class CircularArrayQueue{
             this.dataStructure.numElements += 1;
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
 
-            outputLabel.innerText = "Enqueued " + element;
+            outputLabel.innerText = "Enqueue " + element;
         }else{
             outputLabel.innerText = "Queue is full";
         }
@@ -30,7 +30,7 @@ class CircularArrayQueue{
 
         this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
         this.dataStructure.numElements--;
-        outputLabel.innerText = "Dequeued " + element;
+        outputLabel.innerText = "Dequeue " + element;
         this.dataStructure.draw();
     }
     peek(){
