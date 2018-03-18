@@ -22,8 +22,8 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
-    let pointerOrientation = "test";
+function drawLabelledArrowOld(label, pointerGap, fromX, fromY, toX, toY){
+    let pointerOrientation = "";
     let labelWidth = ctx.measureText(label).width;
 
     // Only works for arrows that are running along a constant plane, i.e. one going up and right is not possible
@@ -85,4 +85,52 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
             ctx.fill();
             break;
     }
+}
+// Resource used: http://dbp-consulting.com/tutorials/canvas/CanvasArrow.html
+function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
+    let pointerOrientation = "";
+    let labelWidth = ctx.measureText(label).width;
+    let lineAngle = Math.atan2(toY-fromY, toX-fromX);
+    let angleFromShaftToArrowHeadCorner = Math.PI/8;
+    let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
+
+    ctx.fillText(label, fromX, fromY);
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.stroke();
+
+    let angleFromShaftToArrowHeadCornerTop = lineAngle + Math.PI + angleFromShaftToArrowHeadCorner;
+    let arrowHeadCornerTopX = toX + Math.cos(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
+    let arrowHeadCornerTopY = toY + Math.sin(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
+
+    let angleFromShaftToArrowHeadCornerBottom = lineAngle + Math.PI - angleFromShaftToArrowHeadCorner;
+    let arrowHeadCornerBottomX = toX + Math.cos(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
+    let arrowHeadCornerBottomY = toY + Math.sin(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
+
+
+    ctx.beginPath();
+    ctx.moveTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
+    ctx.lineTo(toX,toY);
+    ctx.lineTo(arrowHeadCornerBottomX,arrowHeadCornerBottomY);
+    ctx.lineTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
+    ctx.fill();
+
+
+
+/*    ctx.fillText(label, fromX, fromY);
+    console.log(pointerOrientation);
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY + 5); // Margin of 5 pixels
+    ctx.lineTo(arrowHeadCornerTopX, arrowHeadCornerTopY); // toY - pointerGap - size of pointer
+    ctx.closePath();
+    ctx.stroke();
+    // Need to determine our direction: going up, right, down, left?
+    // Draw pointer triangle
+    ctx.beginPath();
+    ctx.moveTo(toX, toY); // Margin of 5 pixels
+    ctx.lineTo(toX, toY - pointerGap); // Instead of elementBoxY, perhaps the Y of the exact container?
+    ctx.lineTo(toX - 5, toY - pointerGap - 10);
+    ctx.closePath();
+    ctx.fill();*/
 }
