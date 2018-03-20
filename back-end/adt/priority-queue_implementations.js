@@ -6,18 +6,14 @@ class HeapArrayPriorityQueue{
     insert(element){
         if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){ this.dataStructure.expand(); }
 
-        //let newest = new ArrayElement(element, true);
         this.dataStructure.content[this.dataStructure.getNumElements()].value = element;
-        //this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
-
-        //this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
         this.dataStructure.numElements = this.dataStructure.numElements + 1;
         let j = this.dataStructure.getNumElements()-1;
 
         // This needs refactoring...
 /*        if (this.dataStructure.getNumElements() !== 1){
             let goRight = Boolean(this.dataStructure.getNumElements()%2!==0);
-            let p = this.dataStructure.getElement(this.dataStructure.parent(j));
+            let p = this.dataStructure.getElementValue(this.dataStructure.parent(j));
             let parentTreeX = p.getTreeX();
             let parentTreeY = p.getTreeY();
             console.log(j + " " + p);
@@ -36,7 +32,7 @@ class HeapArrayPriorityQueue{
 
             console.log("parent: " + p);
             // This won't work with strings...
-            if (this.dataStructure.content[j].getValue() >= this.dataStructure.content[p].getValue()){
+            if (this.dataStructure.content[j].getElementValue() >= this.dataStructure.content[p].getElementValue()){
                 break;
             }
             this.dataStructure.swap(j, p);

@@ -8,7 +8,7 @@ class CircularArrayQueue{
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
             let avail = (this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize();
             //console.log(avail);
-            //this.dataStructure.setValue(avail, element);
+            //this.dataStructure.setElementValue(avail, element);
             this.dataStructure.setValue(avail, element);
             this.dataStructure.numElements += 1;
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());

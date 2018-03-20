@@ -1,21 +1,25 @@
-class Node{
-    constructor(){
-        this.element = null;
+class Element{
+    constructor(value=null, index=null){
+        this.elementValue = value;
+        this.index = index;
     }
-    getElement(){
-        return this.element;
+    getElementValue(){
+        return this.elementValue;
     }
-    setElement(element){
-        this.element = element;
+    setElementValue(value){
+        this.elementValue = value;
+    }
+    setIndex(index){
+        this.index = index;
     }
 }
 
-class BTNode extends Node{
+class BTNode extends Element{
     constructor(){
         super();
-        this.parent = new Node();
-        this.left = new Node();
-        this.right = new Node();
+        this.parent = new Element();
+        this.left = new Element();
+        this.right = new Element();
     }
     getParent(){
         return this.parent;
@@ -28,10 +32,9 @@ class BTNode extends Node{
     }
 }
 
-class SinglyLinkedListNode extends Node{
-    constructor(element, next){
-        super();
-        this.element = element;
+class SinglyLinkedListNode extends Element{
+    constructor(elementValue, next){
+        super(elementValue);
         this.next = next;
         this.middleX = 0;
         this.middleY = 0;
@@ -55,16 +58,13 @@ class SinglyLinkedListNode extends Node{
     getY(){
         return this.middleY;
     }
-    setIndex(index){
-        this.index = index;
-    }
     draw(){
         // Draw the box for "next"
         ctx.strokeRect(this.middleX, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
         // Draw the actual box
         ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
-        if (this.element==null){
+        if (this.elementValue==null){
             // Draw a slanted line to indicate no object referenced
             ctx.beginPath();
             ctx.moveTo(this.middleX, this.middleY + (elementBoxHeight/2));
@@ -72,10 +72,8 @@ class SinglyLinkedListNode extends Node{
             ctx.closePath();
             ctx.stroke();
         }else {
-            // Draw the "next"
-            //ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
             // Draw the actual value
-            ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
+            ctx.fillText(this.elementValue, this.middleX-(elementBoxWidth/2), this.middleY);
 
             if (this.next==null){
                 ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
@@ -94,7 +92,7 @@ class SinglyLinkedListNode extends Node{
     }
 }
 
-class DoublyLinkedListNode extends Node{
+class DoublyLinkedListNode extends Element{
     constructor(){
         super();
         this.next = null;
@@ -112,9 +110,6 @@ class DoublyLinkedListNode extends Node{
     }
     getY(){
         return this.middleY;
-    }
-    setIndex(index){
-        this.index = index;
     }
     draw(){
         // Draw the actual box
@@ -202,7 +197,7 @@ class SinglyLinkedList{
 
         this.draw();
 
-        return first.getElement();
+        return first.getElementValue();
     }
     addLast(node){
 
@@ -318,12 +313,11 @@ class DoublyLinkedList{
     }
 }
 
-class ArrayElement{
+class ArrayElement extends Element{
     constructor(value, showIndexNum=false){
-        this.value = value;
+        super(value);
         this.middleX = 0;
         this.middleY = 0;
-        this.index = 0;
         this.showIndexNum = showIndexNum;
     }
     setXY(x, y){
@@ -336,42 +330,17 @@ class ArrayElement{
     getY(){
         return this.middleY;
     }
-    setIndex(newIndex){
-        this.index = newIndex;
-    }
     draw(){
-
         // Draw the actual box
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
         // Draw the actual value
-        ctx.fillText(this.value, this.middleX, this.middleY);
+        ctx.fillText(this.elementValue, this.middleX, this.middleY);
 
         // Draw the index
         if (this.showIndexNum){
             ctx.fillText(this.index, this.middleX, this.middleY + elementBoxHeight);
         }
-
-        if (this.treeX !== 0 && this.treeY !== 0){
-            ctx.beginPath();
-            // Draw root
-            ctx.arc(this.treeX, this.treeY, 20, 0, 2 * Math.PI);
-            ctx.stroke();
-        }
-
-        //leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
-/*        this.valueTextX = leftMargin +(elementBoxWidth*i);
-
-        this.valueTextX = containerX+elementBoxMiddleX;
-        this.valueTextY = elementBoxMiddleY;
-        ctx.fillText(this.value, this.valueTextX, this.valueTextY);
-        ctx.fillText(index, this.valueTextX, elementBoxIndexY);*/
-    }
-    getValue(){
-        return this.value;
-    }
-    setValue(value){
-        this.value = value;
     }
 }
 
@@ -385,32 +354,20 @@ class SimpleArray{
         this.elementBoxY = elementBoxY;
         for (let i=0; i<size; i++){
             this.content[i] = new ArrayElement(null, this.showIndex);
-            //this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), elementBoxY+elementBoxHeight+(elementBoxHeight/2));
             this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
     }
     setValue(index, value){
-        let adding = Boolean(this.content[index].getValue() == null);
-        console.log(adding);
-        //this.content[index] = value;
-/*        if (adding){
-            outputLabel.innerText = "Added " + this.content[index].getValue();
-            this.numElements++;
-        }else{
-            outputLabel.innerText = "Removed " + this.content[index].getValue();
-            this.numElements--;
-        }*/
         this.content[index].value = value;
         this.draw();
     }
-
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
     getElementValue(index){
         console.log(index);
         if (index >= 0 && index < this.content.length){
 
-            return this.content[index].getValue();
+            return this.content[index].getElementValue();
         }
 
         // Give some sort of error
@@ -431,7 +388,6 @@ class SimpleArray{
         this.size = this.size*2;
         for (let i=this.size/2; i<this.size; i++){
             this.content[i] = new ArrayElement(null, this.showIndex);
-            //this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), elementBoxY+elementBoxHeight+(elementBoxHeight/2));
             this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
@@ -441,14 +397,6 @@ class SimpleArray{
         for (let i=0; i<this.size; i++){
             // Draw the box that visualizes the index
             this.content[i].draw();
-
-            //drawElementBox(leftMargin +(elementBoxWidth*i), elementBoxY, this.content[i], i);
-            //ctx.strokeRect(50+(50*i), topMargin*2, 50, 50);
-            // The value of the element at that index
-            //ctx.fillText(this.content[i]==null?"null":this.content[i], (elementBoxX +(elementBoxWidth*i))+elementBoxWidth*0.5, elementBoxMiddleY);
-            //ctx.fillText(i, (50+(50*i))+25, 125);
-            // The index number
-            //ctx.fillText(i, leftMargin*1.5 + (elementBoxWidth*i), topMargin*4);
         }
     }
 }
@@ -481,26 +429,9 @@ class CircularArray extends SimpleArray{
         if (this.head === this.tail){
             drawLabelledArrow("head / tail", 5, headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
         }else{
-            //drawLabelledArrow(labelText, this.middleX, elementBoxLabelY, this.middleX, this.middleY-(elementBoxHeight/2));
             drawLabelledArrow("head", 5, headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
             drawLabelledArrow("tail", 5, tailElement.getX(), elementBoxLabelY, tailElement.getX(), tailElement.getY()-(elementBoxHeight/2));
         }
-
-        // Then draw the parts specific to CircularArray, points to head and tail
-
-/*        ctx.fillText("head", 75, 25);
-        ctx.beginPath();
-        ctx.moveTo(75, 30); // Margin of 5 pixels
-        ctx.lineTo(75,elementBoxY-20);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(70, elementBoxY-20); // Margin of 5 pixels
-        ctx.lineTo(75,elementBoxY-10);
-        ctx.lineTo(80, elementBoxY-20)
-        ctx.closePath();
-        ctx.fill();*/
-
     }
 }
 
@@ -508,7 +439,7 @@ class HeapElement extends ArrayElement{
     constructor(value, showIndex){
         super(value, showIndex);
     }
-    getValue(){
+    getElementValue(){
         return this.value;
     }
 }
@@ -533,15 +464,10 @@ class HeapArray extends SimpleArray{
         return this.right(j) < this.size;
     }
     swap(i, j){
-        let temp = this.content[i].getValue();
+        let temp = this.content[i].getElementValue();
         console.log(temp);
-        console.log(this.content[j].getValue())
-/*        this.setValue(i, this.content[j].getValue());
-        this.setValue(j, temp);*/
-
-        //this.content[i].setValue(this.content[j].getValue());
-        //this.content[j].setValue(temp.getValue());
-        this.content[i].value = this.content[j].getValue();
+        console.log(this.content[j].getElementValue());
+        this.content[i].value = this.content[j].getElementValue();
         this.content[j].value = temp;
         this.draw();
     }
@@ -556,116 +482,33 @@ class HeapArray extends SimpleArray{
         let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
         let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
 
-        //let startingX = canvas.width / 2 - radiusOfNode - (unitsToStart * radiusOfNode);
         let startingX = canvas.width / 2 - (unitsToStart * radiusOfNode);
         let startingY = (canvas.height / 2);
         ctx.fillRect(startingX,startingY,1,1);
-/*        ctx.beginPath();
-        // Draw root
-        ctx.arc(canvas.width / 2 , canvas.height / 2, radiusOfNode, 0, 2 * Math.PI);
-        ctx.stroke();*/
         console.log(Math.sqrt(this.size));
         let currX = 0;
         let currY = startingY;
-/*        for (let i = numLevels; i >= 1; i--) {
-            let currLevel = (numLevels - i)+1;
-            let distanceBetweenNodes = Math.pow(2, i)-1;
-            //distanceBetweenNodes -= 1;
-            console.log("Current i: " + i);
-            let distanceFromLeftToFirstNode = Math.pow(2, i-1) - 1; // Works!
-            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
-            let numOnThisLevel = Math.pow(2, currLevel); // Works !
-            console.log("currLevel: " + currLevel);
-            console.log("numOnThisLevel: " + numOnThisLevel);
-            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
-            currX = startingX + (distanceFromLeftToFirstNode * gapUnit);
-            currY = startingY + (gapUnit*2*currLevel);
-            ctx.fillRect(currX,currY,5,5);
-            console.log("Height loop: " + currX + " " + currY);
-            for (let j = 0; j < numOnThisLevel; j++) {
-                ctx.beginPath();
-                ctx.arc(currX + (j * distanceBetweenNodes * gapUnit) + radiusOfNode, currY, radiusOfNode, 0, 2 * Math.PI);
-                ctx.stroke();
-                //currX = currX + ((2 ^ (i + 1))*gapUnit);
-                //ctx.fillRect(currX + radiusOfNode + (j * distanceBetweenNodes * gapUnit),currY,5,5);
-                currX = currX + radiusOfNode;
-            }
-        }*/
-/*        for (let i = 0; i <= numLevels; i++) {
-            let reverseCurrLevel = (numLevels + 1) - i;
-            let distanceBetweenNodes = Math.pow(2, reverseCurrLevel)-1;
-            //let distanceFromLeftToFirstNode = Math.pow(2, reverseCurrLevel-1) - 1;
-            let distanceFromLeftToFirstNode = (Math.pow(2, reverseCurrLevel-1) - 1);
-            let numOnThisLevel = Math.pow(2, i);
-
-            //currX = startingX + (distanceFromLeftToFirstNode * gapUnit);
-            //currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode*nodeXSpacingFactor);
-            currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
-            currY = startingY + (radiusOfNode*3*i);
-            console.log("Current i: " + i);
-            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
-            console.log("currLevel: " + i);
-            console.log("numOnThisLevel: " + numOnThisLevel);
-            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
-            ctx.fillRect(currX,currY,5,5);
-            ctx.fillRect(currX+radiusOfNode,currY,5,5);
-            ctx.fillRect(currX+radiusOfNode+(distanceBetweenNodes * radiusOfNode),currY,5,5);
-            console.log("Height loop: " + currX + " " + currY);
-
-            for (let j = 0; j < numOnThisLevel; j++) {
-                ctx.beginPath();
-                //ctx.arc(currX + radiusOfNode + ((j * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor), currY, radiusOfNode, 0, 2 * Math.PI);
-                ctx.arc(currX, currY, radiusOfNode, 0, 2 * Math.PI);
-                ctx.stroke();
-                //currX = currX + radiusOfNode;
-                //currX = currX + (((j+1) * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor);
-                //currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode * nodeXSpacingFactor) + radiusOfNode;
-                currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode);
-            }
-        }*/
         let currNodeIndex = 0;
         for (let i = 0; i <= numLevels; i++) {
             let reverseCurrLevel = (numLevels + 1) - i;
             let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel)*nodeXSpacingFactor);
-            //let extraGap = unitsToStart / (i+1);
-            //console.log("totalExtraGap: " + totalExtraGap);
-            //console.log("extraGap: " + currLevelExtraNodeGap);
             let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
-            //let distanceFromLeftToFirstNode = Math.pow(2, reverseCurrLevel-1) - 1;
             let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
             let numOnThisLevel = Math.pow(2, i);
 
-            //currX = startingX + (distanceFromLeftToFirstNode * gapUnit);
-            //currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode*nodeXSpacingFactor);
             currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
             currY = currY + (radiusOfNode*2) + (radiusOfNode*nodeYSpacingFactor);
-/*            console.log("Current i: " + i);
-            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
-            console.log("currLevel: " + i);
-            console.log("numOnThisLevel: " + numOnThisLevel);
-            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
-            ctx.fillRect(currX,currY,5,5);
-            ctx.fillRect(currX+radiusOfNode,currY,5,5);
-            ctx.fillRect(currX+radiusOfNode+(distanceBetweenNodes * radiusOfNode),currY,5,5);
-            console.log("Height loop: " + currX + " " + currY);*/
 
             for (let j = 0; j < numOnThisLevel; j++) {
-                //console.log("numOnThisLevel: " + numOnThisLevel);
-                //console.log("currNodeIndex: " + currNodeIndex);
                 if (currNodeIndex >= this.size) { break; }
-                if (this.content[currNodeIndex].getValue() != null){
+                if (this.content[currNodeIndex].getElementValue() != null){
                     ctx.beginPath();
-                    //ctx.arc(currX + radiusOfNode + ((j * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor), currY, radiusOfNode, 0, 2 * Math.PI);
                     ctx.arc(currX, currY, radiusOfNode, 0, 2 * Math.PI);
                     ctx.stroke();
-                    ctx.fillText(this.content[currNodeIndex].getValue(), currX, currY);
+                    ctx.fillText(this.content[currNodeIndex].getElementValue(), currX, currY);
                 }
 
                 currNodeIndex = currNodeIndex + 1;
-
-                //currX = currX + radiusOfNode;
-                //currX = currX + (((j+1) * distanceBetweenNodes * gapUnit)*nodeXSpacingFactor);
-                //currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode * nodeXSpacingFactor) + radiusOfNode;
                 currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode);
             }
         }
