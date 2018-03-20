@@ -94,6 +94,8 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
     let angleFromShaftToArrowHeadCorner = Math.PI/8;
     let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
 
+    let adjustedLabelX = fromX + Math.cos(lineAngle)*
+
     ctx.fillText(label, fromX, fromY);
     ctx.beginPath();
     ctx.moveTo(fromX, fromY);

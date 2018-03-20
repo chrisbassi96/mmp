@@ -5,8 +5,8 @@ class Node{
     getElement(){
         return this.element;
     }
-    setElemeent(newElement){
-        this.element = newElement;
+    setElement(element){
+        this.element = element;
     }
 }
 
@@ -36,13 +36,13 @@ class SinglyLinkedListNode extends Node{
         this.middleX = 0;
         this.middleY = 0;
     }
-    getElement(){
-        return this.element;
+    getNext(){
+        return this.next;
     }
-    setElement(element){
-        this.element = element;
+    setNext(newNext){
+        this.next = newNext;
     }
-    equals(otherNode){
+    isOnTopOf(otherNode){
         return (this.middleX === otherNode.getX()) && (this.middleY === otherNode.getY());
     }
     setXY(x, y){
@@ -91,12 +91,6 @@ class SinglyLinkedListNode extends Node{
 
         }
 
-    }
-    getNext(){
-        return this.next;
-    }
-    setNext(newNext){
-        this.next = newNext;
     }
 }
 
@@ -207,6 +201,7 @@ class SinglyLinkedList{
         this.shiftNodes("left");
 
         this.draw();
+
         return first.getElement();
     }
     addLast(node){
@@ -251,7 +246,7 @@ class SinglyLinkedList{
             return;
         }
 
-        if (this.head.equals(this.tail)){
+        if (this.head.isOnTopOf(this.tail)){
             /*            let dummy = new SinglyLinkedListNode(null, null);
                         dummy.setXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);*/
@@ -475,10 +470,6 @@ class CircularArray extends SimpleArray{
     }
     setTail(newTail){
         this.tail = newTail;
-    }
-    setValue(index, value){
-        super.setValue(index, value);
-
     }
     // Created 07/03/18
     draw(){

@@ -11,10 +11,8 @@ class HeapArrayPriorityQueue{
         //this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
 
         //this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
-        this.dataStructure.numElements = this.dataStructure.numElements + 1; // Not working...
+        this.dataStructure.numElements = this.dataStructure.numElements + 1;
         let j = this.dataStructure.getNumElements()-1;
-        console.log("num elements: " + this.dataStructure.getNumElements());
-        console.log("current: " + j);
 
         // This needs refactoring...
 /*        if (this.dataStructure.getNumElements() !== 1){
