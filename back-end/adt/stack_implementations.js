@@ -5,7 +5,7 @@ class SimpleArrayStack{
     }
     push(element){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
-            this.dataStructure.setValue(this.dataStructure.getNumElements(), element);
+            this.dataStructure.setElementValue(this.dataStructure.getNumElements(), element);
             this.dataStructure.numElements++;
             outputLabel.innerText = "Push " + element;
         }else{
@@ -19,7 +19,7 @@ class SimpleArrayStack{
             return;
         }
         let element = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
-        this.dataStructure.setValue(this.dataStructure.getNumElements()-1, null);
+        this.dataStructure.setElementValue(this.dataStructure.getNumElements()-1, null);
         this.dataStructure.numElements--;
         outputLabel.innerText = "Pop " + element;
         this.dataStructure.draw();

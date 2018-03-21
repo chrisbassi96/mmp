@@ -13,7 +13,7 @@ class HeapArrayPriorityQueue{
         // This needs refactoring...
 /*        if (this.dataStructure.getNumElements() !== 1){
             let goRight = Boolean(this.dataStructure.getNumElements()%2!==0);
-            let p = this.dataStructure.getElementValue(this.dataStructure.parent(j));
+            let p = this.dataStructure.getValue(this.dataStructure.parent(j));
             let parentTreeX = p.getTreeX();
             let parentTreeY = p.getTreeY();
             console.log(j + " " + p);
@@ -32,7 +32,7 @@ class HeapArrayPriorityQueue{
 
             console.log("parent: " + p);
             // This won't work with strings...
-            if (this.dataStructure.content[j].getElementValue() >= this.dataStructure.content[p].getElementValue()){
+            if (this.dataStructure.content[j].getValue() >= this.dataStructure.content[p].getValue()){
                 break;
             }
             this.dataStructure.swap(j, p);

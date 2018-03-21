@@ -1,13 +1,13 @@
 class Element{
     constructor(value=null, index=null){
-        this.elementValue = value;
+        this.value = value;
         this.index = index;
     }
-    getElementValue(){
-        return this.elementValue;
+    getValue(){
+        return this.value;
     }
-    setElementValue(value){
-        this.elementValue = value;
+    setValue(value){
+        this.value = value;
     }
     setIndex(index){
         this.index = index;
@@ -64,7 +64,7 @@ class SinglyLinkedListNode extends Element{
         // Draw the actual box
         ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
-        if (this.elementValue==null){
+        if (this.value==null){
             // Draw a slanted line to indicate no object referenced
             ctx.beginPath();
             ctx.moveTo(this.middleX, this.middleY + (elementBoxHeight/2));
@@ -73,7 +73,7 @@ class SinglyLinkedListNode extends Element{
             ctx.stroke();
         }else {
             // Draw the actual value
-            ctx.fillText(this.elementValue, this.middleX-(elementBoxWidth/2), this.middleY);
+            ctx.fillText(this.value, this.middleX-(elementBoxWidth/2), this.middleY);
 
             if (this.next==null){
                 ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
@@ -161,7 +161,7 @@ class SinglyLinkedList{
     }
     find(element){
         let cur = this.head;
-        while (cur.getElementValue() !== element) {
+        while (cur.getValue() !== element) {
             cur = cur.getNext();
         }
         return cur;
@@ -185,7 +185,7 @@ class SinglyLinkedList{
         this.draw();
     }
     getFirst(){
-        return this.head.getElementValue();
+        return this.head.getValue();
     }
     removeFirst(){
         let first = this.head;
@@ -197,7 +197,7 @@ class SinglyLinkedList{
 
         this.draw();
 
-        return first.getElementValue();
+        return first.getValue();
     }
     addLast(node){
 
@@ -260,7 +260,7 @@ class SinglyLinkedList{
             cur.draw();
 
 /*            ctx.strokeRect(50+(50*count), 50, 50, 50);
-            ctx.fillText(cur.getElementValue(), (50+(50*count))+25, 75);*/
+            ctx.fillText(cur.getValue(), (50+(50*count))+25, 75);*/
             //ctx.fillText(count, (50+(50*count))+25, 125);
 
             cur = cur.getNext();
@@ -335,7 +335,7 @@ class ArrayElement extends Element{
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
         // Draw the actual value
-        ctx.fillText(this.elementValue, this.middleX, this.middleY);
+        ctx.fillText(this.value, this.middleX, this.middleY);
 
         // Draw the index
         if (this.showIndexNum){
@@ -358,8 +358,8 @@ class SimpleArray{
             this.content[i].setIndex(i);
         }
     }
-    setValue(index, value){
-        this.content[index].value = value;
+    setElementValue(index, value){
+        this.content[index].setValue(value);
         this.draw();
     }
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
@@ -367,7 +367,7 @@ class SimpleArray{
         console.log(index);
         if (index >= 0 && index < this.content.length){
 
-            return this.content[index].getElementValue();
+            return this.content[index].getValue();
         }
 
         // Give some sort of error
@@ -439,7 +439,7 @@ class HeapElement extends ArrayElement{
     constructor(value, showIndex){
         super(value, showIndex);
     }
-    getElementValue(){
+    getValue(){
         return this.value;
     }
 }
@@ -464,10 +464,10 @@ class HeapArray extends SimpleArray{
         return this.right(j) < this.size;
     }
     swap(i, j){
-        let temp = this.content[i].getElementValue();
+        let temp = this.content[i].getValue();
         console.log(temp);
-        console.log(this.content[j].getElementValue());
-        this.content[i].value = this.content[j].getElementValue();
+        console.log(this.content[j].getValue());
+        this.content[i].value = this.content[j].getValue();
         this.content[j].value = temp;
         this.draw();
     }
@@ -501,11 +501,11 @@ class HeapArray extends SimpleArray{
 
             for (let j = 0; j < numOnThisLevel; j++) {
                 if (currNodeIndex >= this.size) { break; }
-                if (this.content[currNodeIndex].getElementValue() != null){
+                if (this.content[currNodeIndex].getValue() != null){
                     ctx.beginPath();
                     ctx.arc(currX, currY, radiusOfNode, 0, 2 * Math.PI);
                     ctx.stroke();
-                    ctx.fillText(this.content[currNodeIndex].getElementValue(), currX, currY);
+                    ctx.fillText(this.content[currNodeIndex].getValue(), currX, currY);
                 }
 
                 currNodeIndex = currNodeIndex + 1;
