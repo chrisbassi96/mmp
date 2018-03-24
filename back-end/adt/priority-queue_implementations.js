@@ -1,7 +1,6 @@
 class HeapArrayPriorityQueue{
     constructor(size){
         this.dataStructure = new HeapArray(size);
-        this.dataStructure.draw();
     }
     insert(element){
         if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){ this.dataStructure.expand(); }

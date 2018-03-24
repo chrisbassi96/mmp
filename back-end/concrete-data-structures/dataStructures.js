@@ -321,8 +321,27 @@ class ArrayElement extends Element{
         this.showIndexNum = showIndexNum;
     }
     setXY(x, y){
+        this.oldMiddleX = this.middleX;
+        this.oldMiddleY = this.middleY;
         this.middleX = x;
         this.middleY = y;
+
+    }
+    animateDraw(progress, toX, toY){
+        let diffX = toX - this.middleX;
+        let diffY = toY - this.middleY;
+
+
+        animate({
+            duration: 1000,
+            timing: function(timeFraction) {
+                return timeFraction;
+            },
+            draw: function(progress) {
+                this.newDraw(progress);
+                //elem.style.width = progress * 100 + '%';
+            }
+        });
     }
     getX(){
         return this.middleX;
@@ -357,6 +376,7 @@ class SimpleArray{
             this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
+        this.draw();
     }
     setElementValue(index, value){
         this.content[index].setValue(value);

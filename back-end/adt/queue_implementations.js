@@ -1,7 +1,6 @@
 class CircularArrayQueue{
     constructor(size){
         this.dataStructure = new CircularArray(size);
-        this.dataStructure.draw();
     }
     enqueue(element){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
@@ -46,7 +45,6 @@ class CircularArrayQueue{
 class DoublyLinkedListQueue{
     constructor(){
         this.dataStructure = new DoublyLinkedList();
-        this.dataStructure.draw();
     }
     push(element){
         this.dataStructure.addLast(new DoublyLinkedListNode(element, null));

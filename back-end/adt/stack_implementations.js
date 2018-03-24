@@ -1,7 +1,6 @@
 class SimpleArrayStack{
     constructor(size){
         this.dataStructure = new SimpleArray(size);
-        this.dataStructure.draw();
     }
     push(element){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
@@ -37,7 +36,6 @@ class SimpleArrayStack{
 class SinglyLinkedListStack{
     constructor(){
         this.dataStructure = new SinglyLinkedList();
-        //this.dataStructure.draw();
     }
     push(element){
         this.dataStructure.addFirst(new SinglyLinkedListNode(element,null));

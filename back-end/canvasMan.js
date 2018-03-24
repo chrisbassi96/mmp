@@ -22,6 +22,25 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function animate({duration, draw, timing}) {
+
+    let start = performance.now();
+
+    requestAnimationFrame(function animate(time) {
+        let timeFraction = (time - start) / duration;
+        if (timeFraction > 1) timeFraction = 1;
+
+        let progress = timing(timeFraction)
+
+        draw(progress);
+
+        if (timeFraction < 1) {
+            requestAnimationFrame(animate);
+        }
+
+    });
+}
+
 function drawLabelledArrowOld(label, pointerGap, fromX, fromY, toX, toY){
     let pointerOrientation = "";
     let labelWidth = ctx.measureText(label).width;
@@ -93,8 +112,6 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
     let lineAngle = Math.atan2(toY-fromY, toX-fromX);
     let angleFromShaftToArrowHeadCorner = Math.PI/8;
     let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
-
-    let adjustedLabelX = fromX + Math.cos(lineAngle)*
 
     ctx.fillText(label, fromX, fromY);
     ctx.beginPath();
