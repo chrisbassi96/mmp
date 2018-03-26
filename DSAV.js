@@ -1,10 +1,8 @@
-let dataStructure = null;
-let showNulls = false;
 let adt = null;
-
+let showNulls = false;
 
 function createADT(type){
-    let dtSelect = document.getElementById("dataStructure");
+    let dtSelect = document.getElementById("adt");
     let selected = dtSelect.options[dtSelect.selectedIndex].value;
     // below might set size as a String type...
     let size = document.getElementById("adt_size").value === ""?20:parseInt(document.getElementById("adt_size").value);
@@ -13,19 +11,19 @@ function createADT(type){
 
     switch (selected + "-" + type){
         case "simple-array-stack":
-            dataStructure = new SimpleArrayStack(size);
+            adt = new SimpleArrayStack(size);
             break;
         case "singly-linked-list-stack":
-            dataStructure = new SinglyLinkedListStack();
+            adt = new SinglyLinkedListStack();
             break;
         case "circular-array-queue":
-            dataStructure = new CircularArrayQueue(size);
+            adt = new CircularArrayQueue(size);
             break;
         case "doubly-linked-list-queue":
-            dataStructure = new DoublyLinkedListQueue();
+            adt = new DoublyLinkedListQueue();
             break;
         case "heap-array-priority-queue":
-            dataStructure = new HeapArrayPriorityQueue(size);
+            adt = new HeapArrayPriorityQueue(size);
             break;
         default:
             console.log("Error in createADT function. type = " + type);

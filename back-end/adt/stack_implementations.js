@@ -47,7 +47,7 @@ class SinglyLinkedListStack{
             return;
         }
         outputLabel.innerText = "Popped " + this.dataStructure.removeFirst();
-        //this.dataStructure.draw();
+        //this.adt.draw();
     }
     peek(){
         outputLabel.innerText = this.dataStructure.getFirst();

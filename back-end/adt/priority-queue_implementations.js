@@ -10,19 +10,19 @@ class HeapArrayPriorityQueue{
         let j = this.dataStructure.getNumElements()-1;
 
         // This needs refactoring...
-/*        if (this.dataStructure.getNumElements() !== 1){
-            let goRight = Boolean(this.dataStructure.getNumElements()%2!==0);
-            let p = this.dataStructure.getValue(this.dataStructure.parent(j));
+/*        if (this.adt.getNumElements() !== 1){
+            let goRight = Boolean(this.adt.getNumElements()%2!==0);
+            let p = this.adt.getValue(this.adt.parent(j));
             let parentTreeX = p.getTreeX();
             let parentTreeY = p.getTreeY();
             console.log(j + " " + p);
             if (goRight){
-                this.dataStructure.content[j].setTreeXY(parentTreeX+20+20+20, parentTreeY+20+20+20);
+                this.adt.content[j].setTreeXY(parentTreeX+20+20+20, parentTreeY+20+20+20);
             }else{
-                this.dataStructure.content[j].setTreeXY(parentTreeX-20-20-20, parentTreeY+20+20+20);
+                this.adt.content[j].setTreeXY(parentTreeX-20-20-20, parentTreeY+20+20+20);
             }
         }else{
-            this.dataStructure.content[j].setTreeXY(canvas.width / 2, canvas.height / 2);
+            this.adt.content[j].setTreeXY(canvas.width / 2, canvas.height / 2);
         }*/
 
         while (j > 0){
