@@ -326,6 +326,19 @@ class ArrayElement extends Element{
         this.middleX = x;
         this.middleY = y;
 
+/*        window.requestAnimationFrame(newDraw);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);*/
+
+    }
+    newDraw(){
+        let diffX = this.oldMiddleX - this.middleX;
+        let diffY = this.oldMiddleY - this.middleY;
+
+        ctx.clearRect(canvas.width, canvas.height)
+
+
+        window.requestAnimationFrame(newDraw);
     }
     animateDraw(progress, toX, toY){
         let diffX = toX - this.middleX;
@@ -350,6 +363,8 @@ class ArrayElement extends Element{
         return this.middleY;
     }
     draw(){
+        let start = Date.now();
+
         // Draw the actual box
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 

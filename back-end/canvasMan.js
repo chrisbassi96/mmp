@@ -30,7 +30,7 @@ function animate({duration, draw, timing}) {
         let timeFraction = (time - start) / duration;
         if (timeFraction > 1) timeFraction = 1;
 
-        let progress = timing(timeFraction)
+        let progress = timing(timeFraction);
 
         draw(progress);
 
@@ -105,6 +105,7 @@ function drawLabelledArrowOld(label, pointerGap, fromX, fromY, toX, toY){
             break;
     }
 }
+
 // Resource used: http://dbp-consulting.com/tutorials/canvas/CanvasArrow.html
 function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
     let pointerOrientation = "";
