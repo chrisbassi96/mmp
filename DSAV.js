@@ -2,11 +2,11 @@ let adt = null;
 let showNulls = false;
 
 function createADT(type){
-    let dtSelect = document.getElementById("adt");
+    let dtSelect = document.getElementById("dataStructure");
     let selected = dtSelect.options[dtSelect.selectedIndex].value;
     // below might set size as a String type...
     let size = document.getElementById("adt_size").value === ""?20:parseInt(document.getElementById("adt_size").value);
-
+    console.log(size);
     //ctx.textAlign = "center";
 
     switch (selected + "-" + type){

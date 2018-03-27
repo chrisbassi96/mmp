@@ -316,6 +316,8 @@ class DoublyLinkedList{
 class ArrayElement extends Element{
     constructor(value, showIndexNum=false){
         super(value);
+        this.oldMiddleX = 0;
+        this.oldMiddleY = 0;
         this.middleX = 0;
         this.middleY = 0;
         this.showIndexNum = showIndexNum;
@@ -326,35 +328,31 @@ class ArrayElement extends Element{
         this.middleX = x;
         this.middleY = y;
 
-/*        window.requestAnimationFrame(newDraw);
+        let diffX = this.oldMiddleX - this.middleX;
+        let diffY = this.oldMiddleY - this.middleY;
+        let lineAngle = Math.atan2(this.middleY-this.oldMiddleY, this.middleX-this.oldMiddleX);
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);*/
+       while(this.oldMiddleX !== this.middleX && this.oldMiddleY !== this.middleY){
+            toX + Math.cos(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
+            let nextX =
+            window.requestAnimationFrame(newDraw);
+        }
+
+
+
 
     }
     newDraw(){
-        let diffX = this.oldMiddleX - this.middleX;
-        let diffY = this.oldMiddleY - this.middleY;
-
-        ctx.clearRect(canvas.width, canvas.height)
 
 
-        window.requestAnimationFrame(newDraw);
-    }
-    animateDraw(progress, toX, toY){
-        let diffX = toX - this.middleX;
-        let diffY = toY - this.middleY;
+        while(this.oldMiddleX !== this.middleX && this.oldMiddleY !== this.middleY){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            window.requestAnimationFrame(this.newDraw);
+
+        }
 
 
-        animate({
-            duration: 1000,
-            timing: function(timeFraction) {
-                return timeFraction;
-            },
-            draw: function(progress) {
-                this.newDraw(progress);
-                //elem.style.width = progress * 100 + '%';
-            }
-        });
+
     }
     getX(){
         return this.middleX;
@@ -363,7 +361,6 @@ class ArrayElement extends Element{
         return this.middleY;
     }
     draw(){
-        let start = Date.now();
 
         // Draw the actual box
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
@@ -391,7 +388,7 @@ class SimpleArray{
             this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
-        this.draw();
+
     }
     setElementValue(index, value){
         this.content[index].setValue(value);
@@ -441,6 +438,7 @@ class CircularArray extends SimpleArray{
         super(size, topMargin+90, showIndex);
         this.head = 0;
         this.tail = 0;
+        this.draw();
     }
     getHead(){
         return this.head;
@@ -461,6 +459,8 @@ class CircularArray extends SimpleArray{
         let headElement = this.content[this.head];
         let tailElement = this.content[this.tail];
 
+        console.log("head: " + this.head);
+
         if (this.head === this.tail){
             drawLabelledArrow("head / tail", 5, headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
         }else{
@@ -473,6 +473,7 @@ class CircularArray extends SimpleArray{
 class HeapElement extends ArrayElement{
     constructor(value, showIndex){
         super(value, showIndex);
+        this.draw();
     }
     getValue(){
         return this.value;

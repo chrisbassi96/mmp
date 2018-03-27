@@ -108,11 +108,10 @@ function drawLabelledArrowOld(label, pointerGap, fromX, fromY, toX, toY){
 
 // Resource used: http://dbp-consulting.com/tutorials/canvas/CanvasArrow.html
 function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
-    let pointerOrientation = "";
-    let labelWidth = ctx.measureText(label).width;
     let lineAngle = Math.atan2(toY-fromY, toX-fromX);
     let angleFromShaftToArrowHeadCorner = Math.PI/8;
-    let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
+    //let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
+    let lengthOfArrowHeadSide = 10;
 
     ctx.fillText(label, fromX, fromY);
     ctx.beginPath();
