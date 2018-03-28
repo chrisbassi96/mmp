@@ -7,13 +7,16 @@ ctx.textBaseline = "middle";
 ctx.font="10px Arial";
 
 //Visualization settings
-let topMargin = 10;
+let topBottomMargin = 10;
 let leftMargin = 50;
 
 // Canvas elements
 let elementBoxLabelY = 10;
 let elementBoxWidth = 50;
 let elementBoxHeight = 50;
+
+// Animation settings
+let animationSteps = 200; // i.e. speed
 
 let outputLabel = document.getElementById("output_msg");
 let drawScale = 1;

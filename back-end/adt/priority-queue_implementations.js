@@ -5,7 +5,8 @@ class HeapArrayPriorityQueue{
     insert(element){
         if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){ this.dataStructure.expand(); }
 
-        this.dataStructure.content[this.dataStructure.getNumElements()].value = element;
+        //this.dataStructure.content[this.dataStructure.getNumElements()].value = element;
+        this.dataStructure.content[this.dataStructure.getNumElements()].setValue(element);
         this.dataStructure.numElements = this.dataStructure.numElements + 1;
         let j = this.dataStructure.getNumElements()-1;
 

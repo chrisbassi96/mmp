@@ -156,7 +156,7 @@ class SinglyLinkedList{
         this.head = null;
         this.tail = null;
         this.numElements = 0;
-        this.elementBoxY = topMargin+90;
+        this.elementBoxY = topBottomMargin+90;
         this.draw();
     }
     find(element){
@@ -322,6 +322,14 @@ class ArrayElement extends Element{
         this.middleY = 0;
         this.showIndexNum = showIndexNum;
     }
+    setValue(value){
+        super.setValue(value);
+        animateDude({
+            oldMiddleX:leftMargin, oldMiddleY: canvas.height - topBottomMargin, middleX:this.middleX, middleY:this.middleY, draw:function(){
+                ctx.fillText(value, this.middleX, this.middleY);
+            }
+        });
+    }
     setXY(x, y){
         this.oldMiddleX = this.middleX;
         this.oldMiddleY = this.middleY;
@@ -379,14 +387,6 @@ class ArrayElement extends Element{
         this.middleX = x;
         this.middleY = y;*/
     }
-
-    newDraw(){
-        while(this.oldMiddleX !== this.middleX && this.oldMiddleY !== this.middleY){
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            window.requestAnimationFrame(this.newDraw);
-
-        }
-    }
     getX(){
         return this.middleX;
     }
@@ -416,14 +416,15 @@ function animateDude(objectToAnimate){
     let targetY = objectToAnimate.middleY;
     let trajectoryAngle = Math.atan2(targetY-currY, targetX-currX);
     let lineLength = Math.hypot(targetX-currX, targetY-currY);
-    let lineSegment = lineLength / 200;
+    let lineSegment = lineLength / animationSteps;
     let stop = false;
     let stopID = 0;
     let test = window.requestAnimationFrame(step);
     animationStart = null;
     let progress = 0;
-    console.log(Math.cos(trajectoryAngle));
-    console.log(Math.sin(trajectoryAngle));
+
+    console.log(targetX + " " + targetY);
+
     function step(timestamp){
         if (animationStart===null) {
             animationStart = timestamp;
@@ -444,8 +445,9 @@ function animateDude(objectToAnimate){
         objectToAnimate.middleX = currX;
         objectToAnimate.middleY = currY;
         adt.dataStructure.draw();
+        objectToAnimate.draw();
 
-        if (progress!==199) {
+        if (progress!==animationSteps-1) {
             progress += 1;
             stopID = window.requestAnimationFrame(step);
         }else{
@@ -496,7 +498,7 @@ class Animator{
 }
 
 class SimpleArray{
-    constructor(size=20, elementBoxY=topMargin+elementBoxHeight, showIndex=false){
+    constructor(size=20, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
         // Do these need renaming?
         this.size = size;
         this.numElements = 0;
@@ -555,7 +557,7 @@ class SimpleArray{
 
 class CircularArray extends SimpleArray{
     constructor(size=20, showIndex=false){
-        super(size, topMargin+90, showIndex);
+        super(size, topBottomMargin+90, showIndex);
         this.head = 0;
         this.tail = 0;
         this.draw();
@@ -601,7 +603,7 @@ class HeapElement extends ArrayElement{
 }
 
 class HeapArray extends SimpleArray{
-    constructor(size=20, elementBoxY=topMargin+elementBoxHeight, showIndex=true){
+    constructor(size=20, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=true){
         super(size, elementBoxY, showIndex);
     }
     parent(j){
