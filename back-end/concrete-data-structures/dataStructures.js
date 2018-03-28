@@ -325,8 +325,14 @@ class ArrayElement extends Element{
     setXY(x, y){
         this.oldMiddleX = this.middleX;
         this.oldMiddleY = this.middleY;
+        this.middleX = x;
+        this.middleY = y;
 
-        let currX = this.oldMiddleX;
+        animateDude(this);
+
+        //bob.animate(this.oldMiddleX, this.oldMiddleY, this.middleX, this.middleY);
+
+/*        let currX = this.oldMiddleX;
         let currY = this.oldMiddleY;
         let lineAngle = Math.atan2(this.middleY-this.oldMiddleY, this.middleX-this.oldMiddleX);
         let lineLength = Math.hypot(this.middleX-this.oldMiddleX, this.middleY-this.oldMiddleY);
@@ -363,40 +369,15 @@ class ArrayElement extends Element{
             window.requestAnimationFrame(step);
         }
 
-
-
-
-
         window.requestAnimationFrame(this.testAnimate);
-
         let duration = 1000;
-
         let stepsRequired = 20;
 
         for (let i = 1; i<=stepsRequired; i++){
-
-
         }
 
         this.middleX = x;
-        this.middleY = y;
-    }
-    testAnimate(){
-        if(this.middleX)
-
-
-        window.requestAnimationFrame(this.testAnimate);
-    }
-    move(progress){
-        let lineAngle = Math.atan2(this.middleY-this.oldMiddleY, this.middleX-this.oldMiddleX);
-        let lineLength = Math.hypot(this.middleX-this.oldMiddleX, this.middleY-this.oldMiddleY);
-        let lineSegmentLength = lineLength / stepsRequired;
-
-        let currX = this.oldMiddleX + (Math.cos(lineAngle) * (lineSegmentLength*i));
-        let currY = this.oldMiddleY + (Math.sin(lineAngle) * (lineSegmentLength*i));
-
-        window.requestAnimationFrame(this.move);
-
+        this.middleY = y;*/
     }
 
     newDraw(){
@@ -427,30 +408,89 @@ class ArrayElement extends Element{
     }
 }
 
+function animateDude(objectToAnimate){
+    let animationStart = null;
+    let currX = objectToAnimate.oldMiddleX;
+    let currY = objectToAnimate.oldMiddleY;
+    let targetX = objectToAnimate.middleX;
+    let targetY = objectToAnimate.middleY;
+    let trajectoryAngle = Math.atan2(targetY-currY, targetX-currX);
+    let lineLength = Math.hypot(targetX-currX, targetY-currY);
+    let lineSegment = lineLength / 200;
+    let stop = false;
+    let stopID = 0;
+    let test = window.requestAnimationFrame(step);
+    animationStart = null;
+    let progress = 0;
+    console.log(Math.cos(trajectoryAngle));
+    console.log(Math.sin(trajectoryAngle));
+    function step(timestamp){
+        if (animationStart===null) {
+            animationStart = timestamp;
+        }
+
+        //let progress = Math.floor((timestamp - animationStart));
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        //if (currX <= targetX){
+            //currX = currX + (Math.cos(trajectoryAngle) * progress);
+            currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
+        //}
+        //if (currY <= targetY){
+            //currY = currY + (Math.sin(trajectoryAngle) * progress);
+            currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
+        //}
+        objectToAnimate.middleX = currX;
+        objectToAnimate.middleY = currY;
+        adt.dataStructure.draw();
+
+        if (progress!==199) {
+            progress += 1;
+            stopID = window.requestAnimationFrame(step);
+        }else{
+            window.cancelAnimationFrame(stopID)
+        }
+    }
+}
+
+// Animates a given object. The object must have a draw() function.
 class Animator{
-    constructor(toAnimate){
-        this.objectToAnimate = toAnimate;
+    constructor(){
         this.animationStart = null;
         this.currX = 0;
         this.currY = 0;
         this.targetX = 0;
         this.targetY = 0;
+        this.trajectoryAngle = 0;
+        console.log(this.animationStart);
     }
-    animate(){
+    animate(fromX, fromY, toX, toY){
+        this.currX = fromX;
+        this.currY = fromY;
+        this.targetX = toX;
+        this.targetY = toY;
+        this.trajectoryAngle = Math.atan2(toY-fromY, toX-fromX);
         window.requestAnimationFrame(this.step);
+        this.animationStart = null;
     }
     step(timestamp){
-        if (!this.animationStart) this.animationStart = timestamp;
-        let progress = timestamp - start;
+        console.log(this.currX);
+        if (this.animationStart===0) {
+            this.animationStart = timestamp;
+        }
+        let progress = (timestamp - this.animationStart)/1000;
         if (this.currX === this.targetX && this.currY === this.targetY){
             window.cancelAnimationFrame(timestamp);
         }
         if (this.currX !== this.targetX){
-
+            this.currX = this.currX + (Math.cos(this.trajectoryAngle) * progress);
         }
-        element.style.left = Math.min(progress / 10, 200) + 'px';
+        if (this.currY !== this.targetY){
+            this.currY = this.currY + (Math.sin(this.trajectoryAngle) * progress);
+        }
         if (progress < 2000) {
-            window.requestAnimationFrame(step);
+            window.requestAnimationFrame(this.step);
         }
     }
 }
