@@ -325,34 +325,86 @@ class ArrayElement extends Element{
     setXY(x, y){
         this.oldMiddleX = this.middleX;
         this.oldMiddleY = this.middleY;
-        this.middleX = x;
-        this.middleY = y;
 
-        let diffX = this.oldMiddleX - this.middleX;
-        let diffY = this.oldMiddleY - this.middleY;
+        let currX = this.oldMiddleX;
+        let currY = this.oldMiddleY;
         let lineAngle = Math.atan2(this.middleY-this.oldMiddleY, this.middleX-this.oldMiddleX);
+        let lineLength = Math.hypot(this.middleX-this.oldMiddleX, this.middleY-this.oldMiddleY);
+        let start = null;
+        let value = this.value;
+        let index = this.index;
+        let showIndex = this.showIndexNum;
+        function step(timestamp) {
+            if (!start) start = timestamp;
+            let progress = timestamp - start;
 
-       while(this.oldMiddleX !== this.middleX && this.oldMiddleY !== this.middleY){
-            toX + Math.cos(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
-            let nextX =
-            window.requestAnimationFrame(newDraw);
+            currX = currX + (Math.cos(lineAngle) * (progress));
+            currY = currY + (Math.sin(lineAngle) * (progress));
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the actual box
+            ctx.strokeRect(currX-(elementBoxWidth/2), currY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+
+            // Draw the actual value
+            ctx.fillText(value, currX, currY);
+
+            // Draw the index
+            if (showIndex){
+                ctx.fillText(index, currX, currY + elementBoxHeight);
+            }
+            if (progress < 1000) {
+                window.requestAnimationFrame(step);
+            }
+
+        }
+
+        if (this.middleX !== x && this.middleY !== y){
+            window.requestAnimationFrame(step);
         }
 
 
 
 
+
+        window.requestAnimationFrame(this.testAnimate);
+
+        let duration = 1000;
+
+        let stepsRequired = 20;
+
+        for (let i = 1; i<=stepsRequired; i++){
+
+
+        }
+
+        this.middleX = x;
+        this.middleY = y;
     }
+    testAnimate(){
+        if(this.middleX)
+
+
+        window.requestAnimationFrame(this.testAnimate);
+    }
+    move(progress){
+        let lineAngle = Math.atan2(this.middleY-this.oldMiddleY, this.middleX-this.oldMiddleX);
+        let lineLength = Math.hypot(this.middleX-this.oldMiddleX, this.middleY-this.oldMiddleY);
+        let lineSegmentLength = lineLength / stepsRequired;
+
+        let currX = this.oldMiddleX + (Math.cos(lineAngle) * (lineSegmentLength*i));
+        let currY = this.oldMiddleY + (Math.sin(lineAngle) * (lineSegmentLength*i));
+
+        window.requestAnimationFrame(this.move);
+
+    }
+
     newDraw(){
-
-
         while(this.oldMiddleX !== this.middleX && this.oldMiddleY !== this.middleY){
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             window.requestAnimationFrame(this.newDraw);
 
         }
-
-
-
     }
     getX(){
         return this.middleX;
@@ -360,17 +412,45 @@ class ArrayElement extends Element{
     getY(){
         return this.middleY;
     }
-    draw(){
+    draw(x=this.middleX, y=this.middleY){
 
         // Draw the actual box
-        ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        ctx.strokeRect(x-(elementBoxWidth/2), y-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
         // Draw the actual value
-        ctx.fillText(this.value, this.middleX, this.middleY);
+        ctx.fillText(this.value, x, y);
 
         // Draw the index
         if (this.showIndexNum){
-            ctx.fillText(this.index, this.middleX, this.middleY + elementBoxHeight);
+            ctx.fillText(this.index, x, y + elementBoxHeight);
+        }
+    }
+}
+
+class Animator{
+    constructor(toAnimate){
+        this.objectToAnimate = toAnimate;
+        this.animationStart = null;
+        this.currX = 0;
+        this.currY = 0;
+        this.targetX = 0;
+        this.targetY = 0;
+    }
+    animate(){
+        window.requestAnimationFrame(this.step);
+    }
+    step(timestamp){
+        if (!this.animationStart) this.animationStart = timestamp;
+        let progress = timestamp - start;
+        if (this.currX === this.targetX && this.currY === this.targetY){
+            window.cancelAnimationFrame(timestamp);
+        }
+        if (this.currX !== this.targetX){
+
+        }
+        element.style.left = Math.min(progress / 10, 200) + 'px';
+        if (progress < 2000) {
+            window.requestAnimationFrame(step);
         }
     }
 }
