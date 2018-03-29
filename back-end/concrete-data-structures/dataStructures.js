@@ -1,5 +1,3 @@
-var animationFinished = false;
-
 class Element{
     constructor(value=null, index=null){
         this.value = value;
@@ -330,7 +328,7 @@ class ArrayElement extends Element{
     }
        setValue(value){
         /*
-           let test = new TempAnimationObject(leftMargin, canvas.height - topBottomMargin, this.middleX, this.middleY,
+           let canvasObjectMan = new TempAnimationObject(leftMargin, canvas.height - topBottomMargin, this.middleX, this.middleY,
                function(){
                    ctx.fillText(value, this.middleX, this.middleY);
            }, function(){
@@ -338,31 +336,27 @@ class ArrayElement extends Element{
            });
 */
 
-        testing.call(this, super.setValue, value);
 
-
-        let animatedValue = {
+/*        let animatedValue = {
             oldMiddleX:leftMargin, oldMiddleY: canvas.height - topBottomMargin, middleX:this.middleX, middleY:this.middleY, draw:function(){
                     ctx.fillText(value, this.middleX, this.middleY);
             }
-        };
+        };*/
 
 
-        test.add(animatedValue);
-        animateDude(animatedValue, true, super.setValue);
+        //canvasObjectMan.add(animatedValue);
+        //animateDude(animatedValue, true, super.setValue);
         //super.setValue(value, animateDude(animatedValue));
         //animateDude(animatedValue, super.setValue, value);
 
 
-        //super.setValue(value);
+        super.setValue(value);
     }
     setXY(x, y){
         this.oldMiddleX = this.middleX;
         this.oldMiddleY = this.middleY;
         this.middleX = x;
         this.middleY = y;
-
-        animateDude(this);
 
         //bob.animate(this.oldMiddleX, this.oldMiddleY, this.middleX, this.middleY);
 
@@ -452,26 +446,16 @@ function animateDude(objectToAnimate, avoidOverlap, someFunction){
     window.requestAnimationFrame(step);
 
     function step(timestamp){
-/*        if (animationStart===null) {
-            animationStart = timestamp;
-        }*/
-
-        //let progress = Math.floor((timestamp - animationStart));
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        //if (currX <= targetX){
-            //currX = currX + (Math.cos(trajectoryAngle) * progress);
-            currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
-        //}
-        //if (currY <= targetY){
-            //currY = currY + (Math.sin(trajectoryAngle) * progress);
-            currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
-        //}
+        currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
+        currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
+
         objectToAnimate.middleX = currX;
         objectToAnimate.middleY = currY;
         //adt.dataStructure.draw();
-        test.draw();
+        canvasObjectMan.draw();
 
 
         if (progress!==animationSteps-1) {
@@ -479,53 +463,12 @@ function animateDude(objectToAnimate, avoidOverlap, someFunction){
             stopID = window.requestAnimationFrame(step);
         }else{
             if (avoidOverlap){
-                test.remove(objectToAnimate);
+                canvasObjectMan.remove(objectToAnimate);
 
-                test.draw();
+                canvasObjectMan.draw();
             }
             console.log("Finished!");
             window.cancelAnimationFrame(stopID);
-        }
-    }
-}
-
-// Animates a given object. The object must have a draw() function.
-class Animator{
-    constructor(){
-        this.animationStart = null;
-        this.currX = 0;
-        this.currY = 0;
-        this.targetX = 0;
-        this.targetY = 0;
-        this.trajectoryAngle = 0;
-        console.log(this.animationStart);
-    }
-    animate(fromX, fromY, toX, toY){
-        this.currX = fromX;
-        this.currY = fromY;
-        this.targetX = toX;
-        this.targetY = toY;
-        this.trajectoryAngle = Math.atan2(toY-fromY, toX-fromX);
-        window.requestAnimationFrame(this.step);
-        this.animationStart = null;
-    }
-    step(timestamp){
-        console.log(this.currX);
-        if (this.animationStart===0) {
-            this.animationStart = timestamp;
-        }
-        let progress = (timestamp - this.animationStart)/1000;
-        if (this.currX === this.targetX && this.currY === this.targetY){
-            window.cancelAnimationFrame(timestamp);
-        }
-        if (this.currX !== this.targetX){
-            this.currX = this.currX + (Math.cos(this.trajectoryAngle) * progress);
-        }
-        if (this.currY !== this.targetY){
-            this.currY = this.currY + (Math.sin(this.trajectoryAngle) * progress);
-        }
-        if (progress < 2000) {
-            window.requestAnimationFrame(this.step);
         }
     }
 }
@@ -536,18 +479,19 @@ class SimpleArray{
         this.size = size;
         this.numElements = 0;
         this.content = [];
-        this.showIndex = showIndex;
-        this.elementBoxY = elementBoxY;
+        //this.showIndex = showIndex;
+        //this.elementBoxY = elementBoxY;
         for (let i=0; i<size; i++){
-            this.content[i] = new ArrayElement(null, this.showIndex);
-            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.content[i].setIndex(i);
+            //this.content[i] = new ArrayElement(null, this.showIndex);
+            this.content[i] = new Element(null, i);
+            //this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            //this.content[i].setIndex(i);
         }
 
     }
     setElementValue(index, value){
         this.content[index].setValue(value);
-        this.draw();
+        //this.draw();
     }
     // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
     getElementValue(index){

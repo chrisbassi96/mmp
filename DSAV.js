@@ -1,6 +1,8 @@
 let adt = null;
+let adtPainter = null;
+let adtController = null;
 let showNulls = false;
-let test = null;
+let canvasObjectMan = null;
 
 function createADT(type){
     let dtSelect = document.getElementById("dataStructure");
@@ -12,9 +14,11 @@ function createADT(type){
 
     switch (selected + "-" + type){
         case "simple-array-stack":
+/*            adt = new SimpleArrayStack(size);
+            adtPainter = new SimpleArrayStackPainter(adt);
+            adtController = new SimpleArrayStackController(adt, adtPainter);*/
 
-            adt = new SimpleArrayStack(size);
-            controller = new StackController(adt);
+            adtController = new SimpleArrayStackController(size);
             break;
         case "singly-linked-list-stack":
             adt = new SinglyLinkedListStack();
@@ -31,6 +35,6 @@ function createADT(type){
         default:
             console.log("Error in createADT function. type = " + type);
     }
-    test.add(adt.dataStructure);
+    //canvasObjectMan.add(adt.dataStructure);
 }
 

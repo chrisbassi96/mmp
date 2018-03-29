@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>DSAV - Stack</title>
+    <script src="../back-end/deepclone.js"></script>
 </head>
 <body>
 <script src="../DSAV.js"></script>
@@ -32,12 +33,14 @@
 <canvas id="myCanvas" style="border:1px solid #c3c3c3;"></canvas>
 <br/>
 <input type="text" name="add_value" id="add_value" />
-<button onclick="adt.push(document.getElementById('add_value').value);">Push</button>
+<button onclick="adtController.push(document.getElementById('add_value').value);">Push</button>
 <button onclick="adt.pop();">Pop</button>
 <button onclick="adt.peek();">Peek</button>
 <label id="output_msg"></label>
 
 <script src="../back-end/canvasMan.js"></script>
+<script src="../back-end/painters.js"></script>
+<script src="../back-end/controllers.js"></script>
 <script src="../back-end/concrete-data-structures/dataStructures.js"></script>
 <script src="../back-end/adt/stack_implementations.js"></script>
 

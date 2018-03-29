@@ -10,7 +10,10 @@ class SimpleArrayStack{
         }else{
             outputLabel.innerText = "Stack is full";
         }
-        this.dataStructure.draw();
+        //this.dataStructure.draw();
+
+        // The following is used only for visualization
+        return this.dataStructure.numElements-1;
     }
     pop(){
         if (this.dataStructure.isEmpty()){
@@ -52,4 +55,8 @@ class SinglyLinkedListStack{
     peek(){
         outputLabel.innerText = this.dataStructure.getFirst();
     }
+}
+
+class VisualSimpleArrayStack{
+
 }

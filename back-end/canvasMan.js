@@ -44,7 +44,7 @@ class CanvasObjectManager{
     }
 }
 
-test = new CanvasObjectManager();
+canvasObjectMan = new CanvasObjectManager();
 
 
 function drawLabelledArrowOld(label, pointerGap, fromX, fromY, toX, toY){

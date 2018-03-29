@@ -70,7 +70,7 @@ class VizuLinkedList{
 
         var cur = this.head;
         var count = 1;
-        console.log("test");
+        console.log("canvasObjectMan");
         while(cur!=null){
             console.log("test2");
 
