@@ -1,5 +1,6 @@
 let adt = null;
 let showNulls = false;
+let test = null;
 
 function createADT(type){
     let dtSelect = document.getElementById("dataStructure");
@@ -11,7 +12,9 @@ function createADT(type){
 
     switch (selected + "-" + type){
         case "simple-array-stack":
+
             adt = new SimpleArrayStack(size);
+            controller = new StackController(adt);
             break;
         case "singly-linked-list-stack":
             adt = new SinglyLinkedListStack();
@@ -28,5 +31,6 @@ function createADT(type){
         default:
             console.log("Error in createADT function. type = " + type);
     }
+    test.add(adt.dataStructure);
 }
 

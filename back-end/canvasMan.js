@@ -6,6 +6,7 @@ ctx.textAlign = "center";
 ctx.textBaseline = "middle";
 ctx.font="10px Arial";
 
+
 //Visualization settings
 let topBottomMargin = 10;
 let leftMargin = 50;
@@ -25,24 +26,26 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function animate({duration, draw, timing}) {
 
-    let start = performance.now();
-
-    requestAnimationFrame(function animate(time) {
-        let timeFraction = (time - start) / duration;
-        if (timeFraction > 1) timeFraction = 1;
-
-        let progress = timing(timeFraction);
-
-        draw(progress);
-
-        if (timeFraction < 1) {
-            requestAnimationFrame(animate);
+class CanvasObjectManager{
+    constructor(){
+        this.objects = [];
+    }
+    add(canvasObject){
+        this.objects.push(canvasObject);
+    }
+    remove(canvasObject){
+        this.objects.pop(canvasObject);
+    }
+    draw(){
+        for (let i=0; i<this.objects.length; i++){
+            this.objects[i].draw();
         }
-
-    });
+    }
 }
+
+test = new CanvasObjectManager();
+
 
 function drawLabelledArrowOld(label, pointerGap, fromX, fromY, toX, toY){
     let pointerOrientation = "";

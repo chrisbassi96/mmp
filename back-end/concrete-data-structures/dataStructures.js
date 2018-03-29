@@ -1,3 +1,5 @@
+var animationFinished = false;
+
 class Element{
     constructor(value=null, index=null){
         this.value = value;
@@ -313,6 +315,10 @@ class DoublyLinkedList{
     }
 }
 
+function testing (theFunction, param){
+    theFunction(param);
+}
+
 class ArrayElement extends Element{
     constructor(value, showIndexNum=false){
         super(value);
@@ -322,13 +328,33 @@ class ArrayElement extends Element{
         this.middleY = 0;
         this.showIndexNum = showIndexNum;
     }
-    setValue(value){
-        super.setValue(value);
-        animateDude({
+       setValue(value){
+        /*
+           let test = new TempAnimationObject(leftMargin, canvas.height - topBottomMargin, this.middleX, this.middleY,
+               function(){
+                   ctx.fillText(value, this.middleX, this.middleY);
+           }, function(){
+               super
+           });
+*/
+
+        testing.call(this, super.setValue, value);
+
+
+        let animatedValue = {
             oldMiddleX:leftMargin, oldMiddleY: canvas.height - topBottomMargin, middleX:this.middleX, middleY:this.middleY, draw:function(){
-                ctx.fillText(value, this.middleX, this.middleY);
+                    ctx.fillText(value, this.middleX, this.middleY);
             }
-        });
+        };
+
+
+        test.add(animatedValue);
+        animateDude(animatedValue, true, super.setValue);
+        //super.setValue(value, animateDude(animatedValue));
+        //animateDude(animatedValue, super.setValue, value);
+
+
+        //super.setValue(value);
     }
     setXY(x, y){
         this.oldMiddleX = this.middleX;
@@ -408,8 +434,8 @@ class ArrayElement extends Element{
     }
 }
 
-function animateDude(objectToAnimate){
-    let animationStart = null;
+function animateDude(objectToAnimate, avoidOverlap, someFunction){
+    //let animationStart = null;
     let currX = objectToAnimate.oldMiddleX;
     let currY = objectToAnimate.oldMiddleY;
     let targetX = objectToAnimate.middleX;
@@ -419,16 +445,16 @@ function animateDude(objectToAnimate){
     let lineSegment = lineLength / animationSteps;
     let stop = false;
     let stopID = 0;
-    let test = window.requestAnimationFrame(step);
-    animationStart = null;
     let progress = 0;
 
-    console.log(targetX + " " + targetY);
+    let finished = false;
+
+    window.requestAnimationFrame(step);
 
     function step(timestamp){
-        if (animationStart===null) {
+/*        if (animationStart===null) {
             animationStart = timestamp;
-        }
+        }*/
 
         //let progress = Math.floor((timestamp - animationStart));
 
@@ -444,14 +470,21 @@ function animateDude(objectToAnimate){
         //}
         objectToAnimate.middleX = currX;
         objectToAnimate.middleY = currY;
-        adt.dataStructure.draw();
-        objectToAnimate.draw();
+        //adt.dataStructure.draw();
+        test.draw();
+
 
         if (progress!==animationSteps-1) {
             progress += 1;
             stopID = window.requestAnimationFrame(step);
         }else{
-            window.cancelAnimationFrame(stopID)
+            if (avoidOverlap){
+                test.remove(objectToAnimate);
+
+                test.draw();
+            }
+            console.log("Finished!");
+            window.cancelAnimationFrame(stopID);
         }
     }
 }
