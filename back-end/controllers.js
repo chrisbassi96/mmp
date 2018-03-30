@@ -32,9 +32,8 @@ function mrAnimator(objectToAnimate){
         console.log(objectToAnimate.middleX + " " + objectToAnimate.middleY);
 
         //adt.dataStructure.draw();
-        //canvasObjectMan.draw();
-        //canvasObjectMan.draw();
-        adtController.datastructureController.draw();
+        canvasObjectMan.draw();
+        //adtController.datastructureController.draw();
 
         if (progress!==animationSteps-1) {
             progress += 1;
@@ -43,7 +42,9 @@ function mrAnimator(objectToAnimate){
             console.log("Finished!");
             objectToAnimate.oldMiddleX = objectToAnimate.middleX;
             objectToAnimate.oldMiddleY = objectToAnimate.middleY;
-            //clearCanvas();
+            clearCanvas();
+            canvasObjectMan.clear();
+            adtController.datastructureController.draw();
             //canvasObjectMan.add(adt.dataStructure);
             //canvasObjectMan.remove(adtCopy.dataStructure);
             //adtPainter.adt = adt;
@@ -52,38 +53,6 @@ function mrAnimator(objectToAnimate){
             //canvasObjectMan.draw();
             window.cancelAnimationFrame(stopID);
         }
-    }
-}
-
-class VisualObject{
-    constructor(oldMiddleX, oldMiddleY, middleX, middleY){
-        this.oldMiddleX = oldMiddleX;
-        this.oldMiddleY = oldMiddleY;
-        this.middleX = middleX;
-        this.middleY = middleY;
-    }
-    updateXY(x, y){
-        this.middleX = x;
-        this.middleY = y;
-    }
-}
-
-class VisualValue extends VisualObject{
-    constructor(oldMiddleX, oldMiddleY, middleX, middleY, value){
-        super(oldMiddleX, oldMiddleY, middleX, middleY);
-        this.value = value;
-    }
-    move(){
-
-    }
-    fadeOut(){
-
-    }
-    fadeIn(){
-
-    }
-    draw(){
-        ctx.fillText(this.value, this.middleX, this.middleY);
     }
 }
 
@@ -138,7 +107,7 @@ class SimpleArrayStackController{
             outputLabel.innerText = "Stack is empty";
         }else{
             outputLabel.innerText = "Pop " + this.datastructureController.content[poppedIndex];
-            this.datastructureController.moveOutofArray(poppedElement, poppedIndex);
+            this.datastructureController.moveOutofArray(poppedElementValue, poppedIndex);
         }
     }
 }
@@ -150,6 +119,8 @@ class SimpleArrayController{
         this.elementBoxY = elementBoxY;
         this.showIndex = showIndex;
         this.content = [];
+
+        canvasObjectMan.add(this);
 
         for (let i=0; i<datastructure.size; i++){
             this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
@@ -171,11 +142,13 @@ class SimpleArrayController{
         this.content[index].updateElementValue(); // Get the current value from physical datastructure
         //this.content[index].update();
         this.content[index].setIndex(index); // Update index
-
         //this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
 
-        this.content[index].moveVisualValueIntoArray();
-        let tempOutValue
+        //this.content[index].moveVisualValueIntoArray();
+        let tempOutValue = new VisualValue(this.content[index].middleX, this.content[index].middleY, canvas.width-leftMargin, canvas.height-topBottomMargin, outValue);
+        canvasObjectMan.add(tempOutValue);
+        mrAnimator(tempOutValue);
+
     }
     setElementValue(index){
         this.content[index].updateElementValue(); // Get the current value from physical datastructure

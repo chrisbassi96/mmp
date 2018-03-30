@@ -24,7 +24,7 @@ class SimpleArrayStack{
         this.dataStructure.numElements--;
 
         //this.dataStructure.draw();
-        return {value:element.getValue(), index:this.dataStructure.getNumElements()};
+        return {value:element, index:this.dataStructure.getNumElements()};
     }
     peek(){
         if (this.dataStructure.isEmpty()) {

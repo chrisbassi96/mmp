@@ -37,6 +37,9 @@ class CanvasObjectManager{
     remove(canvasObject){
         this.objects.pop(canvasObject);
     }
+    clear(){
+
+    }
     draw(){
         for (let i=0; i<this.objects.length; i++){
             this.objects[i].draw();
