@@ -1,5 +1,6 @@
 let adt = null;
 let adtPainter = null;
+let datastructureController = null;
 let adtController = null;
 let showNulls = false;
 let canvasObjectMan = null;
@@ -14,14 +15,15 @@ function createADT(type){
 
     switch (selected + "-" + type){
         case "simple-array-stack":
-/*            adt = new SimpleArrayStack(size);
-            adtPainter = new SimpleArrayStackPainter(adt);
-            adtController = new SimpleArrayStackController(adt, adtPainter);*/
-
-            adtController = new SimpleArrayStackController(size);
+            adt = new SimpleArrayStack(size);
+            datastructureController = new SimpleArrayController(adt.dataStructure);
+            adtController = new SimpleArrayStackController(adt, datastructureController);
             break;
         case "singly-linked-list-stack":
             adt = new SinglyLinkedListStack();
+            datastructureController = new SinglyLinkedListController(adt.dataStructure);
+            adtController  = new SimpleArrayStackController(adt, datastructureController);
+            //adtController = new Si
             break;
         case "circular-array-queue":
             adt = new CircularArrayQueue(size);

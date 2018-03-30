@@ -34,11 +34,16 @@ class CanvasObjectManager{
     add(canvasObject){
         this.objects.push(canvasObject);
     }
+    // Resource used: https://davidwalsh.name/remove-item-array-javascript
     remove(canvasObject){
-        this.objects.pop(canvasObject);
+        let i = this.objects.indexOf(canvasObject);
+        if (i !== -1){
+            this.objects.splice(i, 1);
+        }
+        //this.objects.pop(canvasObject);
     }
     clear(){
-
+        this.objects = [];
     }
     draw(){
         for (let i=0; i<this.objects.length; i++){

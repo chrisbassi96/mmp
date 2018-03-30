@@ -36,8 +36,6 @@ class SinglyLinkedListNode extends Element{
     constructor(elementValue, next){
         super(elementValue);
         this.next = next;
-        this.middleX = 0;
-        this.middleY = 0;
     }
     getNext(){
         return this.next;
@@ -156,8 +154,8 @@ class SinglyLinkedList{
         this.head = null;
         this.tail = null;
         this.numElements = 0;
-        this.elementBoxY = topBottomMargin+90;
-        this.draw();
+        //this.elementBoxY = topBottomMargin+90;
+        //this.draw();
     }
     find(element){
         let cur = this.head;
@@ -167,7 +165,7 @@ class SinglyLinkedList{
         return cur;
     }
     addFirst(node) {
-        this.shiftNodes("right");
+        //this.shiftNodes("right");
 
         if (this.head == null) {
             node.setNext(null);
@@ -178,11 +176,11 @@ class SinglyLinkedList{
             this.head = node;
         }
         //node.setMiddleXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), this.elementBoxY+(elementBoxHeight/2));
-        node.setMiddleXY(leftMargin+elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
-        node.setIndex(this.numElements);
+        //node.setMiddleXY(leftMargin+elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
+        //node.setIndex(this.numElements);
         this.numElements++;
 
-        this.draw();
+        //this.draw();
     }
     getFirst(){
         return this.head.getValue();
@@ -195,7 +193,7 @@ class SinglyLinkedList{
 
         this.shiftNodes("left");
 
-        this.draw();
+        //this.draw();
 
         return first.getValue();
     }
