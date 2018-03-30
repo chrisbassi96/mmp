@@ -17,14 +17,14 @@ class SimpleArrayStack{
     }
     pop(){
         if (this.dataStructure.isEmpty()){
-            outputLabel.innerText = "Stack is empty";
-            return;
+            return null;
         }
         let element = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
         this.dataStructure.setElementValue(this.dataStructure.getNumElements()-1, null);
         this.dataStructure.numElements--;
-        outputLabel.innerText = "Pop " + element;
-        this.dataStructure.draw();
+
+        //this.dataStructure.draw();
+        return {value:element.getValue(), index:this.dataStructure.getNumElements()};
     }
     peek(){
         if (this.dataStructure.isEmpty()) {

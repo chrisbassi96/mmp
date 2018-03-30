@@ -55,6 +55,38 @@ function mrAnimator(objectToAnimate){
     }
 }
 
+class VisualObject{
+    constructor(oldMiddleX, oldMiddleY, middleX, middleY){
+        this.oldMiddleX = oldMiddleX;
+        this.oldMiddleY = oldMiddleY;
+        this.middleX = middleX;
+        this.middleY = middleY;
+    }
+    updateXY(x, y){
+        this.middleX = x;
+        this.middleY = y;
+    }
+}
+
+class VisualValue extends VisualObject{
+    constructor(oldMiddleX, oldMiddleY, middleX, middleY, value){
+        super(oldMiddleX, oldMiddleY, middleX, middleY);
+        this.value = value;
+    }
+    move(){
+
+    }
+    fadeOut(){
+
+    }
+    fadeIn(){
+
+    }
+    draw(){
+        ctx.fillText(this.value, this.middleX, this.middleY);
+    }
+}
+
 class SimpleArrayStackController{
     constructor(size){
         this.adt = new SimpleArrayStack(size);
@@ -97,6 +129,18 @@ class SimpleArrayStackController{
         // Do animation with adtCopy
 
     }
+    pop(){
+        let poppedElement = this.adt.pop();
+        let poppedElementValue = poppedElement.value;
+        let poppedIndex = poppedElement.index;
+
+        if (poppedIndex==null){
+            outputLabel.innerText = "Stack is empty";
+        }else{
+            outputLabel.innerText = "Pop " + this.datastructureController.content[poppedIndex];
+            this.datastructureController.moveOutofArray(poppedElement, poppedIndex);
+        }
+    }
 }
 
 class SimpleArrayController{
@@ -109,16 +153,38 @@ class SimpleArrayController{
 
         for (let i=0; i<datastructure.size; i++){
             this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
-            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setMiddleXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
+            this.content[i].moveIntoArray();
         }
+    }
+    moveIntoArray(index){
+        this.content[index].updateElementValue(); // Get the current value from physical datastructure
+        //this.content[index].update();
+        this.content[index].setIndex(index); // Update index
 
+        this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
+
+        this.content[index].moveVisualValueIntoArray();
+    }
+    moveOutofArray(outValue, index){
+        this.content[index].updateElementValue(); // Get the current value from physical datastructure
+        //this.content[index].update();
+        this.content[index].setIndex(index); // Update index
+
+        //this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
+
+        this.content[index].moveVisualValueIntoArray();
+        let tempOutValue
     }
     setElementValue(index){
-        this.content[index].updateValue();
-        this.content[index].update();
-        this.content[index].setIndex(index);
-        this.content[index].moveIntoArray();
+        this.content[index].updateElementValue(); // Get the current value from physical datastructure
+        //this.content[index].update();
+        this.content[index].setIndex(index); // Update index
+
+        this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
+
+        this.content[index].moveVisualValueIntoArray();
 
         //this.draw();
     }
@@ -148,7 +214,7 @@ class SimpleArrayController{
         this.size = this.size*2;
         for (let i=this.size/2; i<this.size; i++){
             this.content[i] = new ArrayElementController(null, this.showIndex);
-            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setMiddleXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
     }
@@ -184,6 +250,9 @@ class VisualArrayElement{
                 this.middleY = y;
             }
         };
+
+        this.visualValue = new VisualValue(this.oldMiddleX, this.oldMiddleY, this.middleX, this.middleY, this.arrayElement.getValue());
+
         this.visualValue = {
             oldMiddleX: this.oldMiddleX,
             oldMiddleY: this.oldMiddleY,
@@ -216,18 +285,25 @@ class VisualArrayElement{
             }
         };
     }
-    updateValue(){
+    updateElementValue(){
         this.visualValue.value = this.arrayElement.getValue();
     }
     setIndex(index){
         this.indexNum = index;
     }
-    setXY(x, y){
+    setOldMiddleXY(x, y){
+        this.oldMiddleX = x;
+        this.oldMiddleY = y;
+        this.update();
+
+        //mrAnimator(this);
+    }
+    setMiddleXY(x, y){
         this.middleX = x;
         this.middleY = y;
         this.update();
 
-        mrAnimator(this);
+        //mrAnimator(this);
     }
     updateXY(x, y){
         this.middleX = x;
@@ -235,6 +311,10 @@ class VisualArrayElement{
         this.update();
     }
     update(){
+        this.updateMiddleXY();
+        this.updateOldMiddleXY();
+    }
+    updateMiddleXY(){
         this.visualElementBox.middleX = this.middleX;
         this.visualElementBox.middleY = this.middleY;
         this.visualValue.middleX = this.middleX;
@@ -242,7 +322,18 @@ class VisualArrayElement{
         this.visualIndexNum.middleX = this.middleX;
         this.visualIndexNum.middleY = this.middleY;
     }
+    updateOldMiddleXY(){
+        this.visualElementBox.oldMiddleX = this.oldMiddleX;
+        this.visualElementBox.oldMiddleY = this.oldMiddleY;
+        this.visualValue.oldMiddleX = this.oldMiddleX;
+        this.visualValue.oldMiddleY = this.oldMiddleY;
+        this.visualIndexNum.oldMiddleX = this.oldMiddleX;
+        this.visualIndexNum.oldMiddleY = this.oldMiddleY;
+    }
     moveIntoArray(){
+        mrAnimator(this);
+    }
+    moveVisualValueIntoArray(){
         mrAnimator(this.visualValue);
     }
     draw(){
