@@ -1,9 +1,7 @@
-let adt = null;
-let adtPainter = null;
-let datastructureController = null;
 let adtController = null;
 let showNulls = false;
 let canvasObjectMan = null;
+let animationSequencer = null;
 
 function createADT(type){
     let dtSelect = document.getElementById("dataStructure");
@@ -12,6 +10,9 @@ function createADT(type){
     let size = document.getElementById("adt_size").value === ""?20:parseInt(document.getElementById("adt_size").value);
     console.log(size);
     //ctx.textAlign = "center";
+    let adt = null;
+    let datastructureController = null;
+    animationSequencer = new AnimationSequencer();
 
     switch (selected + "-" + type){
         case "simple-array-stack":

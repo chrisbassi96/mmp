@@ -27,7 +27,7 @@ function clearCanvas(){
 }
 
 
-class CanvasObjectManager{
+class CanvasForeignObjectManager{
     constructor(){
         this.objects = [];
     }
@@ -52,7 +52,7 @@ class CanvasObjectManager{
     }
 }
 
-canvasObjectMan = new CanvasObjectManager();
+canvasFOMan = new CanvasForeignObjectManager();
 
 
 function drawLabelledArrowOld(label, pointerGap, fromX, fromY, toX, toY){

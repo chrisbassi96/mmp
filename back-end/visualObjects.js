@@ -8,12 +8,22 @@ class VisualObject{
         this.opacity = 1;
         this.animationProgress = 0;
         this.isBeingAnimated = false;
+        this.animationProperties = {isMoving: false, isFading:false};
     }
-    updateXY(x, y, progress){
+    setXY(x, y, progress){
+        this.animationProgress = progress;
+        if (this.animationProperties.isMoving){
+            this.middleX = x;
+            this.middleY = y;
+        }
+        if (this.animationProperties.isFading){
+            this.updateOpacity();
+        }
+    }
+    updateXY(x, y){
         this.middleX = x;
         this.middleY = y;
-        this.animationProgress = progress;
-        this.updateOpacity();
+
     }
     updateOpacity(){
         switch(this.fade){
@@ -27,7 +37,10 @@ class VisualObject{
         }
     }
     doAnimationComplete(){
-        // ToDo Something meaningful in here
+        this.isBeingAnimated = false;
+    }
+    draw(){
+
     }
 }
 
@@ -37,6 +50,8 @@ class VisualElementBox extends VisualObject{
         this.crossedThrough = false;
     }
     draw(){
+        super.draw();
+
         ctx.save();
         ctx.globalAlpha = this.opacity;
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
@@ -63,6 +78,7 @@ class VisualValue extends VisualObject{
 
     }
     draw(){
+        super.draw();
         ctx.save();
         ctx.globalAlpha = this.opacity;
         ctx.fillText(this.value, this.middleX, this.middleY);

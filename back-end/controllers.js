@@ -1,65 +1,3 @@
-function mrAnimator(objectToAnimate){
-    //let animationStart = null;
-    let currX = objectToAnimate.oldMiddleX;
-    let currY = objectToAnimate.oldMiddleY;
-    let targetX = objectToAnimate.middleX;
-    let targetY = objectToAnimate.middleY;
-    let trajectoryAngle = Math.atan2(targetY-currY, targetX-currX);
-    let lineLength = Math.hypot(targetX-currX, targetY-currY);
-    let lineSegment = lineLength / animationSteps;
-    let stopID = 0;
-    let progress = 0;
-
-    //canvasObjectMan.add(objectToAnimate);
-
-
-    //canvasObjectMan.add(adtCopy.dataStructure);
-    //canvasObjectMan.remove(adt.dataStructure);
-    //adtPainter.setAdt(adtCopy);
-    //adtPainter.adt = adtCopy;
-
-    window.requestAnimationFrame(step);
-
-    function step(timestamp){
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
-        currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
-
-        objectToAnimate.updateXY(currX, currY, progress);
-
-/*        objectToAnimate.middleX = currX;
-        objectToAnimate.middleY = currY;*/
-
-        //console.log(objectToAnimate.middleX + " " + objectToAnimate.middleY);
-
-        //adt.dataStructure.draw();
-        canvasObjectMan.draw();
-        adtController.datastructureController.draw();
-
-        if (progress!==animationSteps-1) {
-            progress += 1;
-            stopID = window.requestAnimationFrame(step);
-        }else{
-            console.log("Finished!");
-            objectToAnimate.oldMiddleX = objectToAnimate.middleX;
-            objectToAnimate.oldMiddleY = objectToAnimate.middleY;
-            objectToAnimate.doAnimationComplete();
-/*            clearCanvas();
-            canvasObjectMan.remove(objectToAnimate);
-            canvasObjectMan.remove(adtController.datastructureController);
-            canvasObjectMan.add(adtController.datastructureController);
-            canvasObjectMan.draw();*/
-            clearCanvas();
-            canvasObjectMan.remove(objectToAnimate);
-            adtController.datastructureController.draw();
-
-            window.cancelAnimationFrame(stopID);
-        }
-    }
-}
-
 class SimpleArrayStackController{
     constructor(adt, datastructureController){
         this.adt = adt;
@@ -104,18 +42,17 @@ class SinglyLinkedListController{
         this.datastructure = datastructure;
 
         this.elementBoxY = elementBoxY;
-        this.showIndex = showIndex;
 
         this.head = new VisualLinkedListElement(datastructure.head);
-        this.head.setMiddleXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
-        this.head.draw();
+        this.head.setOldMiddleXY(leftMargin + elementBoxWidth, topBottomMargin);
+        this.head.setMiddleXY(this.head.oldMiddleX, this.elementBoxY+(elementBoxHeight/2));
+
 /*        this.head.oldMiddleX = leftMargin;
         this.head.oldMiddleY = canvas.height - topBottomMargin;
         this.head.middleX = leftMargin;
         this.head.middleY = elementBoxY;*/
 
         this.tail = this.head;
-
         this.draw();
 
         //canvasObjectMan.add(this);
@@ -132,26 +69,33 @@ class SinglyLinkedListController{
 
         this.shiftNodes("right");
 
-        let bob = new VisualLinkedListElement(element);
+        let newNode = new VisualLinkedListElement(element);
 
         // When inserting, we only want to see the actual value animated!
-        bob.visualValue.isBeingAnimated = true;
+        //newNode.visualValue.isBeingAnimated = true;
+        //newNode.visualElementBoxValue.isBeingAnimated = true;
+        newNode.visualElementBoxValue.fade = "in";
+        //newNode.isBeingAnimated = true;
 
         // This exchanging of coordinates is like setting the head to the new node: "="
-        bob.oldMiddleX = leftMargin;
-        bob.oldMiddleY = canvas.height - topBottomMargin;
-        bob.setMiddleXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
+        newNode.oldMiddleX = leftMargin + elementBoxWidth;
+        newNode.oldMiddleY = canvas.height - topBottomMargin;
+
+        newNode.setMiddleXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
 
         if (this.head.physicalElement == null){
-            bob.setNext(null);
-            this.head = bob;
-            this.tail = bob;
+            newNode.setNext(null);
+            this.head = newNode;
+            this.tail = newNode;
         }else{
-            bob.setNext(this.head);
-            this.head = bob;
+            newNode.setNext(this.head);
+            this.head = newNode;
         }
 
         this.head.updateElementValue();
+        animationSequencer.add(this.head);
+        animationSequencer.go();
+        //this.head.moveIntoVisualDatastructure();
 
 
 /*        bob.setNext(this.head);
@@ -175,7 +119,7 @@ class SinglyLinkedListController{
         //this.head.setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
         //this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
         //this.head.moveVisualValueIntoArray();
-        this.head.moveIntoVisualDatastructure();
+
         //this.content[index].moveVisualValueIntoArray();
     }
     find(element){
@@ -236,26 +180,36 @@ class SinglyLinkedListController{
     shiftNodes(direction){
         let curr = this.head;
 
-        while (curr!=null){
+        if (this.datastructure.numElements===1){
+            return;
+        }
+
+        while (curr!==null){
             if (direction === "right"){
                 curr.setMiddleXY(curr.middleX+3*elementBoxWidth, curr.middleY);
             }else{
                 curr.setMiddleXY(curr.middleX-3*elementBoxWidth, curr.middleY);
             }
-            curr.isBeingAnimated = true;
-            mrAnimator(curr);
+            //curr.isBeingAnimated = true;
+            //mrAnimator(curr);
+            //console.log(curr);
+            animationSequencer.add(curr);
+            //mrAnimator(curr);
+            //animationSequencer.go();
             curr = curr.getNext();
         }
+
+
     }
     draw(){
-        //clearCanvas();
+        clearCanvas();
 
         if(this.datastructure.isEmpty()){
             /*            let dummy = new SinglyLinkedListNode(null, null);
                         dummy.setMiddleXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);
                         dummy.draw();*/
-            drawLabelledArrow("head / tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-10);
+            drawLabelledArrow("head / tail", 5, this.head.staticMiddleX, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-10);
             return;
         }
 
@@ -265,10 +219,10 @@ class SinglyLinkedListController{
             /*            let dummy = new SinglyLinkedListNode(null, null);
                         dummy.setMiddleXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);*/
-            drawLabelledArrow("head / tail", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.staticMiddleX, this.head.staticMiddleY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head / tail", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.middleX, this.head.middleY-(elementBoxHeight/2)-10);
             //head.draw();
         }else{
-            drawLabelledArrow("head", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.staticMiddleX, this.head.staticMiddleY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.middleX, this.head.middleY-(elementBoxHeight/2)-10);
             drawLabelledArrow("tail", 5, this.tail.middleX, elementBoxLabelY, this.tail.middleX, this.tail.middleY-(elementBoxHeight/2)-10);
         }
 
@@ -320,14 +274,20 @@ class SimpleArrayController{
         tempInValue.oldMiddleY = this.content[index].middleY;
         tempInValue.middleX = this.content[index].middleX;
         tempInValue.middleY = this.content[index].middleY;
-        //canvasObjectMan.add(tempInValue);
-        canvasObjectMan.objects.push(tempInValue);
-        mrAnimator(tempInValue);
+        //canvasObjectMan.objects.push(tempInValue);
+        canvasFOMan.add(tempInValue);
 
-        this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
+        //mrAnimator(tempInValue);
+
+        this.content[index].setOldMiddleXY(leftMargin + (elementBoxWidth/2), canvas.height - topBottomMargin);
         this.content[index].visualValue.isBeingAnimated = true;
+        this.content[index].visualValue.animationProperties.isMoving = true;
+        console.log(this.content[index].visualValue);
 
-        this.content[index].moveIntoVisualDatastructure();
+        animationSequencer.add(this.content[index].visualValue);
+        animationSequencer.go();
+
+        //4this.content[index].moveIntoVisualDatastructure();
     }
     moveOutofArray(outValue, index){
         this.content[index].updateElementValue(); // Get the current value from physical datastructure
@@ -336,48 +296,19 @@ class SimpleArrayController{
         //this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
 
         //this.content[index].moveVisualValueIntoArray();
+        console.log("outValue: " + outValue);
         let tempOutValue = new VisualValue(outValue);
         tempOutValue.oldMiddleX = this.content[index].middleX;
         tempOutValue.oldMiddleY = this.content[index].middleY;
         tempOutValue.middleX = canvas.width-leftMargin;
         tempOutValue.middleY = canvas.height-topBottomMargin;
         //canvasObjectMan.add(tempOutValue);
-        canvasObjectMan.objects.push(tempOutValue);
-        mrAnimator(tempOutValue);
+        canvasFOMan.add(tempOutValue);
 
-    }
-    setElementValue(index){
-        this.content[index].updateElementValue(); // Get the current value from physical datastructure
-        //this.content[index].update();
-        this.content[index].setIndex(index); // Update index
+        animationSequencer.add(tempOutValue);
+        animationSequencer.go();
+        //mrAnimator(tempOutValue);
 
-        this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
-
-        this.content[index].moveVisualValueIntoArray();
-
-        //this.draw();
-    }
-    // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
-    getElementValue(index){
-
-        if (index >= 0 && index < this.content.length){
-
-            return this.content[index].getValue();
-        }
-
-        // Give some sort of error
-    }
-    getElement(index){
-        return this.content[index];
-    }
-    getNumElements(){
-        return this.numElements;
-    }
-    getSize(){
-        return this.size;
-    }
-    isEmpty(){
-        return this.numElements === 0;
     }
     expand(){
         this.size = this.size*2;
@@ -390,7 +321,6 @@ class SimpleArrayController{
     draw() {
         //clearCanvas();
         for (let i=0; i<this.datastructure.size; i++){
-            // Draw the box that visualizes the index
             this.content[i].draw();
         }
     }
@@ -417,7 +347,8 @@ class VisualLinkedListElement{
 
         this.visualNext = new VisualValue("next");
 
-        this.updateMiddleXY();
+        // Give visual components their coordinates
+        //this.setAllXY();
 
     }
     setNext(nextVisualElement){
@@ -434,63 +365,56 @@ class VisualLinkedListElement{
     setIndex(index){
         this.indexNum = index;
     }
-    setOldMiddleXY(x, y){
-        this.oldMiddleX = x;
-        this.oldMiddleY = y;
-        this.update();
-
-        //mrAnimator(this);
-    }
     setMiddleXY(x, y){
         this.middleX = x;
         this.middleY = y;
         this.staticMiddleX = x;
         this.staticMiddleY = y;
-        this.update();
+        this.setAllXY();
 
         //mrAnimator(this);
     }
-    updateXY(x, y){
+    setOldMiddleXY(x, y){
+        this.oldMiddleX = x;
+        this.oldMiddleY = y;
+        this.setAllOldXY();
+    }
+    setAllXY(){
+        this.visualElementBoxValue.setXY(this.middleX-(elementBoxWidth/2), this.middleY);
+        this.visualValue.setXY(this.middleX-(elementBoxWidth/2), this.middleY);
+        this.visualElementBoxNext.setXY(this.middleX+(elementBoxWidth/2), this.middleY);
+        this.visualNext.setXY(this.middleX+(elementBoxWidth/2), this.middleY);
+
+/*        this.visualElementBoxNext.middleX = this.middleX+(elementBoxWidth/2);
+        this.visualElementBoxNext.middleY = this.middleY;
+        this.visualValue.middleX = this.middleX-(elementBoxWidth/2);
+        this.visualValue.middleY = this.middleY;
+        this.visualNext.middleX = this.middleX+(elementBoxWidth/2);
+        this.visualNext.middleY = this.middleY;*/
+    }
+    updateXY(x, y, progress){
         this.middleX = x;
         this.middleY = y;
 
         // Only update the coords of element visual objects IF they are being animated
         // This allows us to control which visual objects of the element are animated and which are not
         if(this.visualElementBoxValue.isBeingAnimated || this.isBeingAnimated){
-            this.visualElementBoxValue.middleX = this.middleX-(elementBoxWidth/2);
-            this.visualElementBoxValue.middleY = this.middleY;
+            this.visualElementBoxValue.updateXY(x-(elementBoxWidth/2), y, progress);
         }
         if(this.visualElementBoxNext.isBeingAnimated || this.isBeingAnimated){
-            this.visualElementBoxNext.middleX = this.middleX+(elementBoxWidth/2);
-            this.visualElementBoxNext.middleY = this.middleY;
+            this.visualElementBoxNext.updateXY(x+(elementBoxWidth/2), y, progress);
         }
 
         if (this.visualValue.isBeingAnimated || this.isBeingAnimated){
-            this.visualValue.middleX = this.middleX-(elementBoxWidth/2);
-            this.visualValue.middleY = this.middleY;
+            this.visualValue.updateXY(x-(elementBoxWidth/2), y, progress);
         }
 
         if (this.visualNext.isBeingAnimated || this.isBeingAnimated){
-            this.visualNext.middleX = this.middleX+(elementBoxWidth/2);
-            this.visualNext.middleY = this.middleY;
+            this.visualNext.updateXY(x+(elementBoxWidth/2), y, progress);
         }
         //this.update();
     }
-    update(){
-        this.updateMiddleXY();
-        this.updateOldMiddleXY();
-    }
-    updateMiddleXY(){
-        this.visualElementBoxValue.middleX = this.middleX-(elementBoxWidth/2);
-        this.visualElementBoxValue.middleY = this.middleY;
-        this.visualElementBoxNext.middleX = this.middleX+(elementBoxWidth/2);
-        this.visualElementBoxNext.middleY = this.middleY;
-        this.visualValue.middleX = this.middleX-(elementBoxWidth/2);
-        this.visualValue.middleY = this.middleY;
-        this.visualNext.middleX = this.middleX+(elementBoxWidth/2);
-        this.visualNext.middleY = this.middleY;
-    }
-    updateOldMiddleXY(){
+    setAllOldXY(){
         this.visualElementBoxValue.oldMiddleX = this.oldMiddleX;
         this.visualElementBoxValue.oldMiddleY = this.oldMiddleY;
         this.visualElementBoxNext.oldMiddleX = this.oldMiddleX;
@@ -511,10 +435,10 @@ class VisualLinkedListElement{
         return (this.middleX === otherNode.middleX) && (this.middleY === otherNode.middleY);
     }
     doAnimationComplete(){
-        this.visualElementBoxValue.isBeingAnimated = false;
-        this.visualElementBoxNext.isBeingAnimated = false;
-        this.visualValue.isBeingAnimated = false;
-        this.visualNext.isBeingAnimated = false;
+        this.visualElementBoxValue.doAnimationComplete();
+        this.visualElementBoxNext.doAnimationComplete();
+        this.visualValue.doAnimationComplete();
+        this.visualNext.doAnimationComplete();
     }
     draw() {
         this.visualElementBoxValue.draw();
@@ -522,7 +446,7 @@ class VisualLinkedListElement{
         this.visualValue.draw();
         this.visualNext.draw();
         if(this.nextVisualElement !== null){
-            drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
+            drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.nextVisualElement.visualElementBoxValue.middleX-(elementBoxWidth/2), this.nextVisualElement.middleY);
         }
     }
 }
@@ -535,8 +459,6 @@ class VisualArrayElement{
         this.oldMiddleY = 0;
         this.middleX = 0;
         this.middleY = 0;
-        this.staticMiddleX = 0;
-        this.staticMiddleY = 0;
         this.isBeingAnimated = false;
 
         this.visualElementBox = new VisualElementBox();
@@ -576,17 +498,14 @@ class VisualArrayElement{
         // Only update the coords of element visual objects IF they are being animated
         // This allows us to control which visual objects of the element are animated and which are not
         if(this.visualElementBox.isBeingAnimated || this.isBeingAnimated){
-            this.visualElementBox.middleX = this.middleX;
-            this.visualElementBox.middleY = this.middleY;
+            this.visualElementBox.setXY(x, y);
         }
         if(this.visualValue.isBeingAnimated || this.isBeingAnimated){
-            this.visualValue.middleX = this.middleX;
-            this.visualValue.middleY = this.middleY;
+            this.visualValue.setXY(x, y);
         }
 
         if (this.visualIndexNum.isBeingAnimated || this.isBeingAnimated){
-            this.visualIndexNum.middleX = this.middleX;
-            this.visualIndexNum.middleY = this.middleY+elementBoxHeight;
+            this.visualIndexNum.setXY(x, y);
         }
         //this.update();
     }
