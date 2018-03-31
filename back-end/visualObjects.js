@@ -4,9 +4,10 @@ class VisualObject{
         this.oldMiddleY = 0;
         this.middleX = 0;
         this.middleY = 0;
-        this.fade = "none"
+        this.fade = "none";
         this.opacity = 1;
         this.animationProgress = 0;
+        this.isBeingAnimated = false;
     }
     updateXY(x, y, progress){
         this.middleX = x;
@@ -25,19 +26,29 @@ class VisualObject{
                 this.opacity = Math.abs(((this.animationProgress-1)/animationSteps)-1);
         }
     }
+    doAnimationComplete(){
+        // ToDo Something meaningful in here
+    }
 }
 
 class VisualElementBox extends VisualObject{
     constructor(){
         super();
-    }
-    move(){
-
+        this.crossedThrough = false;
     }
     draw(){
         ctx.save();
         ctx.globalAlpha = this.opacity;
         ctx.strokeRect(this.middleX-(elementBoxWidth/2), this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        if(this.crossedThrough){
+            // Draw a slanted line to indicate no object referenced
+            ctx.beginPath();
+            ctx.moveTo(this.middleX - (elementBoxWidth/2), this.middleY + (elementBoxHeight/2));
+            ctx.lineTo(this.middleX + (elementBoxWidth/2), this.middleY - (elementBoxHeight/2));
+            ctx.closePath();
+            ctx.stroke();
+        }
+
         ctx.restore();
     }
 }
@@ -46,6 +57,7 @@ class VisualValue extends VisualObject{
     constructor(value){
         super();
         this.value = value;
+
     }
     move(){
 
