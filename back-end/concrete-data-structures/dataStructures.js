@@ -57,7 +57,7 @@ class SinglyLinkedListNode extends Element{
         return this.middleY;
     }
     draw(){
-        // Draw the box for "next"
+        // Draw the box for "visualNext"
         ctx.strokeRect(this.middleX, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
         // Draw the actual box
         ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
@@ -70,7 +70,7 @@ class SinglyLinkedListNode extends Element{
             ctx.closePath();
             ctx.stroke();
         }else {
-            // Draw the actual value
+            // Draw the actual visualValue
             ctx.fillText(this.value, this.middleX-(elementBoxWidth/2), this.middleY);
 
             if (this.next==null){
@@ -112,7 +112,7 @@ class DoublyLinkedListNode extends Element{
     draw(){
         // Draw the actual box
         ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
-        // Draw the box for "next"
+        // Draw the box for "visualNext"
         ctx.strokeRect(this.middleX, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
         if (this.element==null){
@@ -123,9 +123,9 @@ class DoublyLinkedListNode extends Element{
             ctx.closePath();
             ctx.stroke();
         }else {
-            // Draw the actual value
+            // Draw the actual visualValue
             ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
-            // Draw the "next"
+            // Draw the "visualNext"
             ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
             drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
         }
@@ -328,7 +328,7 @@ class ArrayElement extends Element{
         /*
            let canvasObjectMan = new TempAnimationObject(leftMargin, canvas.height - topBottomMargin, this.middleX, this.middleY,
                function(){
-                   ctx.fillText(value, this.middleX, this.middleY);
+                   ctx.fillText(visualValue, this.middleX, this.middleY);
            }, function(){
                super
            });
@@ -337,15 +337,15 @@ class ArrayElement extends Element{
 
 /*        let animatedValue = {
             oldMiddleX:leftMargin, oldMiddleY: canvas.height - topBottomMargin, middleX:this.middleX, middleY:this.middleY, draw:function(){
-                    ctx.fillText(value, this.middleX, this.middleY);
+                    ctx.fillText(visualValue, this.middleX, this.middleY);
             }
         };*/
 
 
         //canvasObjectMan.add(animatedValue);
         //animateDude(animatedValue, true, super.setValue);
-        //super.setValue(value, animateDude(animatedValue));
-        //animateDude(animatedValue, super.setValue, value);
+        //super.setValue(visualValue, animateDude(animatedValue));
+        //animateDude(animatedValue, super.setValue, visualValue);
 
 
         super.setValue(value);
@@ -363,7 +363,7 @@ class ArrayElement extends Element{
         let lineAngle = Math.atan2(this.middleY-this.oldMiddleY, this.middleX-this.oldMiddleX);
         let lineLength = Math.hypot(this.middleX-this.oldMiddleX, this.middleY-this.oldMiddleY);
         let start = null;
-        let value = this.value;
+        let visualValue = this.visualValue;
         let index = this.index;
         let showIndex = this.showIndexNum;
         function step(timestamp) {
@@ -378,8 +378,8 @@ class ArrayElement extends Element{
             // Draw the actual box
             ctx.strokeRect(currX-(elementBoxWidth/2), currY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
-            // Draw the actual value
-            ctx.fillText(value, currX, currY);
+            // Draw the actual visualValue
+            ctx.fillText(visualValue, currX, currY);
 
             // Draw the index
             if (showIndex){
@@ -416,7 +416,7 @@ class ArrayElement extends Element{
         // Draw the actual box
         ctx.strokeRect(x-(elementBoxWidth/2), y-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
-        // Draw the actual value
+        // Draw the actual visualValue
         ctx.fillText(this.value, x, y);
 
         // Draw the index
@@ -600,8 +600,8 @@ class HeapArray extends SimpleArray{
         let temp = this.content[i].getValue();
         console.log(temp);
         console.log(this.content[j].getValue());
-        this.content[i].value = this.content[j].getValue();
-        this.content[j].value = temp;
+        this.content[i].visualValue = this.content[j].getValue();
+        this.content[j].visualValue = temp;
         this.draw();
     }
     draw() {

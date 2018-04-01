@@ -21,7 +21,7 @@ class SimpleArrayStackPainter extends Painter{
             // Draw the actual box
             ctx.strokeRect(currElement.middleX-(elementBoxWidth/2), currElement.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
 
-            // Draw the actual value
+            // Draw the actual visualValue
             ctx.fillText(currElement.value, currElement.middleX, currElement.middleY);
 
             // Draw the index

@@ -19,7 +19,7 @@ function mrAnimator(objectToAnimate){
         currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
         currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
 
-        objectToAnimate.updateXY(currX, currY, progress);
+        objectToAnimate.updateMiddleXY(currX, currY, progress);
 
         //canvasObjectMan.draw();
         adtController.datastructureController.draw();
@@ -62,7 +62,8 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
         currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
         currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
 
-        objectToAnimate.updateXY(currX, currY, progress);
+        // This will have to update the elements contained within the element container
+        objectToAnimate.updateMiddleXY(currX, currY, progress);
 
         //animationSequencer.draw();
         //objectToAnimate.draw();
@@ -105,8 +106,6 @@ class AnimationSequencer{
     }
     go(){
         mrExperimentalAnimator(this, 0, this.animationQueue[0]);
-
-
     }
     doNext(i){
         if (this.animationQueue.length===i+1){
@@ -116,7 +115,6 @@ class AnimationSequencer{
         }else{
             mrExperimentalAnimator(this, i+1, this.animationQueue[i+1]);
         }
-
     }
     draw(){
         for(let bob in this.animationQueue){

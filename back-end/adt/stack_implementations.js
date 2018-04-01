@@ -48,7 +48,7 @@ class SinglyLinkedListStack{
         outputLabel.innerText = "Pushed " + element;
 
         return newNode;
-        //  return {value:};
+        //  return {visualValue:};
     }
     pop(){
         if (this.dataStructure.isEmpty()) {
