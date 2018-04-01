@@ -6,12 +6,14 @@ class VisualObject{
         this.middleY = 0;
         this.staticMiddleX = 0;
         this.staticMiddleY = 0;
+        this.notDrawn = false;
         this.fade = "none";
         this.opacity = 1;
         this.animationProgress = 0;
         this.isBeingAnimated = false;
         this.animationProperties = {isMoving: false, isFading:false};
         this.visualObjects = [];
+        this.id = Math.random();
     }
     setMiddleXY(x, y){
         this.middleX = x;
@@ -39,14 +41,10 @@ class VisualObject{
         if (this.animationProperties.isFading){
             this.updateOpacity();
         }
-/*        for (let i=0; i<this.visualObjects.length; i++){
-            if (this.visualObjects[i].isBeingAnimated || this.isBeingAnimated){
-                this.visualObjects[i].updateMiddleXY(x, y, progress);
-            }
-        }*/
     }
     setIsMoving(isMoving){
         this.animationProperties.isMoving = isMoving;
+        this.isBeingAnimated = isMoving;
         for (let i=0; i<this.visualObjects.length; i++){
             this.visualObjects[i].setIsMoving(isMoving);
         }
@@ -62,15 +60,38 @@ class VisualObject{
                 this.opacity = Math.abs(((this.animationProgress-1)/animationSteps)-1);
         }
     }
+    addObject(visualObject){
+        this.visualObjects.push(visualObject);
+    }
     doAnimationComplete(){
-        this.isBeingAnimated = false;
+        //this.isBeingAnimated = false;
+        this.animationProperties.isMoving = false;
+        this.animationProperties.isFading = false;
+
         for (let i=0; i<this.visualObjects.length; i++){
             this.visualObjects[i].doAnimationComplete();
         }
     }
     draw(){
         for (let i=0; i<this.visualObjects.length; i++){
-            this.visualObjects[i].draw();
+            if (!this.notDrawn){
+                this.visualObjects[i].draw();
+            }
+        }
+    }
+}
+
+// WE NEED TO SET ALL CONTAINED OBJECTS TO BE ANIMATED
+class VisualObjectContainer extends VisualObject{
+    constructor(){
+        super();
+    }
+    updateMiddleXY(x, y, progress){
+        super.updateMiddleXY(x, y, progress);
+        console.log(progress);
+        for (let i = 0; i < this.visualObjects.length; i++) {
+                this.visualObjects[i].updateMiddleXY(x, y, progress);
+
         }
     }
 }
@@ -110,6 +131,7 @@ class VisualValue extends VisualObject{
     }
     draw(){
         super.draw();
+
         ctx.save();
         ctx.globalAlpha = this.opacity;
         ctx.fillText(this.value, this.middleX, this.middleY);

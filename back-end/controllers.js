@@ -185,22 +185,29 @@ class SinglyLinkedListController{
             return;
         }
 
+        let elementContainer = new VisualObjectContainer();
+
+        elementContainer.setOldMiddleXY(curr.middleX, curr.middleY);
+
         while (curr!==null){
+            curr.setOldMiddleXY(curr.middleX, curr.middleY);
             if (direction === "right"){
                 curr.setMiddleXY(curr.middleX+3*elementBoxWidth, curr.middleY);
             }else{
                 curr.setMiddleXY(curr.middleX-3*elementBoxWidth, curr.middleY);
             }
-            //curr.isBeingAnimated = true;
-            //mrAnimator(curr);
-            //console.log(curr);
-            animationSequencer.add(curr);
-            //mrAnimator(curr);
-            //animationSequencer.go();
+            //elementContainer.setMiddleXY(curr.middleX, curr.middleY);
+            //elementContainer.addObject(curr);
+            curr.setIsMoving(true);
+            //curr.setOldMiddleXY(prev.middleX, prev.middleY);
+            //animationSequencer.animationQueue.push(curr);
+            //animationSequencer.add(curr);
             curr = curr.getNext();
         }
-
-
+        //animationSequencer.go();
+        //animationSequencer.go();
+        //elementContainer.setIsMoving(true);
+        //animationSequencer.add(elementContainer);
     }
     draw(){
         clearCanvas();
@@ -285,7 +292,6 @@ class SimpleArrayController{
         this.content[index].visualValue.isBeingAnimated = true;
         this.content[index].visualValue.animationProperties.isMoving = true;
         console.log(this.content[index].visualValue);
-
         animationSequencer.add(this.content[index].visualValue);
         animationSequencer.go();
 
@@ -350,8 +356,6 @@ class VisualLinkedListElement extends VisualObject{
         this.visualObjects.push(this.visualNextBox);
         this.visualObjects.push(this.visualValue);
         this.visualObjects.push(this.visualNext);
-
-        this.setIsMoving(true);
 
 /*        this.visualElementBoxValue = new VisualElementBox(this.oldMiddleX, this.oldMiddleY, this.middleX, this.middleY-(elementBoxHeight/2));
 

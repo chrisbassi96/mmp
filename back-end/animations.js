@@ -41,6 +41,7 @@ function mrAnimator(objectToAnimate){
 }
 
 function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
+
     //let animationStart = null;
     let currX = objectToAnimate.oldMiddleX;
     let currY = objectToAnimate.oldMiddleY;
@@ -57,6 +58,7 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
     console.log("animating..." + 0+index);
 
     function step(timestamp){
+
         clearCanvas();
 
         currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
@@ -76,8 +78,8 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
             stopID = window.requestAnimationFrame(step);
         }else{
             console.log("Finished!");
-            objectToAnimate.oldMiddleX = objectToAnimate.middleX;
-            objectToAnimate.oldMiddleY = objectToAnimate.middleY;
+            //objectToAnimate.oldMiddleX = objectToAnimate.middleX;
+            //objectToAnimate.oldMiddleY = objectToAnimate.middleY;
             objectToAnimate.doAnimationComplete();
             clearCanvas();
             //canvasObjectMan.remove(objectToAnimate);
@@ -93,8 +95,13 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
 class AnimationSequencer{
     constructor(){
         this.animationQueue = [];
+        this.doNotDrawList = [];
+        this.numAnimations = 0;
     }
     add(canvasObject){
+        this.numAnimations++;
+        console.log("ADDY ADDY");
+        console.log(canvasObject);
         this.animationQueue[this.animationQueue.length] = canvasObject;
     }
     // Resource used: https://davidwalsh.name/remove-item-array-javascript
@@ -105,16 +112,33 @@ class AnimationSequencer{
         }
     }
     go(){
+        console.log("GO!");
+        //console.log(this.animationQueue[0]);
         mrExperimentalAnimator(this, 0, this.animationQueue[0]);
     }
     doNext(i){
-        if (this.animationQueue.length===i+1){
+        console.log("Animation queue length: " + this.animationQueue.length);
+        console.log("Next animation in queue: " + (i+1));
+        if (this.numAnimations===(i+1)){
             // Finished animating all items
-            this.animationQueue = [];
+            //this.animationQueue = [];
+            //this.clear();
+            //this.numAnimations = 0;
             canvasFOMan.clear();
+            console.log("Animation sequence over");
         }else{
+            console.log("NEXT ONE!");
+            console.log(this.animationQueue);
             mrExperimentalAnimator(this, i+1, this.animationQueue[i+1]);
         }
+    }
+    clear(){
+        for (let i=0; i<this.numAnimations.length; i++){
+            this.numAnimations.pop();
+        }
+    }
+    doNotDraw(canvasObject){
+        this.doNotDrawList.push(canvasObject);
     }
     draw(){
         for(let bob in this.animationQueue){

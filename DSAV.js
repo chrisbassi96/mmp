@@ -24,7 +24,6 @@ function createADT(type){
             adt = new SinglyLinkedListStack();
             datastructureController = new SinglyLinkedListController(adt.dataStructure);
             adtController  = new SimpleArrayStackController(adt, datastructureController);
-            //adtController = new Si
             break;
         case "circular-array-queue":
             adt = new CircularArrayQueue(size);
