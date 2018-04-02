@@ -45,8 +45,8 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
     //let animationStart = null;
     let currX = objectToAnimate.oldMiddleX;
     let currY = objectToAnimate.oldMiddleY;
-    let targetX = objectToAnimate.middleX;
-    let targetY = objectToAnimate.middleY;
+    let targetX = objectToAnimate.staticMiddleX;
+    let targetY = objectToAnimate.staticMiddleY;
     let trajectoryAngle = Math.atan2(targetY-currY, targetX-currX);
     let lineLength = Math.hypot(targetX-currX, targetY-currY);
     let lineSegment = lineLength / animationSteps;
@@ -56,6 +56,7 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
     window.requestAnimationFrame(step);
     objectToAnimate.isBeingAnimated = true;
     console.log("animating..." + 0+index);
+    console.log(objectToAnimate);
 
     function step(timestamp){
 
@@ -92,17 +93,72 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
     }
 }
 
+function mrExperimentalAnimator2(animationSequence, objectsToAnimate){
+    let stopID = 0;
+    let progress = 0;
+
+    window.requestAnimationFrame(step);
+
+    function step(timestamp){
+
+        clearCanvas();
+
+        for (let i=0; i<objectsToAnimate.length; i++){
+            let currObject = objectsToAnimate[i];
+            let fromX = currObject.oldMiddleX;
+            let fromY = currObject.oldMiddleY;
+            let toX = currObject.staticMiddleX;
+            let toY = currObject.staticMiddleY;
+            let trajectoryAngle = Math.atan2(toY-fromY, toX-fromX);
+            let lineLength = Math.hypot(toX-fromX, toY-fromY);
+            let lineSegment = lineLength / animationSteps;
+
+            let newX = currObject.middleX + (Math.cos(trajectoryAngle) * lineSegment);
+            let newY = currObject.middleY + (Math.sin(trajectoryAngle) * lineSegment);
+
+            currObject.setMiddleXY(newX, newY);
+        }
+
+        adtController.datastructureController.draw();
+        canvasFOMan.draw();
+
+        if (progress!==animationSteps-1) {
+            progress += 1;
+            stopID = window.requestAnimationFrame(step);
+        }else{
+            console.log("Finished!");
+            //objectToAnimate.oldMiddleX = objectToAnimate.middleX;
+            //objectToAnimate.oldMiddleY = objectToAnimate.middleY;
+            for (let i=0; i<objectsToAnimate.length; i++){
+                objectsToAnimate[i].doAnimationComplete();
+                objectsToAnimate[i].isBeingAnimated = false;
+            }
+
+            clearCanvas();
+            //canvasObjectMan.remove(objectToAnimate);
+            animationSequence.finish();
+            //canvasFOMan.draw();
+            adtController.datastructureController.draw();
+            window.cancelAnimationFrame(stopID);
+        }
+    }
+}
+
 class AnimationSequencer{
     constructor(){
-        this.animationQueue = [];
-        this.doNotDrawList = [];
-        this.numAnimations = 0;
+        this.sequenceQueue = [];
+        this.numSequences = 0;
+        this.currSequence = 0;
     }
-    add(canvasObject){
-        this.numAnimations++;
+    add(animationSequence){
+
         console.log("ADDY ADDY");
-        console.log(canvasObject);
-        this.animationQueue[this.animationQueue.length] = canvasObject;
+        console.log(animationSequence);
+
+        this.sequenceQueue[this.numSequences] = animationSequence;
+        this.numSequences++;
+        console.log("numSequences: " + this.numSequences);
+        console.log(this.sequenceQueue);
     }
     // Resource used: https://davidwalsh.name/remove-item-array-javascript
     remove(canvasObject){
@@ -113,43 +169,80 @@ class AnimationSequencer{
     }
     go(){
         console.log("GO!");
-        //console.log(this.animationQueue[0]);
-        mrExperimentalAnimator(this, 0, this.animationQueue[0]);
+        console.log(this.sequenceQueue);
+        this.sequenceQueue[0].go();
+    }
+    doNext(){
+        this.currSequence++;
+        console.log("Animation queue length: " + this.sequenceQueue.length);
+        console.log("Next sequence in queue: " + this.currSequence);
+        if (this.numSequences===this.currSequence){
+            // Finished animating all items
+            this.sequenceQueue = [];
+            this.numSequences = 0;
+            this.currSequence = 0;
+            canvasFOMan.clear();
+            console.log("Animation sequencer finished");
+        }else{
+            console.log("NEXT ONE!");
+            console.log(this.sequenceQueue);
+            this.sequenceQueue[this.currSequence].go();
+        }
+    }
+}
+
+class AnimationSequence{
+    constructor(){
+        this.animationSequencer = animationSequencer;
+        this.animationQueue = [];
+        this.doNotDrawObjects = [];
+        this.numAnimations = 0;
+        this.executeConcurrently = false;
+    }
+    go(){
+        this.setDoNotDrawObjects(true);
+        console.log(this.animationQueue[0]);
+        if (this.executeConcurrently){
+            mrExperimentalAnimator2(this, this.animationQueue);
+        }else{
+            mrExperimentalAnimator(this, 0, this.animationQueue[0]);
+        }
+    }
+    setDoNotDrawObjects(setNotDrawObjects){
+        for (let i=0; i<this.doNotDrawObjects.length; i++){
+            this.doNotDrawObjects[i].notDrawn = setNotDrawObjects;
+        }
+    }
+    add(canvasObject){
+        //this.animationQueue[this.numAnimations] = canvasObject;
+        this.animationQueue.push(canvasObject);
+        this.numAnimations++;
     }
     doNext(i){
-        console.log("Animation queue length: " + this.animationQueue.length);
-        console.log("Next animation in queue: " + (i+1));
         if (this.numAnimations===(i+1)){
-            // Finished animating all items
-            //this.animationQueue = [];
-            //this.clear();
-            //this.numAnimations = 0;
-            canvasFOMan.clear();
-            console.log("Animation sequence over");
+            console.log("FINITO!");
+            this.finish();
         }else{
             console.log("NEXT ONE!");
             console.log(this.animationQueue);
             mrExperimentalAnimator(this, i+1, this.animationQueue[i+1]);
         }
     }
-    clear(){
-        for (let i=0; i<this.numAnimations.length; i++){
-            this.numAnimations.pop();
-        }
+    setExecuteLastFirst(){
+        this.executeLastFirst = true;
     }
-    doNotDraw(canvasObject){
-        this.doNotDrawList.push(canvasObject);
+    finish(){
+        // Finished animating all items
+        this.animationQueue = [];
+        //this.clear();
+        this.numAnimations = 0;
+        canvasFOMan.clear();
+        this.setDoNotDrawObjects(false);
+        this.animationSequencer.doNext();
+        console.log("Animation sequence over");
     }
-    draw(){
-        for(let bob in this.animationQueue){
-            if (bob.isBeingAnimated){
-                bob.draw();
-            }
-        }
-/*        for (let i=0; i<this.animationQueue.length; i++){
-            if (this.animationQueue[i].isBeingAnimated){
-                this.animationQueue[i].draw();
-            }
-        }*/
+    doNotDraw(visualObject){
+        this.doNotDrawObjects.push(visualObject);
     }
 }
+

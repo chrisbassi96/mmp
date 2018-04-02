@@ -342,7 +342,7 @@ class ArrayElement extends Element{
         };*/
 
 
-        //canvasObjectMan.add(animatedValue);
+        //canvasObjectMan.addTempObject(animatedValue);
         //animateDude(animatedValue, true, super.setValue);
         //super.setValue(visualValue, animateDude(animatedValue));
         //animateDude(animatedValue, super.setValue, visualValue);

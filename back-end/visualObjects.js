@@ -18,9 +18,13 @@ class VisualObject{
     setMiddleXY(x, y){
         this.middleX = x;
         this.middleY = y;
+        //this.staticMiddleX = x;
+        //this.staticMiddleY = y;
+        //this.setAllMiddleXY();
+    }
+    setStaticMiddleXY(x, y){
         this.staticMiddleX = x;
         this.staticMiddleY = y;
-        //this.setAllMiddleXY();
     }
     setOldMiddleXY(x, y){
         this.oldMiddleX = x;
@@ -73,9 +77,11 @@ class VisualObject{
         }
     }
     draw(){
-        for (let i=0; i<this.visualObjects.length; i++){
-            if (!this.notDrawn){
+        if (!this.notDrawn) {
+            for (let i = 0; i < this.visualObjects.length; i++) {
+
                 this.visualObjects[i].draw();
+
             }
         }
     }
@@ -91,7 +97,6 @@ class VisualObjectContainer extends VisualObject{
         console.log(progress);
         for (let i = 0; i < this.visualObjects.length; i++) {
                 this.visualObjects[i].updateMiddleXY(x, y, progress);
-
         }
     }
 }

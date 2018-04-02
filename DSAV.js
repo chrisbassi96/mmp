@@ -37,6 +37,6 @@ function createADT(type){
         default:
             console.log("Error in createADT function. type = " + type);
     }
-    //canvasObjectMan.add(adt.dataStructure);
+    //canvasObjectMan.addTempObject(adt.dataStructure);
 }
 

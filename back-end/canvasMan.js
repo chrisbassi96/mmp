@@ -29,25 +29,29 @@ function clearCanvas(){
 
 class CanvasForeignObjectManager{
     constructor(){
-        this.objects = [];
+        this.tempObjects = [];
+        this.permObjects = [];
     }
-    add(canvasObject){
-        this.objects.push(canvasObject);
+    addTempObject(canvasObject){
+        this.tempObjects.push(canvasObject);
+    }
+    addPermObject(canvasObject) {
+        this.permObjects.push(canvasObject);
     }
     // Resource used: https://davidwalsh.name/remove-item-array-javascript
     remove(canvasObject){
-        let i = this.objects.indexOf(canvasObject);
+        let i = this.tempObjects.indexOf(canvasObject);
         if (i !== -1){
-            this.objects.splice(i, 1);
+            this.tempObjects.splice(i, 1);
         }
-        //this.objects.pop(canvasObject);
+        //this.tempObjects.pop(canvasObject);
     }
     clear(){
-        this.objects = [];
+        this.tempObjects = [];
     }
     draw(){
-        for (let i=0; i<this.objects.length; i++){
-            this.objects[i].draw();
+        for (let i=0; i<this.tempObjects.length; i++){
+            this.tempObjects[i].draw();
         }
     }
 }

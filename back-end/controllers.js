@@ -45,7 +45,7 @@ class SinglyLinkedListController{
 
         this.head = new VisualLinkedListElement(datastructure.head);
         this.head.setOldMiddleXY(leftMargin + elementBoxWidth, topBottomMargin);
-        this.head.setMiddleXY(this.head.oldMiddleX, this.elementBoxY+(elementBoxHeight/2));
+        this.head.setStaticMiddleXY(this.head.oldMiddleX, this.elementBoxY+(elementBoxHeight/2));
 
 /*        this.head.oldMiddleX = leftMargin;
         this.head.oldMiddleY = canvas.height - topBottomMargin;
@@ -55,7 +55,7 @@ class SinglyLinkedListController{
         this.tail = this.head;
         this.draw();
 
-        //canvasObjectMan.add(this);
+        //canvasObjectMan.addTempObject(this);
     }
     moveIntoVisualDatastructure(element){
 /*        if (this.head == null) {
@@ -67,7 +67,7 @@ class SinglyLinkedListController{
             this.head = node;
         }*/
 
-        this.shiftNodes("right");
+
 
         let newNode = new VisualLinkedListElement(element);
 
@@ -81,7 +81,7 @@ class SinglyLinkedListController{
         newNode.oldMiddleX = leftMargin + elementBoxWidth;
         newNode.oldMiddleY = canvas.height - topBottomMargin;
 
-        newNode.setMiddleXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
+        newNode.setStaticMiddleXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
 
         if (this.head.physicalElement == null){
             newNode.setNext(null);
@@ -92,9 +92,17 @@ class SinglyLinkedListController{
             this.head = newNode;
         }
 
+        this.shiftNodes("right");
+
         this.head.updateElementValue();
         this.head.setIsMoving(true);
-        animationSequencer.add(this.head);
+        let sequencePush = new AnimationSequence();
+        sequencePush.add(this.head);
+
+        console.log("Add send");
+        console.log("THE SEQUENCE: ");
+        console.log(sequencePush);
+        animationSequencer.add(sequencePush);
         animationSequencer.go();
         //this.head.moveIntoVisualDatastructure();
 
@@ -113,8 +121,8 @@ class SinglyLinkedListController{
         //this.content[index].update();
         //this.content[index].setIndex(index); // Update index
 
-        //canvasObjectMan.add(tempInValue);
-        //canvasObjectMan.objects.push(tempInValue);
+        //canvasObjectMan.addTempObject(tempInValue);
+        //canvasObjectMan.tempObjects.push(tempInValue);
         //mrAnimator(bob);
 
         //this.head.setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
@@ -179,35 +187,87 @@ class SinglyLinkedListController{
         return this.numElements === 0;
     }
     shiftNodes(direction){
-        let curr = this.head;
+        //let curr = this.head;
 
         if (this.datastructure.numElements===1){
             return;
         }
 
-        let elementContainer = new VisualObjectContainer();
+        let prev = this.head;
+        let curr = this.head.getNext();
+        let reversedNodes = [];
 
-        elementContainer.setOldMiddleXY(curr.middleX, curr.middleY);
+        //let sequence = new AnimationSequence();
+        let sequence = new AnimationSequence();
 
         while (curr!==null){
-            curr.setOldMiddleXY(curr.middleX, curr.middleY);
+            curr.setOldMiddleXY(curr.staticMiddleX, curr.staticMiddleY);
             if (direction === "right"){
-                curr.setMiddleXY(curr.middleX+3*elementBoxWidth, curr.middleY);
+                curr.setStaticMiddleXY(curr.staticMiddleX+(3*elementBoxWidth), curr.staticMiddleY);
             }else{
-                curr.setMiddleXY(curr.middleX-3*elementBoxWidth, curr.middleY);
+                curr.setStaticMiddleXY(curr.staticMiddleX-(3*elementBoxWidth), curr.staticMiddleY);
             }
+            curr.setIsMoving(true);
+            sequence.add(curr);
+            sequence.doNotDraw(this.head);
+            sequence.executeConcurrently = true;
+
+            //console.log("Current coords: " + curr.middleX + " " + curr.middleY);
             //elementContainer.setMiddleXY(curr.middleX, curr.middleY);
             //elementContainer.addObject(curr);
-            curr.setIsMoving(true);
+
+/*            curr.setIsMoving(true);
+            let bob = new AnimationSequence();
+            bob.doNotDraw(prev);
+            bob.addTempObject(curr);
+            animationSequencer.addTempObject(bob);*/
+            //reversedNodes.push(curr);
+            //bob = null;
             //curr.setOldMiddleXY(prev.middleX, prev.middleY);
             //animationSequencer.animationQueue.push(curr);
-            //animationSequencer.add(curr);
+            //animationSequencer.addTempObject(curr);
+            //reversedNodes.push(curr);
+            prev = curr;
             curr = curr.getNext();
         }
-        //animationSequencer.go();
-        //animationSequencer.go();
-        //elementContainer.setIsMoving(true);
-        //animationSequencer.add(elementContainer);
+
+
+        console.log(reversedNodes);
+
+        //reversedNodes = reversedNodes.reverse();
+
+
+/*        for (let i=0; i<reversedNodes.length; i++){
+            reversedNodes[i].setOldMiddleXY(reversedNodes[i].middleX, reversedNodes[i].middleY);
+            console.log("oldMiddleX: " + reversedNodes[i].middleX);
+            console.log("oldMiddleY: " + reversedNodes[i].middleY);
+            //reversedNodes[i].setMiddleXY(reversedNodes[i].middleX+(3*elementBoxWidth), reversedNodes[i].middleY);
+
+            reversedNodes[i].staticMiddleX = reversedNodes[i].middleX+(3*elementBoxWidth);
+            reversedNodes[i].staticMiddleY = reversedNodes[i].middleY;
+            console.log("middleX: " + (reversedNodes[i].middleX+(3*elementBoxWidth)));
+            console.log("middleY: " + reversedNodes[i].middleY);
+            reversedNodes[i].setIsMoving(true);
+/!*            let bob = new AnimationSequence();
+            bob.addTempObject(reversedNodes[i]);
+            bob.doNotDraw(this.head);
+            console.log("reverseNodes length: " + reversedNodes.length);
+            for (let b = reversedNodes.length-1; b>i; b--){
+                bob.doNotDraw(reversedNodes[b]);
+            }*!/
+            sequence.add(reversedNodes[i]);
+            sequence.doNotDraw(this.head);
+            sequence.executeConcurrently = true;
+            //animationSequencer.addTempObject(bob);
+
+        }*/
+        animationSequencer.add(sequence);
+        //sequence.doNotDraw(this.head);
+        //console.log("Add send");
+        //console.log("THE SEQUENCE: ");
+        //console.log(sequence);
+        //sequence.setExecuteLastFirst();
+        //animationSequencer.addTempObject(sequence);
     }
     draw(){
         clearCanvas();
@@ -221,16 +281,23 @@ class SinglyLinkedListController{
             return;
         }
 
+        let arrowEndY = 0;
+
+        if (this.head.staticMiddleY !== this.head.middleY){
+            arrowEndY = this.elementBoxY-10;
+        }else{
+            arrowEndY = this.head.middleY-(elementBoxHeight/2)-10;
+        }
 
 
         if (this.head.isOnTopOf(this.tail)){
             /*            let dummy = new SinglyLinkedListNode(null, null);
                         dummy.setMiddleXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);*/
-            drawLabelledArrow("head / tail", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.middleX, this.head.middleY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head / tail", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.staticMiddleX, arrowEndY);
             //head.draw();
         }else{
-            drawLabelledArrow("head", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.middleX, this.head.middleY-(elementBoxHeight/2)-10);
+            drawLabelledArrow("head", 5, this.head.staticMiddleX, elementBoxLabelY, this.head.staticMiddleX, arrowEndY);
             drawLabelledArrow("tail", 5, this.tail.middleX, elementBoxLabelY, this.tail.middleX, this.tail.middleY-(elementBoxHeight/2)-10);
         }
 
@@ -262,11 +329,12 @@ class SimpleArrayController{
         this.showIndex = showIndex;
         this.content = [];
 
-        //canvasObjectMan.add(this);
+        //canvasObjectMan.addTempObject(this);
 
         for (let i=0; i<datastructure.size; i++){
             this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
             this.content[i].setMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             //this.content[i].setIndex(i);
             //this.content[i].moveIntoVisualDatastructure();
             this.content[i].draw();
@@ -283,16 +351,18 @@ class SimpleArrayController{
         tempInValue.oldMiddleY = this.content[index].middleY;
         tempInValue.middleX = this.content[index].middleX;
         tempInValue.middleY = this.content[index].middleY;
-        //canvasObjectMan.objects.push(tempInValue);
-        canvasFOMan.add(tempInValue);
+        //canvasObjectMan.tempObjects.push(tempInValue);
+        canvasFOMan.addTempObject(tempInValue);
 
         //mrAnimator(tempInValue);
 
         this.content[index].setOldMiddleXY(leftMargin + (elementBoxWidth/2), canvas.height - topBottomMargin);
         this.content[index].visualValue.isBeingAnimated = true;
         this.content[index].visualValue.animationProperties.isMoving = true;
-        console.log(this.content[index].visualValue);
-        animationSequencer.add(this.content[index].visualValue);
+        //console.log(this.content[index].visualValue);
+        let sequence = new AnimationSequence();
+        sequence.add(this.content[index].visualValue);
+        animationSequencer.add(sequence);
         animationSequencer.go();
 
         //4this.content[index].moveIntoVisualDatastructure();
@@ -306,12 +376,11 @@ class SimpleArrayController{
         //this.content[index].moveVisualValueIntoArray();
         console.log("outValue: " + outValue);
         let tempOutValue = new VisualValue(outValue);
-        tempOutValue.oldMiddleX = this.content[index].middleX;
-        tempOutValue.oldMiddleY = this.content[index].middleY;
-        tempOutValue.middleX = canvas.width-leftMargin;
-        tempOutValue.middleY = canvas.height-topBottomMargin;
-        //canvasObjectMan.add(tempOutValue);
-        canvasFOMan.add(tempOutValue);
+        tempOutValue.setOldMiddleXY(this.content[index].middleX, this.content[index].middleY);
+        tempOutValue.setStaticMiddleXY(canvas.width - leftMargin, canvas.height-topBottomMargin);
+        //canvasObjectMan.addTempObject(tempOutValue);
+        tempOutValue.setIsMoving(true);
+        canvasFOMan.addTempObject(tempOutValue);
 
         animationSequencer.add(tempOutValue);
         animationSequencer.go();
@@ -417,8 +486,8 @@ class VisualLinkedListElement extends VisualObject{
 /*        this.middleX = x;
         this.middleY = y;*/
 
-        // Only update the coords of element visual objects IF they are being animated
-        // This allows us to control which visual objects of the element are animated and which are not
+        // Only update the coords of element visual tempObjects IF they are being animated
+        // This allows us to control which visual tempObjects of the element are animated and which are not
         if(this.visualValueBox.isBeingAnimated || this.isBeingAnimated){
             this.visualValueBox.updateMiddleXY(x-(elementBoxWidth/2), y, progress);
         }
@@ -467,7 +536,7 @@ class VisualLinkedListElement extends VisualObject{
         this.visualValue.draw();
         this.visualNext.draw();*/
         super.draw();
-        if(this.nextVisualElement !== null){
+        if(!this.notDrawn && this.nextVisualElement !== null){
             this.visualNextBox.crossedThrough = false;
             drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.nextVisualElement.visualValue.middleX-(elementBoxWidth/2), this.nextVisualElement.middleY);
         }
@@ -518,8 +587,8 @@ class VisualArrayElement{
         this.middleX = x;
         this.middleY = y;
 
-        // Only update the coords of element visual objects IF they are being animated
-        // This allows us to control which visual objects of the element are animated and which are not
+        // Only update the coords of element visual tempObjects IF they are being animated
+        // This allows us to control which visual tempObjects of the element are animated and which are not
         if(this.visualElementBox.isBeingAnimated || this.isBeingAnimated){
             this.visualElementBox.updateMiddleXY(x, y);
         }
