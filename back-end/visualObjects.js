@@ -6,48 +6,72 @@ class CoordsSet{
     }
 }
 
+class AnimationProperties{
+    constructor(isMoving, isFading){
+        this.isMoving = isMoving;
+        this.isFading = isFading;
+        this.progress = 0;
+        this.fade = "none";
+        this.opacity = 1;
+
+    }
+    isBeingAnimated(){
+        return this.isMoving === true || this.isFading === true;
+    }
+}
+
+class MoveFadeIn extends AnimationProperties{
+    constructor(){
+        super(true, true);
+        this.fade = "in";
+    }
+}
+
+class MoveFadeOut extends AnimationProperties{
+    constructor(){
+        super(true, true);
+        this.fade = "out";
+    }
+}
+
+class MoveNoFade extends AnimationProperties{
+    constructor(){
+        super(true, false);
+    }
+}
+
 class VisualObject{
     constructor(){
         this.coordsSet = new CoordsSet();
-/*        this.oldMiddleX = 0;
-        this.oldMiddleY = 0;
-        this.middleX = 0;
-        this.middleY = 0;
-        this.staticMiddleX = 0;
-        this.staticMiddleY = 0;*/
         this.notDrawn = false;
         this.fade = "none";
         this.opacity = 1;
         this.animationProgress = 0;
-        this.isBeingAnimated = false;
-        this.animationProperties = {isMoving: false, isFading:false};
+        //this.isBeingAnimated = false;
+        this.animationProperties = new AnimationProperties();
         this.visualObjects = [];
         this.id = Math.random();
     }
-    setMiddleXY(x, y){
-        this.coordsSet.middleXY[0] = x;
-        this.coordsSet.middleXY[1] = y;
-        //this.staticMiddleX = x;
-        //this.staticMiddleY = y;
-        //this.setAllMiddleXY();
-    }
+    // Return middle X and Y coordinates
+    // @return middle X and Y coordinates as Array
     getMiddleXY(){
-        return [this.coordsSet.middleXY[0], this.coordsSet.middleXY[1]];
+        return this.coordsSet.middleXY;
     }
-    setStaticMiddleXY(x, y){
-        this.coordsSet.staticMiddleXY[0] = x;
-        this.coordsSet.staticMiddleXY[1] = y;
+    setMiddleXY(x, y){
+        this.coordsSet.middleXY = [x, y];
     }
     getStaticMiddleXY(){
         return [this.coordsSet.staticMiddleXY[0], this.coordsSet.staticMiddleXY[1]];
     }
-    setOldMiddleXY(x, y){
-        this.coordsSet.oldMiddleXY[0] = x;
-        this.coordsSet.oldMiddleXY[1] = y;
-        this.setAllOldMiddleXY();
+    setStaticMiddleXY(x, y){
+        this.coordsSet.staticMiddleXY = [x, y];
     }
     getOldMiddleXY(){
-        return [this.coordsSet.oldMiddleXY[0], this.coordsSet.oldMiddleXY[1]];
+        return this.coordsSet.oldMiddleXY;
+    }
+    setOldMiddleXY(x, y){
+        this.coordsSet.oldMiddleXY = [x, y];
+        this.setAllOldMiddleXY();
     }
     setAllOldMiddleXY(){
         for (let i=0; i<this.visualObjects.length; i++){
@@ -55,20 +79,29 @@ class VisualObject{
         }
     }
     updateMiddleXY(x, y, progress){
-        this.animationProgress = progress;
+        this.animationProperties.progress = progress;
+
         if (this.animationProperties.isMoving){
-            this.coordsSet.middleXY[0] = x;
-            this.coordsSet.middleXY[1] = y;
+            this.coordsSet.middleXY = [x, y];
         }
         if (this.animationProperties.isFading){
             this.updateOpacity();
         }
     }
-    setIsMoving(isMoving){
-        this.animationProperties.isMoving = isMoving;
-        this.isBeingAnimated = isMoving;
+    isBeingAnimated(){
+        return this.animationProperties.isBeingAnimated();
+    }
+    setAnimationProperties(animationProperties){
+        this.animationProperties = animationProperties;
         for (let i=0; i<this.visualObjects.length; i++){
-            this.visualObjects[i].setIsMoving(isMoving);
+            this.visualObjects[i].setAnimationProperties(animationProperties);
+        }
+    }
+    setNotDrawn(notDrawn){
+        this.notDrawn = notDrawn;
+        console.log(notDrawn);
+        for (let i=0; i<this.visualObjects; i++){
+            this.visualObjects[i].setNotDrawn(notDrawn);
         }
     }
     updateOpacity(){
@@ -87,8 +120,7 @@ class VisualObject{
     }
     doAnimationComplete(){
         //this.isBeingAnimated = false;
-        this.animationProperties.isMoving = false;
-        this.animationProperties.isFading = false;
+        this.animationProperties = new AnimationProperties();
 
         for (let i=0; i<this.visualObjects.length; i++){
             this.visualObjects[i].doAnimationComplete();
@@ -97,24 +129,8 @@ class VisualObject{
     draw(){
         if (!this.notDrawn) {
             for (let i = 0; i < this.visualObjects.length; i++) {
-
                 this.visualObjects[i].draw();
-
             }
-        }
-    }
-}
-
-// WE NEED TO SET ALL CONTAINED OBJECTS TO BE ANIMATED
-class VisualObjectContainer extends VisualObject{
-    constructor(){
-        super();
-    }
-    updateMiddleXY(x, y, progress){
-        super.updateMiddleXY(x, y, progress);
-        console.log(progress);
-        for (let i = 0; i < this.visualObjects.length; i++) {
-                this.visualObjects[i].updateMiddleXY(x, y, progress);
         }
     }
 }
@@ -122,7 +138,12 @@ class VisualObjectContainer extends VisualObject{
 class VisualElementBox extends VisualObject{
     constructor(){
         super();
+        this.containingVisualObject = null;
         this.crossedThrough = false;
+    }
+    doAnimationComplete(){
+        super.doAnimationComplete();
+
     }
     draw(){
         super.draw();
@@ -159,5 +180,12 @@ class VisualValue extends VisualObject{
         ctx.globalAlpha = this.opacity;
         ctx.fillText(this.value, this.coordsSet.middleXY[0], this.coordsSet.middleXY[1]);
         ctx.restore();
+    }
+}
+
+class VisualArrow extends VisualObject {
+    constructor(){
+        super();
+        this.destCoordsSet = new CoordsSet();
     }
 }

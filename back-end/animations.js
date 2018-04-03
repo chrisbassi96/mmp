@@ -55,7 +55,7 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
     let progress = 0;
 
     window.requestAnimationFrame(step);
-    objectToAnimate.isBeingAnimated = true;
+    //objectToAnimate.isBeingAnimated = true;
     console.log("animating..." + 0+index);
     console.log(objectToAnimate);
 
@@ -66,10 +66,7 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
         currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
         currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
 
-        // This will have to update the elements contained within the element container
-        console.log(currX + " " + currY);
         objectToAnimate.updateMiddleXY(currX, currY, progress);
-        console.log(objectToAnimate.getMiddleXY()[0] + " " + objectToAnimate.getMiddleXY()[1]);
 
         //animationSequencer.draw();
         //objectToAnimate.draw();
@@ -89,7 +86,7 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
             //objectToAnimate.doAnimationComplete();
             clearCanvas();
             //canvasObjectMan.remove(objectToAnimate);
-            objectToAnimate.isBeingAnimated = false;
+            //objectToAnimate.isBeingAnimated = false;
             //canvasFOMan.draw();
             adtController.datastructureController.draw();
             animationSequencer.doNext(index);
@@ -104,14 +101,16 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate){
 
     window.requestAnimationFrame(step);
 
+    console.log(objectsToAnimate);
+
     function step(timestamp){
 
         clearCanvas();
-
+        console.log(objectsToAnimate.length);
         for (let i=0; i<objectsToAnimate.length; i++){
-            let currObject = objectsToAnimate[i];
-            let fromX = currObject.getMiddleXY()[0];
-            let fromY = currObject.getMiddleXY()[1];
+            let currObject = objectsToAnimate[i].canvasObject;
+            let fromX = currObject.getOldMiddleXY()[0];
+            let fromY = currObject.getOldMiddleXY()[1];
             let toX = currObject.getStaticMiddleXY()[0];
             let toY = currObject.getStaticMiddleXY()[1];
             let trajectoryAngle = Math.atan2(toY-fromY, toX-fromX);
@@ -135,8 +134,8 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate){
             //objectToAnimate.oldMiddleX = objectToAnimate.middleX;
             //objectToAnimate.oldMiddleY = objectToAnimate.middleY;
             for (let i=0; i<objectsToAnimate.length; i++){
-                objectsToAnimate[i].doAnimationComplete();
-                objectsToAnimate[i].isBeingAnimated = false;
+                objectsToAnimate[i].canvasObject.doAnimationComplete();
+                objectsToAnimate[i].canvasObject.animationProperties = new AnimationProperties(false, false);
             }
 
             clearCanvas();
@@ -201,28 +200,41 @@ class AnimationSequence{
         this.animationSequencer = animationSequencer;
         this.animationQueue = [];
         this.doNotDrawObjects = [];
+        this.doDrawObjects = [];
         this.numAnimations = 0;
         this.executeConcurrently = false;
     }
     go(){
-        this.setDoNotDrawObjects(true);
-        console.log(this.animationQueue[0]);
+        //this.setupDrawnObjects(true)
+        console.log("GO GO GO");
+        for (let i=0; i<this.doNotDrawObjects.length; i++){
+            this.doNotDrawObjects[i].setNotDrawn(true);
+        }
         if (this.executeConcurrently){
+            for (let i = 0; i<this.numAnimations; i++){
+                this.animationQueue[i].canvasObject.coordsSet = this.animationQueue[i].coordsSet;
+                this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
+            }
             mrExperimentalAnimator2(this, this.animationQueue);
         }else{
             this.animationQueue[0].canvasObject.coordsSet = this.animationQueue[0].coordsSet;
-            console.log(this.animationQueue[0]);
+            this.animationQueue[0].canvasObject.setAnimationProperties(this.animationQueue[0].animationProperties);
             mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
         }
     }
-    setDoNotDrawObjects(setNotDrawObjects){
+    setupDrawnObjects(setNotDrawObjects){
+        console.log(setNotDrawObjects);
         for (let i=0; i<this.doNotDrawObjects.length; i++){
-            this.doNotDrawObjects[i].notDrawn = setNotDrawObjects;
+            console.log(this.doNotDrawObjects[i]);
+            this.doNotDrawObjects[i].setNotDrawn(setNotDrawObjects);
+            console.log(this.doNotDrawObjects[i]);
         }
     }
-    add(canvasObject, coordsSet){
+    add(canvasObject, coordsSet, animationProperties){
         //this.animationQueue[this.numAnimations] = canvasObject;
-        this.animationQueue.push({canvasObject: canvasObject, coordsSet: coordsSet});
+        this.animationQueue.push({canvasObject: canvasObject, coordsSet: coordsSet, animationProperties: animationProperties});
+        //this.animationQueue[this.numAnimations].canvasObject.coordsSet = this.animationQueue[this.numAnimations].coordsSet;
+        //this.animationQueue[this.numAnimations].canvasObject.setAnimationProperties(animationProperties);
         this.numAnimations++;
     }
     doNext(i){
@@ -233,6 +245,7 @@ class AnimationSequence{
             console.log("NEXT ONE!");
             console.log(this.animationQueue);
             this.animationQueue[i+1].canvasObject.coordsSet = this.animationQueue[i+1].coordsSet;
+            this.animationQueue[i+1].canvasObject.setAnimationProperties(this.animationQueue[i+1].animationProperties);
             mrExperimentalAnimator(this, i+1, this.animationQueue[i+1].canvasObject);
         }
     }
@@ -245,14 +258,19 @@ class AnimationSequence{
         //this.clear();
         this.numAnimations = 0;
         canvasFOMan.clear();
-        this.setDoNotDrawObjects(false);
-
-
+        this.setupDrawnObjects(false);
+        this.doNotDrawObjects = [];
+        this.doDrawObjects = [];
         this.animationSequencer.doNext();
         console.log("Animation sequence over");
     }
     doNotDraw(visualObject){
+        //this.doNotDrawObjects = this.doNotDrawObjects.concat(visualObjects);
         this.doNotDrawObjects.push(visualObject);
+    }
+    doDraw(visualObject){
+        //this.doDrawObjects = this.doDrawObjects.concat(visualObjects)
+        this.doDrawObjects.push(visualObject);
     }
 }
 

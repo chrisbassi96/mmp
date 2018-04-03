@@ -30,9 +30,14 @@ function clearCanvas(){
 class CanvasForeignObjectManager{
     constructor(){
         this.tempObjects = [];
+        this.numTempObjects = 0;
         this.permObjects = [];
     }
     addTempObject(canvasObject){
+
+        console.log("Adding temp object");
+        //this.tempObjects[this.numTempObjects] = canvasObject;
+        //this.numTempObjects++;
         this.tempObjects.push(canvasObject);
     }
     addPermObject(canvasObject) {
@@ -48,8 +53,12 @@ class CanvasForeignObjectManager{
     }
     clear(){
         this.tempObjects = [];
+        //this.numTempObjects = 0;
     }
     draw(){
+/*        for (let i=0; i<this.numTempObjects; i++){
+            this.tempObjects[i].draw();
+        }*/
         for (let i=0; i<this.tempObjects.length; i++){
             this.tempObjects[i].draw();
         }

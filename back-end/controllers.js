@@ -19,11 +19,10 @@ class SimpleArrayStackController{
         if (poppedElement==null){
             outputLabel.innerText = "Stack is empty";
         }else{
-            let poppedElementValue = poppedElement.value;
             let poppedIndex = poppedElement.index;
 
-            outputLabel.innerText = "Pop " + poppedElementValue;
-            this.datastructureController.moveOutofArray(poppedElementValue, poppedIndex);
+            outputLabel.innerText = "Pop " + poppedElement.elementValue;
+            this.datastructureController.moveOutOfDatastructure(poppedElement.elementValue, poppedIndex);
         }
     }
     peek(){
@@ -81,42 +80,61 @@ class SinglyLinkedListController{
         }
 
         this.shiftNodes("right");
+        this.head.updateElementValue();
+
+        let stage0 = new AnimationSequence();
+        stage0.doNotDraw(this.head);
+        stage0.executeConcurrently = true;
+
+        let stage0coordsSet1 = new CoordsSet();
+        let tempElement = new VisualLinkedListElement();
+        stage0coordsSet1.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage0coordsSet1.staticMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+
+        stage0.add(tempElement, stage0coordsSet1, new MoveNoFade());
+        canvasFOMan.addTempObject(tempElement);
+
+        let headValue = new VisualValue(this.head.physicalElement.getValue());
+
+        let stage0coordsSet2 = new CoordsSet();
+        stage0coordsSet2.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
+        stage0coordsSet2.middleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
+        stage0coordsSet2.staticMiddleXY = [stage0coordsSet1.staticMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.staticMiddleXY[1]];
+
+        stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
+        canvasFOMan.addTempObject(headValue);
+
+        animationSequencer.add(stage0);
+
+
 
 
         let stage1 = new AnimationSequence();
+
+        //this.head.setIsMoving(true);
+
         let stage1coordsSet = new CoordsSet();
         stage1coordsSet.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-                stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-                stage1coordsSet.staticMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1coordsSet.staticMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1.add(this.head, stage1coordsSet, new MoveNoFade());
 
+        animationSequencer.add(stage1);
 
-                //let stage1element1 = new VisualLinkedListElement();
-                //stage1element1.setOldMiddleXY(leftMargin + elementBoxWidth, canvas.height / 2);
-                //stage1element1.setMiddleXY(leftMargin + elementBoxWidth, canvas.height / 2);
-                //stage1element1.setStaticMiddleXY(leftMargin + elementBoxWidth, canvas.height / 2);
-                //canvasFOMan.addTempObject(stage1element1);
-                stage1.add(this.head, stage1coordsSet);
-                //stage1.doNotDraw(this.head);
-                animationSequencer.add(stage1);
-
-        //this.head.setOldMiddleXY(stage1element1.staticMiddleX, stage1element1.staticMiddleY);
-        //this.head.setStaticMiddleXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
+        let stage2 = new AnimationSequence();
 
         let stage2coordsSet = new CoordsSet();
-        console.log("stage2coordsSet: ");
-        console.log(stage2coordsSet);
         stage2coordsSet.oldMiddleXY = [stage1coordsSet.staticMiddleXY[0], stage1coordsSet.staticMiddleXY[1]];
+        stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
         stage2coordsSet.staticMiddleXY =  [leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2)];
 
-        this.head.updateElementValue();
-        this.head.setIsMoving(true);
-        let sequencePush = new AnimationSequence();
-        stage1.add(this.head, stage2coordsSet);
+        stage2.add(this.head, stage2coordsSet, new MoveNoFade());
 
         console.log("Add send");
         console.log("THE SEQUENCE: ");
         console.log(stage1);
-        //animationSequencer.add(sequencePush);
+        animationSequencer.add(stage2);
         animationSequencer.go();
     }
     shiftNodes(direction){
@@ -129,14 +147,13 @@ class SinglyLinkedListController{
         let sequence = new AnimationSequence();
 
         while (curr!==null){
-            curr.setOldMiddleXY(curr.staticMiddleX, curr.staticMiddleY);
+            curr.setOldMiddleXY(curr.getStaticMiddleXY()[0], curr.getStaticMiddleXY()[1]);
             if (direction === "right"){
-                curr.setStaticMiddleXY(curr.staticMiddleX+(3*elementBoxWidth), curr.staticMiddleY);
+                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]+(3*elementBoxWidth), curr.getStaticMiddleXY()[1]);
             }else{
-                curr.setStaticMiddleXY(curr.staticMiddleX-(3*elementBoxWidth), curr.staticMiddleY);
+                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]-(3*elementBoxWidth), curr.getStaticMiddleXY()[1]);
             }
-            curr.setIsMoving(true);
-            sequence.add(curr);
+            sequence.add(curr, curr.coordsSet, new MoveNoFade());
 
             curr = curr.getNext();
         }
@@ -165,10 +182,10 @@ class SinglyLinkedListController{
         if (this.head.notDrawn){
             arrowEndY = this.elementBoxY-10;
         }else{
-            arrowEndY = this.head.middleY-(elementBoxHeight/2)-10;
+            arrowEndY = this.head.getMiddleXY()[1]-(elementBoxHeight/2)-10;
         }
 
-        if (this.head.isOnTopOf(this.tail)){
+        if (this.head === this.tail){
             /*            let dummy = new SinglyLinkedListNode(null, null);
                         dummy.setMiddleXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);*/
@@ -176,7 +193,7 @@ class SinglyLinkedListController{
             //head.draw();
         }else{
             drawLabelledArrow("head", 5, headStaticXY[0], elementBoxLabelY, headStaticXY[0], arrowEndY);
-            drawLabelledArrow("tail", 5, tailMiddleXY[0], elementBoxLabelY, tailMiddleXY[0], tailMiddleXY.y-(elementBoxHeight/2)-10);
+            drawLabelledArrow("tail", 5, tailMiddleXY[0], elementBoxLabelY, tailMiddleXY[0], tailMiddleXY[1]-(elementBoxHeight/2)-10);
         }
 
         /*        ctx.strokeRect(50, 50, 50, 50);
@@ -184,7 +201,6 @@ class SinglyLinkedListController{
 
         let cur = this.head;
         while(cur!=null){
-
             cur.draw();
 
             /*            ctx.strokeRect(50+(50*count), 50, 50, 50);
@@ -245,15 +261,15 @@ class SimpleArrayController{
 
         //4this.content[index].moveIntoVisualDatastructure();
     }
-    moveOutofArray(outValue, index){
+    moveOutOfDatastructure(outElement, index){
         this.content[index].updateElementValue(); // Get the current visualValue from physical datastructure
         //this.content[index].update();
         this.content[index].setIndex(index); // Update index
         //this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
 
         //this.content[index].moveVisualValueIntoArray();
-        console.log("outValue: " + outValue);
-        let tempOutValue = new VisualValue(outValue);
+        console.log("outValue: " + outElement.getValue());
+        let tempOutValue = new VisualValue(outElement.getValue());
         tempOutValue.setOldMiddleXY(this.content[index].middleX, this.content[index].middleY);
         tempOutValue.setStaticMiddleXY(canvas.width - leftMargin, canvas.height-topBottomMargin);
         //canvasObjectMan.addTempObject(tempOutValue);
@@ -327,8 +343,8 @@ class VisualLinkedListElement extends VisualObject{
     getNext(){
         return this.nextVisualElement;
     }
-    updateElementValue(){
-        this.visualValue.value = this.physicalElement.getValue();
+    updateElementValue(value = this.physicalElement.getValue()){
+        this.visualValue.value = value;
     }
     setIndex(index){
         this.indexNum = index;
@@ -369,18 +385,19 @@ class VisualLinkedListElement extends VisualObject{
 
         // Only update the coords of element visual tempObjects IF they are being animated
         // This allows us to control which visual tempObjects of the element are animated and which are not
-        if(this.visualValueBox.isBeingAnimated || this.isBeingAnimated){
+        if(this.visualValueBox.isBeingAnimated() || this.isBeingAnimated()){
+            console.log(this.visualValueBox.getMiddleXY());
             this.visualValueBox.updateMiddleXY(x-(elementBoxWidth/2), y, progress);
         }
-        if(this.visualNextBox.isBeingAnimated || this.isBeingAnimated){
+        if(this.visualNextBox.isBeingAnimated() || this.isBeingAnimated()){
             this.visualNextBox.updateMiddleXY(x+(elementBoxWidth/2), y, progress);
         }
 
-        if (this.visualValue.isBeingAnimated || this.isBeingAnimated){
+        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()){
             this.visualValue.updateMiddleXY(x-(elementBoxWidth/2), y, progress);
         }
 
-        if (this.visualNext.isBeingAnimated || this.isBeingAnimated){
+        if (this.visualNext.isBeingAnimated() || this.isBeingAnimated()){
             this.visualNext.updateMiddleXY(x+(elementBoxWidth/2), y, progress);
         }
         //this.update();
@@ -403,7 +420,7 @@ class VisualLinkedListElement extends VisualObject{
         mrAnimator(this.visualValue);
     }*/
     isOnTopOf(otherNode){
-        return (this.coordsSet.middleXY[0] === otherNode.coordsSet.middleXY[1]) && (this.coordsSet.middleXY[1] === otherNode.coordsSet.middleXY[1]);
+        return (this.coordsSet.staticMiddleXY[0] === otherNode.coordsSet.staticMiddleXY[1]) && (this.coordsSet.staticMiddleXY[1] === otherNode.coordsSet.staticMiddleXY[1]);
     }
 /*    doAnimationComplete(){
         this.visualElementBoxValue.doAnimationComplete();

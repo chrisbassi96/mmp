@@ -186,6 +186,9 @@ class SinglyLinkedList{
         return this.head.getValue();
     }
     removeFirst(){
+        // This first line is only for visualization purposes
+        let removedValue = this.head.getValue();
+
         let first = this.head;
         this.head = first.getNext();
 
@@ -193,9 +196,8 @@ class SinglyLinkedList{
 
         this.shiftNodes("left");
 
-        //this.draw();
-
-        return first.getValue();
+        // This line is only for visualization purposes
+        return {elementValue: removedValue, index: null};
     }
     addLast(node){
 
