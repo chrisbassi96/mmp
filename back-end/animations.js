@@ -2,8 +2,8 @@ function mrAnimator(objectToAnimate){
     //let animationStart = null;
     let currX = objectToAnimate.getOldMiddleXY()[0];
     let currY = objectToAnimate.getOldMiddleXY()[1];
-    let targetX = objectToAnimate.getMiddleXY()[0];
-    let targetY = objectToAnimate.getMiddleXY()[1];
+    let targetX = objectToAnimate.getXY()[0];
+    let targetY = objectToAnimate.getXY()[1];
     let trajectoryAngle = Math.atan2(targetY-currY, targetX-currX);
     let lineLength = Math.hypot(targetX-currX, targetY-currY);
     let lineSegment = lineLength / animationSteps;
@@ -29,7 +29,7 @@ function mrAnimator(objectToAnimate){
             stopID = window.requestAnimationFrame(step);
         }else{
             console.log("Finished!");
-            objectToAnimate.setOldMiddleXY(objectToAnimate.getMiddleXY()[0], objectToAnimate.getMiddleXY()[0]);
+            objectToAnimate.setOldMiddleXY(objectToAnimate.getXY()[0], objectToAnimate.getXY()[0]);
             //objectToAnimate.oldMiddleX = objectToAnimate.middleX;
             //objectToAnimate.oldMiddleY = objectToAnimate.middleY;
             objectToAnimate.doAnimationComplete();
@@ -62,6 +62,7 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
     function step(timestamp){
 
         clearCanvas();
+
 
         currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
         currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
@@ -111,7 +112,6 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimati
         //console.log(objectsToAnimate[0].canvasObject);
         for (let i=0; i<numAnimations; i++){
             let currObject = objectsToAnimate[i].canvasObject;
-            console.log(currObject);
             let fromX = currObject.getOldMiddleXY()[0];
             let fromY = currObject.getOldMiddleXY()[1];
             let toX = currObject.getStaticMiddleXY()[0];
@@ -120,11 +120,10 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimati
             let lineLength = Math.hypot(toX-fromX, toY-fromY);
             let lineSegment = lineLength / animationSteps;
 
-            let newX = currObject.getMiddleXY()[0] + (Math.cos(trajectoryAngle) * lineSegment);
-            let newY = currObject.getMiddleXY()[1] + (Math.sin(trajectoryAngle) * lineSegment);
+            let newX = currObject.getXY()[0] + (Math.cos(trajectoryAngle) * lineSegment);
+            let newY = currObject.getXY()[1] + (Math.sin(trajectoryAngle) * lineSegment);
 
-            currObject.updateMiddleXY(newX, newY);
-            console.log(currObject);
+            currObject.updateMiddleXY(newX, newY, progress);
         }
 
         adtController.datastructureController.draw();
@@ -162,7 +161,7 @@ class AnimationSequencer{
     add(animationSequence){
 
         console.log("ADDY ADDY");
-
+        console.log(animationSequence);
         this.sequenceQueue[this.numSequences] = animationSequence;
         this.numSequences++;
         console.log("numSequences: " + this.numSequences);
@@ -216,15 +215,11 @@ class AnimationSequence{
             this.doNotDrawObjects[i].setNotDrawn(true);
         }
         if (this.executeConcurrently){
-
-
             for (let i = 0; i<this.numAnimations; i++){
-                this.animationQueue[i].canvasObject.coordsSet = this.animationQueue[i].coordsSet;
+                this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordsSet);
                 this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
-                console.log(this.animationQueue[i]);
                 //mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
             }
-            console.log(this.animationQueue[0]);
             mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
         }else{
             this.doNext(0);
@@ -242,7 +237,6 @@ class AnimationSequence{
     add(canvasObject, coordsSet, animationProperties){
         //this.animationQueue[this.numAnimations] = canvasObject;
         this.animationQueue.push({canvasObject: canvasObject, coordsSet: coordsSet, animationProperties: animationProperties});
-        console.log(this.animationQueue[this.numAnimations].animationProperties);
         this.numAnimations++;
     }
     // This function adds to the sequence's list of objects that need to be drawn. These can't be specified in the above
@@ -268,7 +262,7 @@ class AnimationSequence{
             console.log(this.animationQueue);
             // Important to only apply the coordsSet when executing animation, otherwise if having the same object
             // animated with two coordsSets, it would be overridden
-            this.animationQueue[i].canvasObject.coordsSet = this.animationQueue[i].coordsSet;
+            this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordsSet);
             this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
             mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
         }

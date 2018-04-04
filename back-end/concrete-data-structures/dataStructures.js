@@ -149,7 +149,7 @@ class SinglyLinkedList{
     constructor(){
 /*        this.head = new SinglyLinkedListNode(null, null);
         this.tail = this.head;
-        this.head.setMiddleXY(leftMargin, elementBoxY);
+        this.head.setXY(leftMargin, elementBoxY);
         this.head.setIndex(0);*/
         this.head = null;
         this.tail = null;
@@ -175,8 +175,8 @@ class SinglyLinkedList{
             node.setNext(this.head);
             this.head = node;
         }
-        //node.setMiddleXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), this.elementBoxY+(elementBoxHeight/2));
-        //node.setMiddleXY(leftMargin+elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
+        //node.setXY(leftMargin+elementBoxWidth+(elementBoxWidth*3*this.numElements), this.elementBoxY+(elementBoxHeight/2));
+        //node.setXY(leftMargin+elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
         //node.setIndex(this.numElements);
         this.numElements++;
 
@@ -185,19 +185,14 @@ class SinglyLinkedList{
     getFirst(){
         return this.head.getValue();
     }
-    removeFirst(){
-        // This first line is only for visualization purposes
-        let removedValue = this.head.getValue();
-
+    removeFirst() {
         let first = this.head;
         this.head = first.getNext();
 
-        this.numElements = this.numElements-1;
+        // Added to make this work in JavaScript
+        if (this.head===null){this.tail = null;}
 
-        this.shiftNodes("left");
-
-        // This line is only for visualization purposes
-        return {elementValue: removedValue, index: null};
+        this.numElements = this.numElements - 1;
     }
     addLast(node){
 
@@ -214,17 +209,6 @@ class SinglyLinkedList{
     isEmpty(){
         return this.numElements === 0;
     }
-    shiftNodes(direction){
-        let curr = this.head;
-        while (curr!=null){
-            if (direction === "right"){
-                curr.setMiddleXY(curr.getX()+3*elementBoxWidth, curr.getY());
-            }else{
-                curr.setMiddleXY(curr.getX()-3*elementBoxWidth, curr.getY());
-            }
-            curr = curr.getNext();
-        }
-    }
     draw(){
         clearCanvas();
 
@@ -234,7 +218,7 @@ class SinglyLinkedList{
 
         if(this.isEmpty()){
 /*            let dummy = new SinglyLinkedListNode(null, null);
-            dummy.setMiddleXY(leftMargin, elementBoxY);
+            dummy.setXY(leftMargin, elementBoxY);
             dummy.setIndex(0);
             dummy.draw();*/
             drawLabelledArrow("head / tail", 5, leftMargin+elementBoxWidth, elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-10);
@@ -243,7 +227,7 @@ class SinglyLinkedList{
 
         if (this.head.isOnTopOf(this.tail)){
             /*            let dummy = new SinglyLinkedListNode(null, null);
-                        dummy.setMiddleXY(leftMargin, elementBoxY);
+                        dummy.setXY(leftMargin, elementBoxY);
                         dummy.setIndex(0);*/
             drawLabelledArrow("head / tail", 5, this.head.getX(), elementBoxLabelY, this.head.getX(), this.head.getY()-(elementBoxHeight/2)-10);
             //head.draw();
@@ -484,7 +468,7 @@ class SimpleArray{
         for (let i=0; i<size; i++){
             //this.content[i] = new ArrayElement(null, this.showIndex);
             this.content[i] = new Element(null, i);
-            //this.content[i].setMiddleXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            //this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             //this.content[i].setIndex(i);
         }
 
@@ -519,7 +503,7 @@ class SimpleArray{
         this.size = this.size*2;
         for (let i=this.size/2; i<this.size; i++){
             this.content[i] = new ArrayElement(null, this.showIndex);
-            this.content[i].setMiddleXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
     }

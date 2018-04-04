@@ -56,10 +56,11 @@ class SinglyLinkedListStack{
             return null;
         }
 
-        outputLabel.innerText = "Popped " + this.dataStructure.removeFirst();
+        let poppedElement = this.dataStructure.head.getValue();
 
+        this.dataStructure.removeFirst();
 
-        return this.dataStructure.removeFirst();
+        return poppedElement;
 
 
         //this.adt.draw();

@@ -45,7 +45,7 @@ class SinglyLinkedListController{
         this.head = new VisualLinkedListElement(datastructure.head);
         this.head.setOldMiddleXY(leftMargin + elementBoxWidth, topBottomMargin);
         this.head.setStaticMiddleXY(this.head.getOldMiddleXY()[0], this.elementBoxY+(elementBoxHeight/2));
-        console.log(this.head);
+
 /*        this.head.oldMiddleX = leftMargin;
         this.head.oldMiddleY = canvas.height - topBottomMargin;
         this.head.middleX = leftMargin;
@@ -59,11 +59,6 @@ class SinglyLinkedListController{
     moveIntoVisualDatastructure(element){
 
         let newNode = new VisualLinkedListElement(element);
-
-        // When inserting, we only want to see the actual visualValue animated!
-        //newNode.visualValue.isBeingAnimated = true;
-        //newNode.visualElementBoxValue.isBeingAnimated = true;
-        //newNode.isBeingAnimated = true;
 
         // This exchanging of coordinates is like setting the head to the new node: "="
         newNode.setOldMiddleXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
@@ -87,48 +82,43 @@ class SinglyLinkedListController{
         stage0.executeConcurrently = true;
 
         let stage0coordsSet1 = new CoordsSet();
-        let tempElement = new VisualLinkedListElement();
         stage0coordsSet1.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        //stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
         stage0coordsSet1.staticMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
 
+        let tempElement = new VisualLinkedListElement();
         stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
         stage0.addTempObject(tempElement);
-        //canvasFOMan.addTempObject(tempElement);
 
         let headValue = new VisualValue(this.head.physicalElement.getValue());
 
         let stage0coordsSet2 = new CoordsSet();
         stage0coordsSet2.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
-        stage0coordsSet2.middleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
+        //stage0coordsSet2.middleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
         stage0coordsSet2.staticMiddleXY = [stage0coordsSet1.staticMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.staticMiddleXY[1]];
 
         stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
         stage0.addTempObject(headValue);
-        //canvasFOMan.addTempObject(headValue);
 
         animationSequencer.add(stage0);
 
 
-
-
         let stage1 = new AnimationSequence();
 
-        //this.head.setIsMoving(true);
-
-        let stage1coordsSet = new CoordsSet();
-        stage1coordsSet.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage1coordsSet.staticMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage1.add(this.head, stage1coordsSet, new MoveNoFade());
+        let stage1coordsSetHead = new CoordsSet();
+        stage1coordsSetHead.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1coordsSetHead.staticMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1.add(this.head, stage1coordsSetHead, new MoveNoFade());
 
         animationSequencer.add(stage1);
+
 
         let stage2 = new AnimationSequence();
 
         let stage2coordsSet = new CoordsSet();
-        stage2coordsSet.oldMiddleXY = [stage1coordsSet.staticMiddleXY[0], stage1coordsSet.staticMiddleXY[1]];
-        stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage2coordsSet.oldMiddleXY = [stage1coordsSetHead.staticMiddleXY[0], stage1coordsSetHead.staticMiddleXY[1]];
+        //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
         stage2coordsSet.staticMiddleXY =  [leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2)];
 
         stage2.add(this.head, stage2coordsSet, new MoveNoFade());
@@ -139,12 +129,44 @@ class SinglyLinkedListController{
         animationSequencer.add(stage2);
         animationSequencer.go();
     }
-    shiftNodes(direction){
-        if (this.datastructure.numElements===1){
-            return;
-        }
+    moveOutOfDatastructure(element){
+        //this.head = null;
+        this.head.physicalElement = this.datastructure.head;
+        this.tail.physicalElement = this.datastructure.tail;
 
-        let curr = this.head.getNext();
+        let stage0 = new AnimationSequence();
+
+        let stage0coordsSetHeadDummy = new CoordsSet();
+        stage0coordsSetHeadDummy.setFromXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
+        stage0coordsSetHeadDummy.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
+
+        let stage0HeadDummy = new VisualLinkedListElement();
+        stage0HeadDummy.visualValue.value = element;
+        stage0.addTempObject(stage0HeadDummy);
+        stage0.doNotDraw(this.head);
+        stage0.add(stage0HeadDummy, stage0coordsSetHeadDummy, new MoveFadeOut());
+
+        animationSequencer.add(stage0);
+
+        console.log("HERE IS THE HEAD");
+        console.log(this.head);
+
+        this.shiftNodes("left");
+
+        this.head = this.head.getNext();
+
+        animationSequencer.go();
+    }
+    shiftNodes(direction){
+        let curr = null;
+
+        if (direction==="right"){
+            if (this.datastructure.numElements===1){return;}
+            curr = this.head.getNext();
+        }else if(direction==="left"){
+            if (this.datastructure.numElements===0){return;}
+            curr = this.head;
+        }
 
         let sequence = new AnimationSequence();
 
@@ -168,13 +190,10 @@ class SinglyLinkedListController{
         clearCanvas();
 
         let headStaticXY = this.head.getStaticMiddleXY();
-        let tailMiddleXY = this.tail.getMiddleXY();
+        let headMiddleXY = this.head.getXY();
+        let tailMiddleXY = this.tail.getXY();
 
         if(this.datastructure.isEmpty()){
-            /*            let dummy = new SinglyLinkedListNode(null, null);
-                        dummy.setMiddleXY(leftMargin, elementBoxY);
-                        dummy.setIndex(0);
-                        dummy.draw();*/
             drawLabelledArrow("head / tail", 5, headStaticXY[0], elementBoxLabelY, leftMargin+elementBoxWidth, this.elementBoxY-10);
             return;
         }
@@ -184,36 +203,21 @@ class SinglyLinkedListController{
         if (this.head.notDrawn){
             arrowEndY = this.elementBoxY-10;
         }else{
-            arrowEndY = this.head.getMiddleXY()[1]-(elementBoxHeight/2)-10;
+            arrowEndY = this.head.getXY()[1]-(elementBoxHeight/2)-10;
         }
 
-        if (this.head === this.tail){
-            /*            let dummy = new SinglyLinkedListNode(null, null);
-                        dummy.setMiddleXY(leftMargin, elementBoxY);
-                        dummy.setIndex(0);*/
-            drawLabelledArrow("head / tail", 5, headStaticXY[0], elementBoxLabelY, headStaticXY[0], arrowEndY);
-            //head.draw();
+        if (this.head.physicalElement === this.tail.physicalElement){
+            drawLabelledArrow("head / tail", 5, headStaticXY[0], elementBoxLabelY, tailMiddleXY[0], arrowEndY);
         }else{
             drawLabelledArrow("head", 5, headStaticXY[0], elementBoxLabelY, headStaticXY[0], arrowEndY);
             drawLabelledArrow("tail", 5, tailMiddleXY[0], elementBoxLabelY, tailMiddleXY[0], tailMiddleXY[1]-(elementBoxHeight/2)-10);
         }
 
-        /*        ctx.strokeRect(50, 50, 50, 50);
-                ctx.fillText("head", 75, 125);*/
-
         let cur = this.head;
         while(cur!=null){
             cur.draw();
-
-            /*            ctx.strokeRect(50+(50*count), 50, 50, 50);
-                        ctx.fillText(cur.getValue(), (50+(50*count))+25, 75);*/
-            //ctx.fillText(count, (50+(50*count))+25, 125);
-
             cur = cur.getNext();
-            /*count++;*/
         }
-        /*        ctx.strokeRect(50+(50*(count)), 50, 50, 50);
-                ctx.fillText("tail", (50+(50*(count)))+25, 75);*/
     }
 }
 
@@ -229,7 +233,7 @@ class SimpleArrayController{
 
         for (let i=0; i<datastructure.size; i++){
             this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
-            this.content[i].setMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             //this.content[i].setIndex(i);
             //this.content[i].moveIntoVisualDatastructure();
@@ -270,8 +274,8 @@ class SimpleArrayController{
         //this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
 
         //this.content[index].moveVisualValueIntoArray();
-        console.log("outValue: " + outElement.getValue());
-        let tempOutValue = new VisualValue(outElement.getValue());
+        console.log("outValue: " + outElement);
+        let tempOutValue = new VisualValue(outElement);
         tempOutValue.setOldMiddleXY(this.content[index].middleX, this.content[index].middleY);
         tempOutValue.setStaticMiddleXY(canvas.width - leftMargin, canvas.height-topBottomMargin);
         //canvasObjectMan.addTempObject(tempOutValue);
@@ -287,7 +291,7 @@ class SimpleArrayController{
         this.size = this.size*2;
         for (let i=this.size/2; i<this.size; i++){
             this.content[i] = new ArrayElementController(null, this.showIndex);
-            this.content[i].setMiddleXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setIndex(i);
         }
     }
@@ -351,38 +355,38 @@ class VisualLinkedListElement extends VisualObject{
     setIndex(index){
         this.indexNum = index;
     }
-    setMiddleXY(x, y){
-        super.setMiddleXY(x, y);
-/*        this.middleX = x;
-        this.middleY = y;
-        this.staticMiddleX = x;
-        this.staticMiddleY = y;*/
+    setXY(x, y){
+        super.setXY(x, y);
+        /*        this.middleX = x;
+                this.middleY = y;
+                this.staticMiddleX = x;
+                this.staticMiddleY = y;*/
         this.setAllXY();
 
         //mrAnimator(this);
     }
-/*    setOldMiddleXY(x, y){
-        this.oldMiddleX = x;
-        this.oldMiddleY = y;
-        this.setAllOldXY();
-    }*/
+    /*    setOldMiddleXY(x, y){
+            this.oldMiddleX = x;
+            this.oldMiddleY = y;
+            this.setAllOldXY();
+        }*/
     setAllXY(){
-        this.visualValueBox.setMiddleXY(this.coordsSet.middleXY[0]-(elementBoxWidth/2), this.coordsSet.middleXY[1]);
-        this.visualValue.setMiddleXY(this.coordsSet.middleXY[0]-(elementBoxWidth/2), this.coordsSet.middleXY[1]);
-        this.visualNextBox.setMiddleXY(this.coordsSet.middleXY[0]+(elementBoxWidth/2), this.coordsSet.middleXY[1]);
-        this.visualNext.setMiddleXY(this.coordsSet.middleXY[0]+(elementBoxWidth/2), this.coordsSet.middleXY[1]);
+        this.visualValueBox.setXY(this.getXY()[0]-(elementBoxWidth/2), this.getXY()[1]);
+        this.visualValue.setXY(this.getXY()[0]-(elementBoxWidth/2), this.getXY()[1]);
+        this.visualNextBox.setXY(this.getXY()[0]+(elementBoxWidth/2), this.getXY()[1]);
+        this.visualNext.setXY(this.getXY()[0]+(elementBoxWidth/2), this.getXY()[1]);
 
-/*        this.visualElementBoxNext.middleX = this.middleX+(elementBoxWidth/2);
-        this.visualElementBoxNext.middleY = this.middleY;
-        this.visualValue.middleX = this.middleX-(elementBoxWidth/2);
-        this.visualValue.middleY = this.middleY;
-        this.visualNext.middleX = this.middleX+(elementBoxWidth/2);
-        this.visualNext.middleY = this.middleY;*/
+        /*        this.visualElementBoxNext.middleX = this.middleX+(elementBoxWidth/2);
+                this.visualElementBoxNext.middleY = this.middleY;
+                this.visualValue.middleX = this.middleX-(elementBoxWidth/2);
+                this.visualValue.middleY = this.middleY;
+                this.visualNext.middleX = this.middleX+(elementBoxWidth/2);
+                this.visualNext.middleY = this.middleY;*/
     }
     updateMiddleXY(x, y, progress){
         super.updateMiddleXY(x, y, progress);
-/*        this.middleX = x;
-        this.middleY = y;*/
+        /*        this.middleX = x;
+                this.middleY = y;*/
 
         // Only update the coords of element visual tempObjects IF they are being animated
         // This allows us to control which visual tempObjects of the element are animated and which are not
@@ -392,51 +396,22 @@ class VisualLinkedListElement extends VisualObject{
         if(this.visualNextBox.isBeingAnimated() || this.isBeingAnimated()){
             this.visualNextBox.updateMiddleXY(x+(elementBoxWidth/2), y, progress);
         }
-
         if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()){
             this.visualValue.updateMiddleXY(x-(elementBoxWidth/2), y, progress);
         }
-
         if (this.visualNext.isBeingAnimated() || this.isBeingAnimated()){
             this.visualNext.updateMiddleXY(x+(elementBoxWidth/2), y, progress);
         }
         //this.update();
     }
- /*   setAllOldXY(){
-        this.visualElementBoxValue.oldMiddleX = this.oldMiddleX;
-        this.visualElementBoxValue.oldMiddleY = this.oldMiddleY;
-        this.visualElementBoxNext.oldMiddleX = this.oldMiddleX;
-        this.visualElementBoxNext.oldMiddleY = this.oldMiddleY;
-        this.visualValue.oldMiddleX = this.oldMiddleX;
-        this.visualValue.oldMiddleY = this.oldMiddleY;
-        this.visualNext.oldMiddleX = this.oldMiddleX;
-        this.visualNext.oldMiddleY = this.oldMiddleY;
-
-    }*/
-/*    moveIntoVisualDatastructure(){
-        mrAnimator(this);
-    }*/
-/*    moveVisualValueIntoArray(){
-        mrAnimator(this.visualValue);
-    }*/
     isOnTopOf(otherNode){
         return (this.coordsSet.staticMiddleXY[0] === otherNode.coordsSet.staticMiddleXY[1]) && (this.coordsSet.staticMiddleXY[1] === otherNode.coordsSet.staticMiddleXY[1]);
     }
-/*    doAnimationComplete(){
-        this.visualElementBoxValue.doAnimationComplete();
-        this.visualElementBoxNext.doAnimationComplete();
-        this.visualValue.doAnimationComplete();
-        this.visualNext.doAnimationComplete();
-    }*/
     draw() {
-/*        this.visualElementBoxValue.draw();
-        this.visualElementBoxNext.draw();
-        this.visualValue.draw();
-        this.visualNext.draw();*/
         super.draw();
-        if(!this.notDrawn && this.nextVisualElement !== null){
+        if(!this.notDrawn && this.physicalElement !==null && this.nextVisualElement !== null){
             this.visualNextBox.crossedThrough = false;
-            drawLabelledArrow("next", 0, this.coordsSet.middleXY[0]+(elementBoxWidth/2), this.coordsSet.middleXY[1], this.nextVisualElement.visualValue.coordsSet.middleXY[0]-(elementBoxWidth/2), this.nextVisualElement.coordsSet.middleXY[1]);
+            drawLabelledArrow("next", 0, this.getXY()[0]+(elementBoxWidth/2), this.getXY()[1], this.nextVisualElement.visualValue.getXY()[0]-(elementBoxWidth/2), this.nextVisualElement.visualValue.getXY()[1]);
         }
     }
 }

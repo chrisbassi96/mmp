@@ -1,8 +1,20 @@
 class CoordsSet{
     constructor(){
         this.oldMiddleXY = [0, 0];
-        this.middleXY = [0, 0];
+        //this.middleXY = [0, 0];
         this.staticMiddleXY = [0, 0];
+    }
+    getFromXY(){
+        return this.oldMiddleXY;
+    }
+    setFromXY(x, y){
+        this.oldMiddleXY = [x, y];
+    }
+    getToXY(){
+        return this.staticMiddleXY;
+    }
+    setToXY(x, y){
+        this.staticMiddleXY = [x, y];
     }
 }
 
@@ -42,51 +54,49 @@ class MoveNoFade extends AnimationProperties{
 
 class VisualObject{
     constructor(){
-        this.coordsSet = new CoordsSet();
+        this.xy = [0, 0];
         this.notDrawn = false;
-/*        this.fade = "none";
-        this.opacity = 1;*/
-        this.animationProgress = 0;
-        //this.isBeingAnimated = false;
-        this.animationProperties = new AnimationProperties();
         this.visualObjects = [];
-        this.id = Math.random();
+        this.coordsSet = new CoordsSet();
+        this.animationProperties = new AnimationProperties();
     }
     // Return middle X and Y coordinates
     // @return middle X and Y coordinates as Array
-    getMiddleXY(){
-        return this.coordsSet.middleXY;
+    getXY(){
+        return this.xy;
     }
-    setMiddleXY(x, y){
-        this.coordsSet.middleXY = [x, y];
+    setXY(x, y){
+        this.xy = [x, y];
     }
     getStaticMiddleXY(){
-        return [this.coordsSet.staticMiddleXY[0], this.coordsSet.staticMiddleXY[1]];
+        return this.coordsSet.getToXY();
     }
     setStaticMiddleXY(x, y){
-        this.coordsSet.staticMiddleXY = [x, y];
+        this.coordsSet.setToXY(x, y);
     }
     getOldMiddleXY(){
-        return this.coordsSet.oldMiddleXY;
+        return this.coordsSet.getFromXY();
     }
     setOldMiddleXY(x, y){
-        this.coordsSet.oldMiddleXY = [x, y];
+        this.coordsSet.setFromXY(x, y);
         this.setAllOldMiddleXY();
     }
     setAllOldMiddleXY(){
         for (let i=0; i<this.visualObjects.length; i++){
-            this.visualObjects[i].setOldMiddleXY(this.coordsSet.oldMiddleX, this.coordsSet.oldMiddleY);
+            this.visualObjects[i].setOldMiddleXY(this.coordsSet.getFromXY()[0], this.coordsSet.getFromXY()[1]);
         }
     }
+    setCoords(coordsSet){
+        this.coordsSet = coordsSet;
+        this.xy = coordsSet.getFromXY();
+    }
     updateMiddleXY(x, y, progress){
-        console.log(this);
         this.animationProperties.progress = progress;
 
         if (this.animationProperties.isMoving){
-            this.coordsSet.middleXY = [x, y];
+            this.setXY(x, y);
         }
         if (this.animationProperties.isFading){
-
             this.updateOpacity();
         }
     }
@@ -102,26 +112,26 @@ class VisualObject{
     }
     setNotDrawn(notDrawn){
         this.notDrawn = notDrawn;
-        console.log(notDrawn);
+
         for (let i=0; i<this.visualObjects; i++){
             this.visualObjects[i].setNotDrawn(notDrawn);
         }
     }
     updateOpacity(){
-        console.log(this);
         let newOpacity = 0;
 
         switch(this.animationProperties.fade){
             case "none":
                 return;
             case "in":
-                newOpacity = ((this.animationProperties.progress-1)/animationSteps);
+                newOpacity = (this.animationProperties.progress/animationSteps);
                 break;
             case "out":
                 newOpacity = Math.abs(((this.animationProperties.progress-1)/animationSteps)-1);
                 break;
         }
         this.animationProperties.opacity = newOpacity;
+
         console.log(this);
 
         for (let i=0; i<this.visualObjects.length; i++){
@@ -148,6 +158,18 @@ class VisualObject{
     }
 }
 
+class VisualArrow extends VisualObject{
+    constructor(){
+        super();
+        this.startCoordsSet = this.coordsSet;
+        this.endCoordsSet = new CoordsSet();
+    }
+    setCoords(coordsSet){
+        this.startCoordsSet = coordsSet;
+
+    }
+}
+
 class VisualElementBox extends VisualObject{
     constructor(){
         super();
@@ -163,12 +185,12 @@ class VisualElementBox extends VisualObject{
 
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
-        ctx.strokeRect(this.coordsSet.middleXY[0]-(elementBoxWidth/2), this.coordsSet.middleXY[1]-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        ctx.strokeRect(this.getXY()[0]-(elementBoxWidth/2), this.getXY()[1]-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
         if(this.crossedThrough){
             // Draw a slanted line to indicate no object referenced
             ctx.beginPath();
-            ctx.moveTo(this.coordsSet.middleXY[0] - (elementBoxWidth/2), this.coordsSet.middleXY[1] + (elementBoxHeight/2));
-            ctx.lineTo(this.coordsSet.middleXY[0] + (elementBoxWidth/2), this.coordsSet.middleXY[1] - (elementBoxHeight/2));
+            ctx.moveTo(this.getXY()[0] - (elementBoxWidth/2), this.getXY()[1] + (elementBoxHeight/2));
+            ctx.lineTo(this.getXY()[0] + (elementBoxWidth/2), this.getXY()[1] - (elementBoxHeight/2));
             ctx.closePath();
             ctx.stroke();
         }
@@ -183,22 +205,13 @@ class VisualValue extends VisualObject{
         this.value = value;
 
     }
-    move(){
-
-    }
     draw(){
         super.draw();
 
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
-        ctx.fillText(this.value, this.coordsSet.middleXY[0], this.coordsSet.middleXY[1]);
+        ctx.fillText(this.value, this.getXY()[0], this.getXY()[1]);
         ctx.restore();
     }
 }
 
-class VisualArrow extends VisualObject {
-    constructor(){
-        super();
-        this.destCoordsSet = new CoordsSet();
-    }
-}
