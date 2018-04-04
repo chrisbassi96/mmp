@@ -44,8 +44,8 @@ class VisualObject{
     constructor(){
         this.coordsSet = new CoordsSet();
         this.notDrawn = false;
-        this.fade = "none";
-        this.opacity = 1;
+/*        this.fade = "none";
+        this.opacity = 1;*/
         this.animationProgress = 0;
         //this.isBeingAnimated = false;
         this.animationProperties = new AnimationProperties();
@@ -79,12 +79,14 @@ class VisualObject{
         }
     }
     updateMiddleXY(x, y, progress){
+        console.log(this);
         this.animationProperties.progress = progress;
 
         if (this.animationProperties.isMoving){
             this.coordsSet.middleXY = [x, y];
         }
         if (this.animationProperties.isFading){
+
             this.updateOpacity();
         }
     }
@@ -92,6 +94,7 @@ class VisualObject{
         return this.animationProperties.isBeingAnimated();
     }
     setAnimationProperties(animationProperties){
+
         this.animationProperties = animationProperties;
         for (let i=0; i<this.visualObjects.length; i++){
             this.visualObjects[i].setAnimationProperties(animationProperties);
@@ -105,14 +108,24 @@ class VisualObject{
         }
     }
     updateOpacity(){
-        switch(this.fade){
+        console.log(this);
+        let newOpacity = 0;
+
+        switch(this.animationProperties.fade){
             case "none":
                 return;
             case "in":
-                this.opacity = ((this.animationProgress-1)/animationSteps);
+                newOpacity = ((this.animationProperties.progress-1)/animationSteps);
                 break;
             case "out":
-                this.opacity = Math.abs(((this.animationProgress-1)/animationSteps)-1);
+                newOpacity = Math.abs(((this.animationProperties.progress-1)/animationSteps)-1);
+                break;
+        }
+        this.animationProperties.opacity = newOpacity;
+        console.log(this);
+
+        for (let i=0; i<this.visualObjects.length; i++){
+            this.visualObjects[i].animationProperties.opacity = newOpacity;
         }
     }
     addObject(visualObject){
@@ -149,7 +162,7 @@ class VisualElementBox extends VisualObject{
         super.draw();
 
         ctx.save();
-        ctx.globalAlpha = this.opacity;
+        ctx.globalAlpha = this.animationProperties.opacity;
         ctx.strokeRect(this.coordsSet.middleXY[0]-(elementBoxWidth/2), this.coordsSet.middleXY[1]-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
         if(this.crossedThrough){
             // Draw a slanted line to indicate no object referenced
@@ -177,7 +190,7 @@ class VisualValue extends VisualObject{
         super.draw();
 
         ctx.save();
-        ctx.globalAlpha = this.opacity;
+        ctx.globalAlpha = this.animationProperties.opacity;
         ctx.fillText(this.value, this.coordsSet.middleXY[0], this.coordsSet.middleXY[1]);
         ctx.restore();
     }

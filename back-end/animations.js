@@ -72,7 +72,9 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
         //objectToAnimate.draw();
         //canvasObjectMan.draw();
         adtController.datastructureController.draw();
-        canvasFOMan.draw();
+        //canvasFOMan.draw();
+        //console.log(animationSequencer);
+        animationSequencer.drawObjects();
 
         if (progress!==animationSteps-1) {
             progress += 1;
@@ -89,13 +91,13 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
             //objectToAnimate.isBeingAnimated = false;
             //canvasFOMan.draw();
             adtController.datastructureController.draw();
-            animationSequencer.doNext(index);
+            animationSequencer.doNext(index+1);
             window.cancelAnimationFrame(stopID);
         }
     }
 }
 
-function mrExperimentalAnimator2(animationSequence, objectsToAnimate){
+function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimations){
     let stopID = 0;
     let progress = 0;
 
@@ -106,9 +108,10 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate){
     function step(timestamp){
 
         clearCanvas();
-        console.log(objectsToAnimate.length);
-        for (let i=0; i<objectsToAnimate.length; i++){
+        //console.log(objectsToAnimate[0].canvasObject);
+        for (let i=0; i<numAnimations; i++){
             let currObject = objectsToAnimate[i].canvasObject;
+            console.log(currObject);
             let fromX = currObject.getOldMiddleXY()[0];
             let fromY = currObject.getOldMiddleXY()[1];
             let toX = currObject.getStaticMiddleXY()[0];
@@ -120,11 +123,13 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate){
             let newX = currObject.getMiddleXY()[0] + (Math.cos(trajectoryAngle) * lineSegment);
             let newY = currObject.getMiddleXY()[1] + (Math.sin(trajectoryAngle) * lineSegment);
 
-            currObject.setMiddleXY(newX, newY);
+            currObject.updateMiddleXY(newX, newY);
+            console.log(currObject);
         }
 
         adtController.datastructureController.draw();
-        canvasFOMan.draw();
+        //canvasFOMan.draw();
+        animationSequence.drawObjects();
 
         if (progress!==animationSteps-1) {
             progress += 1;
@@ -157,12 +162,10 @@ class AnimationSequencer{
     add(animationSequence){
 
         console.log("ADDY ADDY");
-        console.log(animationSequence);
 
         this.sequenceQueue[this.numSequences] = animationSequence;
         this.numSequences++;
         console.log("numSequences: " + this.numSequences);
-        console.log(this.sequenceQueue);
     }
     // Resource used: https://davidwalsh.name/remove-item-array-javascript
     remove(canvasObject){
@@ -199,9 +202,11 @@ class AnimationSequence{
     constructor(){
         this.animationSequencer = animationSequencer;
         this.animationQueue = [];
-        this.doNotDrawObjects = [];
-        this.doDrawObjects = [];
         this.numAnimations = 0;
+        this.doNotDrawObjects = [];
+        this.objectsToDraw = [];
+        this.numObjectsToDraw = 0;
+
         this.executeConcurrently = false;
     }
     go(){
@@ -211,42 +216,61 @@ class AnimationSequence{
             this.doNotDrawObjects[i].setNotDrawn(true);
         }
         if (this.executeConcurrently){
+
+
             for (let i = 0; i<this.numAnimations; i++){
                 this.animationQueue[i].canvasObject.coordsSet = this.animationQueue[i].coordsSet;
                 this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
+                console.log(this.animationQueue[i]);
+                //mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
             }
-            mrExperimentalAnimator2(this, this.animationQueue);
+            console.log(this.animationQueue[0]);
+            mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
         }else{
-            this.animationQueue[0].canvasObject.coordsSet = this.animationQueue[0].coordsSet;
-            this.animationQueue[0].canvasObject.setAnimationProperties(this.animationQueue[0].animationProperties);
-            mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
+            this.doNext(0);
+/*            this.animationQueue[0].canvasObject.coordsSet = this.animationQueue[0].coordsSet;
+            this.animationQueue[0].canvasObject.setAnimationProperties(this.animationQueue[0].animationProperties);*/
+            //mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
         }
     }
     setupDrawnObjects(setNotDrawObjects){
         console.log(setNotDrawObjects);
         for (let i=0; i<this.doNotDrawObjects.length; i++){
-            console.log(this.doNotDrawObjects[i]);
             this.doNotDrawObjects[i].setNotDrawn(setNotDrawObjects);
-            console.log(this.doNotDrawObjects[i]);
         }
     }
     add(canvasObject, coordsSet, animationProperties){
         //this.animationQueue[this.numAnimations] = canvasObject;
         this.animationQueue.push({canvasObject: canvasObject, coordsSet: coordsSet, animationProperties: animationProperties});
-        //this.animationQueue[this.numAnimations].canvasObject.coordsSet = this.animationQueue[this.numAnimations].coordsSet;
-        //this.animationQueue[this.numAnimations].canvasObject.setAnimationProperties(animationProperties);
+        console.log(this.animationQueue[this.numAnimations].animationProperties);
         this.numAnimations++;
     }
+    // This function adds to the sequence's list of objects that need to be drawn. These can't be specified in the above
+    // add function, as the object being added may be part of the data structure and so would be drawn twice.
+    addTempObject(canvasObject){
+        console.log("hello from addTempObject");
+        this.objectsToDraw.push(canvasObject);
+        this.numObjectsToDraw++;
+    }
+    drawObjects(){
+        for (let i = 0; i<this.numObjectsToDraw; i++){
+            this.objectsToDraw[i].draw();
+        }
+    }
     doNext(i){
-        if (this.numAnimations===(i+1)){
+        console.log("numAnimations: " + this.numAnimations);
+        console.log("doNext i value: " + i);
+        if (this.numAnimations===(i)){
             console.log("FINITO!");
             this.finish();
         }else{
             console.log("NEXT ONE!");
             console.log(this.animationQueue);
-            this.animationQueue[i+1].canvasObject.coordsSet = this.animationQueue[i+1].coordsSet;
-            this.animationQueue[i+1].canvasObject.setAnimationProperties(this.animationQueue[i+1].animationProperties);
-            mrExperimentalAnimator(this, i+1, this.animationQueue[i+1].canvasObject);
+            // Important to only apply the coordsSet when executing animation, otherwise if having the same object
+            // animated with two coordsSets, it would be overridden
+            this.animationQueue[i].canvasObject.coordsSet = this.animationQueue[i].coordsSet;
+            this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
+            mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
         }
     }
     finish(){
@@ -257,10 +281,10 @@ class AnimationSequence{
         this.animationQueue = [];
         //this.clear();
         this.numAnimations = 0;
-        canvasFOMan.clear();
+        //canvasFOMan.clear();
         this.setupDrawnObjects(false);
         this.doNotDrawObjects = [];
-        this.doDrawObjects = [];
+        this.objectsToDraw = [];
         this.animationSequencer.doNext();
         console.log("Animation sequence over");
     }
@@ -269,8 +293,8 @@ class AnimationSequence{
         this.doNotDrawObjects.push(visualObject);
     }
     doDraw(visualObject){
-        //this.doDrawObjects = this.doDrawObjects.concat(visualObjects)
-        this.doDrawObjects.push(visualObject);
+        //this.objectsToDraw = this.objectsToDraw.concat(visualObjects)
+        this.objectsToDraw.push(visualObject);
     }
 }
 

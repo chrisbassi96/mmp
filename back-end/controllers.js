@@ -92,8 +92,9 @@ class SinglyLinkedListController{
         stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
         stage0coordsSet1.staticMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
 
-        stage0.add(tempElement, stage0coordsSet1, new MoveNoFade());
-        canvasFOMan.addTempObject(tempElement);
+        stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
+        stage0.addTempObject(tempElement);
+        //canvasFOMan.addTempObject(tempElement);
 
         let headValue = new VisualValue(this.head.physicalElement.getValue());
 
@@ -103,7 +104,8 @@ class SinglyLinkedListController{
         stage0coordsSet2.staticMiddleXY = [stage0coordsSet1.staticMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.staticMiddleXY[1]];
 
         stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
-        canvasFOMan.addTempObject(headValue);
+        stage0.addTempObject(headValue);
+        //canvasFOMan.addTempObject(headValue);
 
         animationSequencer.add(stage0);
 
@@ -378,7 +380,6 @@ class VisualLinkedListElement extends VisualObject{
         this.visualNext.middleY = this.middleY;*/
     }
     updateMiddleXY(x, y, progress){
-
         super.updateMiddleXY(x, y, progress);
 /*        this.middleX = x;
         this.middleY = y;*/
@@ -386,7 +387,6 @@ class VisualLinkedListElement extends VisualObject{
         // Only update the coords of element visual tempObjects IF they are being animated
         // This allows us to control which visual tempObjects of the element are animated and which are not
         if(this.visualValueBox.isBeingAnimated() || this.isBeingAnimated()){
-            console.log(this.visualValueBox.getMiddleXY());
             this.visualValueBox.updateMiddleXY(x-(elementBoxWidth/2), y, progress);
         }
         if(this.visualNextBox.isBeingAnimated() || this.isBeingAnimated()){
