@@ -20,13 +20,13 @@ class SimpleArrayStack{
         if (this.dataStructure.isEmpty()){
             return null;
         }
-        let element = this.dataStructure.getElement(this.dataStructure.getNumElements()-1);
+        let element = this.dataStructure.getElement(this.dataStructure.getNumElements()-1).getValue();
         //let element = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
         this.dataStructure.setElementValue(this.dataStructure.getNumElements()-1, null);
         this.dataStructure.numElements--;
 
         //this.dataStructure.draw();
-        return {elementValue: element.getValue(), index: this.dataStructure.getNumElements()};
+        return {element: element, index: this.dataStructure.getNumElements()};
     }
     peek(){
         if (this.dataStructure.isEmpty()) {
@@ -60,7 +60,7 @@ class SinglyLinkedListStack{
 
         this.dataStructure.removeFirst();
 
-        return poppedElement;
+        return {element: poppedElement};
 
 
         //this.adt.draw();
