@@ -5,7 +5,7 @@ class HeapArrayPriorityQueue{
     insert(element){
         if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){ this.dataStructure.expand(); }
 
-        //this.dataStructure.content[this.dataStructure.getNumElements()].visualValue = element;
+        //this.dataStructure.visualContent[this.dataStructure.getNumElements()].visualValue = element;
         this.dataStructure.content[this.dataStructure.getNumElements()].setValue(element);
         this.dataStructure.numElements = this.dataStructure.numElements + 1;
         let j = this.dataStructure.getNumElements()-1;
@@ -18,12 +18,12 @@ class HeapArrayPriorityQueue{
             let parentTreeY = p.getTreeY();
             console.log(j + " " + p);
             if (goRight){
-                this.adt.content[j].setTreeXY(parentTreeX+20+20+20, parentTreeY+20+20+20);
+                this.adt.visualContent[j].setTreeXY(parentTreeX+20+20+20, parentTreeY+20+20+20);
             }else{
-                this.adt.content[j].setTreeXY(parentTreeX-20-20-20, parentTreeY+20+20+20);
+                this.adt.visualContent[j].setTreeXY(parentTreeX-20-20-20, parentTreeY+20+20+20);
             }
         }else{
-            this.adt.content[j].setTreeXY(canvas.width / 2, canvas.height / 2);
+            this.adt.visualContent[j].setTreeXY(canvas.width / 2, canvas.height / 2);
         }*/
 
         while (j > 0){
@@ -38,9 +38,7 @@ class HeapArrayPriorityQueue{
             this.dataStructure.swap(j, p);
             j = p;
         }
-        outputLabel.innerText = "Insert " + element;
-        //return newest;
-        this.dataStructure.draw();
+        return {value: element, index: this.dataStructure.getNumElements()-1};
     }
     removeMin(){
         if (this.dataStructure.isEmpty()){

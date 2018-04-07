@@ -466,10 +466,10 @@ class SimpleArray{
         //this.showIndex = showIndex;
         //this.elementBoxY = elementBoxY;
         for (let i=0; i<size; i++){
-            //this.content[i] = new ArrayElement(null, this.showIndex);
+            //this.visualContent[i] = new ArrayElement(null, this.showIndex);
             this.content[i] = new Element(null, i);
-            //this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            //this.content[i].setIndex(i);
+            //this.visualContent[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            //this.visualContent[i].setIndex(i);
         }
 
     }

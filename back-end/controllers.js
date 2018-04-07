@@ -75,6 +75,22 @@ class QueueController extends AdtController{
     }
 }
 
+class PriorityQueueController extends  AdtController{
+    constructor(adt, datastructureController){
+        super(adt, datastructureController);
+    }
+    insert(element){
+        let insertedElement = this.adt.insert(element);
+
+        if (insertedElement == null){
+
+        }else{
+            outputLabel.innerText = "Insert " + element;
+            this.datastructureController.moveIntoVisualDatastructure(insertedElement);
+        }
+    }
+}
+
 class SinglyLinkedListController{
     constructor(datastructure, elementBoxY=topBottomMargin+90, showIndex=false){
         this.datastructure = datastructure;
@@ -294,44 +310,45 @@ class SimpleArrayController{
         this.datastructure = datastructure;
         this.elementBoxY = elementBoxY;
         this.showIndex = showIndex;
-        this.content = [];
+        this.visualContent = [];
 
         //canvasObjectMan.addTempObject(this);
 
         for (let i=0; i<datastructure.size; i++){
-            this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
-            this.content[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.content[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            //this.content[i].setIndex(i);
-            //this.content[i].moveIntoVisualDatastructure();
-            this.content[i].draw();
+            this.visualContent[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
+            this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            //this.visualContent[i].setIndex(i);
+            //this.visualContent[i].moveIntoVisualDatastructure();
+            this.visualContent[i].draw();
         }
     }
     moveIntoVisualDatastructure(element){
         let index = element.index;
-        this.content[index].updateElementValue(); // Get the current visualValue from physical datastructure
-        //this.content[index].update();
-        this.content[index].setIndex(index); // Update index
+        console.log(element);
+        this.visualContent[index].updateElementValue(); // Get the current visualValue from physical datastructure
+        //this.visualContent[index].update();
+        this.visualContent[index].setIndex(index); // Update index
 
         // Setup for animation stage
         let stage0 = new AnimationSequence();
         stage0.executeConcurrently = true;
-        stage0.doNotDraw(this.content[index]);
+        stage0.doNotDraw(this.visualContent[index]);
 
         // Declaration of objects involved in the animation stage
         let tempElement = new VisualArrayElement(null, index, this.showIndex);
-        let headValue = new VisualValue(this.content[index].physicalElement.getValue());
+        let headValue = new VisualValue(this.visualContent[index].physicalElement.getValue());
 
         stage0.addTempObject(tempElement);
         stage0.addTempObject(headValue);
 
         let stage0coordsSetTempElement = new CoordsSet();
-        stage0coordsSetTempElement.setFromXY(this.content[index].getXY()[0], this.content[index].getXY()[1]);
-        stage0coordsSetTempElement.setToXY(this.content[index].getXY()[0], this.content[index].getXY()[1]);
+        stage0coordsSetTempElement.setFromXY(this.visualContent[index].getXY()[0], this.visualContent[index].getXY()[1]);
+        stage0coordsSetTempElement.setToXY(this.visualContent[index].getXY()[0], this.visualContent[index].getXY()[1]);
 
         let stage0coordsSet2 = new CoordsSet();
         stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
-        stage0coordsSet2.setToXY(this.content[index].getXY()[0], this.content[index].getXY()[1]);
+        stage0coordsSet2.setToXY(this.visualContent[index].getXY()[0], this.visualContent[index].getXY()[1]);
 
         stage0.add(tempElement, stage0coordsSetTempElement, new MoveNoFade());
         stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
@@ -341,10 +358,10 @@ class SimpleArrayController{
         animationSequencer.go();
     }
     moveOutOfDatastructure(outElement, index){
-        this.content[index].updateElementValue(); // Get the current visualValue from physical datastructure
-        //this.content[index].update();
-        this.content[index].setIndex(index); // Update index
-        //this.content[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
+        this.visualContent[index].updateElementValue(); // Get the current visualValue from physical datastructure
+        //this.visualContent[index].update();
+        this.visualContent[index].setIndex(index); // Update index
+        //this.visualContent[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
 
         console.log("outElement value:" + outElement);
         console.log("outElement index:" + index);
@@ -356,7 +373,7 @@ class SimpleArrayController{
         stage0.addTempObject(poppedElement);
 
         let stage0coordsSetPoppedElement = new CoordsSet();
-        stage0coordsSetPoppedElement.setFromXY(this.content[index].getXY()[0], this.content[index].getXY()[1]);
+        stage0coordsSetPoppedElement.setFromXY(this.visualContent[index].getXY()[0], this.visualContent[index].getXY()[1]);
         stage0coordsSetPoppedElement.setToXY(canvas.width - leftMargin, canvas.height-topBottomMargin);
 
         stage0.add(poppedElement, stage0coordsSetPoppedElement, new MoveFadeOut());
@@ -368,15 +385,90 @@ class SimpleArrayController{
     expand(){
         this.size = this.size*2;
         for (let i=this.size/2; i<this.size; i++){
-            this.content[i] = new ArrayElementController(null, this.showIndex);
-            this.content[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.content[i].setIndex(i);
+            this.visualContent[i] = new ArrayElementController(null, this.showIndex);
+            this.visualContent[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.visualContent[i].setIndex(i);
         }
     }
     draw() {
         //clearCanvas();
         for (let i=0; i<this.datastructure.size; i++){
-            this.content[i].draw();
+            this.visualContent[i].draw();
+        }
+    }
+}
+
+class HeapArrayController extends SimpleArrayController{
+    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
+        super(datastructure, elementBoxY, showIndex);
+        this.originalSize = datastructure.size;
+        this.visualTreeContent = [];
+
+        for (let i=0; i<this.datastructure.size; i++){
+            this.visualTreeContent[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
+            this.visualTreeContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.visualTreeContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            //this.visualContent[i].setIndex(i);
+            //this.visualContent[i].moveIntoVisualDatastructure();
+        }
+    }
+    moveIntoVisualDatastructure(element){
+        if (this.originalSize < this.datastructure.size){
+            for (let i=this.originalSize; i<this.datastructure.size; i++){
+                console.log(i);
+                this.visualContent[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
+                this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+                this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+                //this.visualContent[i].setIndex(i);
+                //this.visualContent[i].moveIntoVisualDatastructure();
+                this.visualContent[i].draw();
+            }
+            this.originalSize = this.datastructure.size;
+        }
+
+        super.moveIntoVisualDatastructure(element);
+
+    }
+    draw() {
+        super.draw();
+        let radiusOfNode = 20;
+        let gapUnit = radiusOfNode;
+        let nodeXSpacingFactor = 0;
+        let nodeYSpacingFactor = 0;
+
+        let numLevels = Math.floor(Math.log2(this.datastructure.numElements));
+        let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
+        let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
+
+        let startingX = canvas.width / 2 - (unitsToStart * radiusOfNode);
+        let startingY = (canvas.height / 2);
+        ctx.fillRect(startingX,startingY,1,1);
+        console.log(Math.sqrt(this.datastructure.numElements));
+        let currX = 0;
+        let currY = startingY;
+        let currNodeIndex = 0;
+        for (let i = 0; i <= numLevels; i++) {
+            let reverseCurrLevel = (numLevels + 1) - i;
+            let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel)*nodeXSpacingFactor);
+            let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
+            let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
+            let numOnThisLevel = Math.pow(2, i);
+
+            currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
+            currY = currY + (radiusOfNode*2) + (radiusOfNode*nodeYSpacingFactor);
+
+            for (let j = 0; j < numOnThisLevel; j++) {
+                if (currNodeIndex >= this.datastructure.numElements) { break; }
+                if (this.datastructure.content[currNodeIndex].getValue() != null){
+                    ctx.beginPath();
+                    ctx.arc(currX, currY, radiusOfNode, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.fillText(this.datastructure.content[currNodeIndex].getValue(), currX, currY);
+                }
+
+                currNodeIndex = currNodeIndex + 1;
+                currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode);
+            }
         }
     }
 }
@@ -386,12 +478,12 @@ class CircularArrayController extends SimpleArrayController{
         super(datastructure, elementBoxY, showIndex);
         this.headArrow = new VisualArrow();
         this.headArrow.setLabelText("head / tail");
-        this.headArrow.setStartXY(this.content[0].getXY()[0], elementBoxLabelY);
-        this.headArrow.setEndXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-elementBoxHeight/2);
+        this.headArrow.setStartXY(this.visualContent[0].getXY()[0], elementBoxLabelY);
+        this.headArrow.setEndXY(this.visualContent[0].getXY()[0], this.visualContent[0].getXY()[1]-elementBoxHeight/2);
 
         this.tailArrow = new VisualArrow();
-        this.tailArrow.setStartXY(this.content[0].getXY()[0], elementBoxLabelY);
-        this.tailArrow.setEndXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-elementBoxHeight/2);
+        this.tailArrow.setStartXY(this.visualContent[0].getXY()[0], elementBoxLabelY);
+        this.tailArrow.setEndXY(this.visualContent[0].getXY()[0], this.visualContent[0].getXY()[1]-elementBoxHeight/2);
 
         this.headArrow.draw();
 
@@ -403,17 +495,17 @@ class CircularArrayController extends SimpleArrayController{
 
         let tailArrowCoordSetStart = new CoordsSet();
         tailArrowCoordSetStart.setFromXY(this.tailArrow.startXY[0], this.tailArrow.startXY[1]);
-        tailArrowCoordSetStart.setToXY(this.content[this.datastructure.tail].getXY()[0], this.tailArrow.startXY[1]);
+        tailArrowCoordSetStart.setToXY(this.visualContent[this.datastructure.tail].getXY()[0], this.tailArrow.startXY[1]);
 
         let tailArrowCoordSetEnd = new CoordsSet();
         tailArrowCoordSetEnd.setFromXY(this.tailArrow.endXY[0], this.tailArrow.endXY[1]);
-        tailArrowCoordSetEnd.setToXY(this.content[this.datastructure.tail].getXY()[0], this.tailArrow.endXY[1]);
+        tailArrowCoordSetEnd.setToXY(this.visualContent[this.datastructure.tail].getXY()[0], this.tailArrow.endXY[1]);
 
         stage0.add(this.tailLabel, tailArrowCoordSetStart, new MoveNoFade());
         stage0.add(this.tailArrow, tailArrowCoordSetEnd, new MoveNoFade());
 
-        let headElement = this.content[this.datastructure.head];
-        let tailElement = this.content[this.datastructure.tail];
+        let headElement = this.visualContent[this.datastructure.head];
+        let tailElement = this.visualContent[this.datastructure.tail];
 
         this.headArrow.setStartXY(headElement.getXY()[0], elementBoxLabelY);
         this.headArrow.setEndXY(headElement.getXY()[0], headElement.getXY()[1]-elementBoxHeight/2);
@@ -431,7 +523,7 @@ class CircularArrayController extends SimpleArrayController{
     moveOutOfDatastructure(outElement, index){
         super.moveOutOfDatastructure(outElement, index);
 
-        let headElement = this.content[this.datastructure.head];
+        let headElement = this.visualContent[this.datastructure.head];
 
         this.headArrow.setStartXY(headElement.getXY()[0], elementBoxLabelY);
         this.headArrow.setEndXY(headElement.getXY()[0], headElement.getXY()[1]-elementBoxHeight/2);
