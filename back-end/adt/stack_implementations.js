@@ -49,7 +49,6 @@ class SinglyLinkedListStack{
         outputLabel.innerText = "Pushed " + element;
 
         return newNode;
-        //  return {visualValue:};
     }
     pop(){
         if (this.dataStructure.isEmpty()) {
@@ -61,15 +60,8 @@ class SinglyLinkedListStack{
         this.dataStructure.removeFirst();
 
         return {element: poppedElement};
-
-
-        //this.adt.draw();
     }
     peek(){
         outputLabel.innerText = this.dataStructure.getFirst();
     }
-}
-
-class VisualSimpleArrayStack{
-
 }

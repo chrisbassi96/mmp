@@ -12,33 +12,30 @@ class CircularArrayQueue{
             this.dataStructure.numElements += 1;
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
 
-            outputLabel.innerText = "Enqueue " + element;
-        }else{
-            outputLabel.innerText = "Queue is full";
+            return {value: element, index: avail};
         }
-
-        this.dataStructure.draw();
+        return null;
     }
     dequeue(){
         if (this.dataStructure.isEmpty()){
-            outputLabel.innerText = "Queue is empty";
-            return;
+            return null;
         }
+
         let element = this.dataStructure.getElementValue(this.dataStructure.getHead());
         this.dataStructure.setElementValue(this.dataStructure.getHead(), null);
 
         this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
         this.dataStructure.numElements--;
-        outputLabel.innerText = "Dequeue " + element;
-        this.dataStructure.draw();
+
+        return {value: element, index: (this.dataStructure.getHead()-1)%this.dataStructure.getSize()};
     }
     peek(){
         if (this.dataStructure.isEmpty()) {
-            outputLabel.innerText = "Queue is empty";
-            return;
+            return null;
         }
-        outputLabel.innerText = this.dataStructure.getElementValue(this.dataStructure.getHead());
-        this.dataStructure.draw();
+
+        return this.dataStructure.getElementValue(this.dataStructure.getHead());
+
     }
 }
 

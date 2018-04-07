@@ -507,13 +507,6 @@ class SimpleArray{
             this.content[i].setIndex(i);
         }
     }
-    draw() {
-        clearCanvas();
-        for (let i=0; i<this.size; i++){
-            // Draw the box that visualizes the index
-            this.content[i].draw();
-        }
-    }
 }
 
 class CircularArray extends SimpleArray{
@@ -521,7 +514,6 @@ class CircularArray extends SimpleArray{
         super(size, topBottomMargin+90, showIndex);
         this.head = 0;
         this.tail = 0;
-        this.draw();
     }
     getHead(){
         return this.head;
@@ -534,22 +526,6 @@ class CircularArray extends SimpleArray{
     }
     setTail(newTail){
         this.tail = newTail;
-    }
-    // Created 07/03/18
-    draw(){
-        // Draw the common parts of any array structure
-        super.draw();
-        let headElement = this.content[this.head];
-        let tailElement = this.content[this.tail];
-
-        console.log("head: " + this.head);
-
-        if (this.head === this.tail){
-            drawLabelledArrow("head / tail", 5, headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
-        }else{
-            drawLabelledArrow("head", 5, headElement.getX(), elementBoxLabelY, headElement.getX(), headElement.getY()-(elementBoxHeight/2));
-            drawLabelledArrow("tail", 5, tailElement.getX(), elementBoxLabelY, tailElement.getX(), tailElement.getY()-(elementBoxHeight/2));
-        }
     }
 }
 

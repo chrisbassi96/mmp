@@ -161,22 +161,4 @@ function drawLabelledArrow(label, pointerGap, fromX, fromY, toX, toY){
     ctx.lineTo(arrowHeadCornerBottomX,arrowHeadCornerBottomY);
     ctx.lineTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
     ctx.fill();
-
-
-
-/*    ctx.fillText(label, fromX, fromY);
-    console.log(pointerOrientation);
-    ctx.beginPath();
-    ctx.moveTo(fromX, fromY + 5); // Margin of 5 pixels
-    ctx.lineTo(arrowHeadCornerTopX, arrowHeadCornerTopY); // toY - pointerGap - size of pointer
-    ctx.closePath();
-    ctx.stroke();
-    // Need to determine our direction: going up, right, down, left?
-    // Draw pointer triangle
-    ctx.beginPath();
-    ctx.moveTo(toX, toY); // Margin of 5 pixels
-    ctx.lineTo(toX, toY - pointerGap); // Instead of elementBoxY, perhaps the Y of the exact container?
-    ctx.lineTo(toX - 5, toY - pointerGap - 10);
-    ctx.closePath();
-    ctx.fill();*/
 }

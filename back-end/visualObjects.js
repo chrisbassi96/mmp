@@ -57,6 +57,8 @@ class VisualObject{
         this.xy = [0, 0];
         this.notDrawn = false;
         this.visualObjects = [];
+        this.incomingArrows = [];
+        this.outgoingArrows = [];
         this.coordsSet = new CoordsSet();
         this.animationProperties = new AnimationProperties();
     }
@@ -99,6 +101,12 @@ class VisualObject{
         if (this.animationProperties.isFading){
             this.updateOpacity();
         }
+    }
+    addIncomingArrow(visualArrow){
+        this.incomingArrows.push(visualArrow);
+    }
+    addOutgoingArrow(visualArrow){
+        this.outgoingArrows.push(visualArrow);
     }
     isBeingAnimated(){
         return this.animationProperties.isBeingAnimated();
@@ -159,14 +167,72 @@ class VisualObject{
 }
 
 class VisualArrow extends VisualObject{
-    constructor(){
+    constructor(labelText="", labelPosition="start"){
         super();
-        this.startCoordsSet = this.coordsSet;
-        this.endCoordsSet = new CoordsSet();
+        this.coordsSet = [];
+        this.startXY = [];
+        this.endXY = [];
+        this.label = new VisualValue(labelText);
+        this.labelPosition = labelPosition;
     }
-    setCoords(coordsSet){
-        this.startCoordsSet = coordsSet;
 
+    setCoords(coordsSet){
+        this.coordsSet = coordsSet;
+
+    }
+    setStartXY(x, y){
+        this.startXY = [x, y];
+        this.updateLabelPosition();
+    }
+    setEndXY(x, y){
+        this.endXY = [x, y];
+    }
+    setLabelText(text){
+        this.label.setValue(text);
+    }
+    updateLabelPosition(){
+        switch (this.labelPosition){
+            case "start":
+                this.label.setXY(this.startXY[0], this.startXY[1]);
+                break;
+            case "middle":
+                this.label.setXY(this.xy[0], this.xy[1]);
+                break;
+            case "end":
+                this.label.setXY(this.endXY[0], this.endXY[1]);
+                break;
+        }
+    }
+    draw(){
+        this.updateLabelPosition();
+        this.label.draw();
+
+        let lineAngle = Math.atan2(this.endXY[1]-this.startXY[1], this.endXY[0]-this.startXY[0]);
+        let angleFromShaftToArrowHeadCorner = Math.PI/8;
+        //let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
+        let lengthOfArrowHeadSide = 10;
+
+        //ctx.fillText(this.label, fromX, fromY);
+        ctx.beginPath();
+        ctx.moveTo(this.startXY[0], this.startXY[1]);
+        ctx.lineTo(this.endXY[0], this.endXY[1]);
+        ctx.stroke();
+
+        let angleFromShaftToArrowHeadCornerTop = lineAngle + Math.PI + angleFromShaftToArrowHeadCorner;
+        let arrowHeadCornerTopX = this.endXY[0] + Math.cos(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
+        let arrowHeadCornerTopY = this.endXY[1] + Math.sin(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
+
+        let angleFromShaftToArrowHeadCornerBottom = lineAngle + Math.PI - angleFromShaftToArrowHeadCorner;
+        let arrowHeadCornerBottomX = this.endXY[0] + Math.cos(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
+        let arrowHeadCornerBottomY = this.endXY[1] + Math.sin(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
+
+
+        ctx.beginPath();
+        ctx.moveTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
+        ctx.lineTo(this.endXY[0], this.endXY[1]);
+        ctx.lineTo(arrowHeadCornerBottomX,arrowHeadCornerBottomY);
+        ctx.lineTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
+        ctx.fill();
     }
 }
 
@@ -203,7 +269,9 @@ class VisualValue extends VisualObject{
     constructor(value){
         super();
         this.value = value;
-
+    }
+    setValue(value){
+        this.value = value;
     }
     draw(){
         super.draw();
