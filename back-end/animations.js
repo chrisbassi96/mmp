@@ -208,6 +208,11 @@ class AnimationSequence{
 
         this.executeConcurrently = false;
     }
+    add(canvasObject, coordsSet, animationProperties){
+        //this.animationQueue[this.numAnimations] = canvasObject;
+        this.animationQueue.push({canvasObject: canvasObject, coordsSet: coordsSet, animationProperties: animationProperties});
+        this.numAnimations++;
+    }
     go(){
         //this.setupDrawnObjects(true)
         console.log("GO GO GO");
@@ -226,29 +231,6 @@ class AnimationSequence{
 /*            this.animationQueue[0].canvasObject.coordsSet = this.animationQueue[0].coordsSet;
             this.animationQueue[0].canvasObject.setAnimationProperties(this.animationQueue[0].animationProperties);*/
             //mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
-        }
-    }
-    setupDrawnObjects(setNotDrawObjects){
-        console.log(setNotDrawObjects);
-        for (let i=0; i<this.doNotDrawObjects.length; i++){
-            this.doNotDrawObjects[i].setNotDrawn(setNotDrawObjects);
-        }
-    }
-    add(canvasObject, coordsSet, animationProperties){
-        //this.animationQueue[this.numAnimations] = canvasObject;
-        this.animationQueue.push({canvasObject: canvasObject, coordsSet: coordsSet, animationProperties: animationProperties});
-        this.numAnimations++;
-    }
-    // This function adds to the sequence's list of objects that need to be drawn. These can't be specified in the above
-    // add function, as the object being added may be part of the data structure and so would be drawn twice.
-    addTempObject(canvasObject){
-        console.log("hello from addTempObject");
-        this.objectsToDraw.push(canvasObject);
-        this.numObjectsToDraw++;
-    }
-    drawObjects(){
-        for (let i = 0; i<this.numObjectsToDraw; i++){
-            this.objectsToDraw[i].draw();
         }
     }
     doNext(i){
@@ -282,6 +264,26 @@ class AnimationSequence{
         this.animationSequencer.doNext();
         console.log("Animation sequence over");
     }
+    setupDrawnObjects(setNotDrawObjects){
+        console.log(setNotDrawObjects);
+        for (let i=0; i<this.doNotDrawObjects.length; i++){
+            this.doNotDrawObjects[i].setNotDrawn(setNotDrawObjects);
+        }
+    }
+
+    // This function adds to the sequence's list of objects that need to be drawn. These can't be specified in the above
+    // add function, as the object being added may be part of the data structure and so would be drawn twice.
+    addTempObject(canvasObject){
+        console.log("hello from addTempObject");
+        this.objectsToDraw.push(canvasObject);
+        this.numObjectsToDraw++;
+    }
+    drawObjects(){
+        for (let i = 0; i<this.numObjectsToDraw; i++){
+            this.objectsToDraw[i].draw();
+        }
+    }
+
     doNotDraw(visualObject){
         //this.doNotDrawObjects = this.doNotDrawObjects.concat(visualObjects);
         this.doNotDrawObjects.push(visualObject);

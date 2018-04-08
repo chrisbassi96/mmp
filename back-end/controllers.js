@@ -330,17 +330,26 @@ class SimpleArrayController{
         //this.visualContent[index].update();
         this.visualContent[index].setIndex(index); // Update index
 
-        // Setup for animation stage
         let stage0 = new AnimationSequence();
         stage0.executeConcurrently = true;
-        stage0.doNotDraw(this.visualContent[index]);
+
+
+        this.animationMoveIntoVisualDatastructure(index, stage0);
+
+        animationSequencer.add(stage0);
+
+        animationSequencer.go();
+    }
+    animationMoveIntoVisualDatastructure(index, stageToAddTo){
+        // Setup for animation stage
+        stageToAddTo.doNotDraw(this.visualContent[index]);
 
         // Declaration of objects involved in the animation stage
         let tempElement = new VisualArrayElement(null, index, this.showIndex);
         let headValue = new VisualValue(this.visualContent[index].physicalElement.getValue());
 
-        stage0.addTempObject(tempElement);
-        stage0.addTempObject(headValue);
+        stageToAddTo.addTempObject(tempElement);
+        stageToAddTo.addTempObject(headValue);
 
         let stage0coordsSetTempElement = new CoordsSet();
         stage0coordsSetTempElement.setFromXY(this.visualContent[index].getXY()[0], this.visualContent[index].getXY()[1]);
@@ -350,13 +359,10 @@ class SimpleArrayController{
         stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
         stage0coordsSet2.setToXY(this.visualContent[index].getXY()[0], this.visualContent[index].getXY()[1]);
 
-        stage0.add(tempElement, stage0coordsSetTempElement, new MoveNoFade());
-        stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
-
-        animationSequencer.add(stage0);
-
-        animationSequencer.go();
+        stageToAddTo.add(tempElement, stage0coordsSetTempElement, new MoveNoFade());
+        stageToAddTo.add(headValue, stage0coordsSet2, new MoveNoFade());
     }
+
     moveOutOfDatastructure(outElement, index){
         this.visualContent[index].updateElementValue(); // Get the current visualValue from physical datastructure
         //this.visualContent[index].update();
@@ -382,14 +388,7 @@ class SimpleArrayController{
 
         animationSequencer.go();
     }
-    expand(){
-        this.size = this.size*2;
-        for (let i=this.size/2; i<this.size; i++){
-            this.visualContent[i] = new ArrayElementController(null, this.showIndex);
-            this.visualContent[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.visualContent[i].setIndex(i);
-        }
-    }
+
     draw() {
         //clearCanvas();
         for (let i=0; i<this.datastructure.size; i++){
@@ -410,40 +409,77 @@ class HeapArrayController extends SimpleArrayController{
             this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
 
-            this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
+            //this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
             //this.visualContent[i].setIndex(i);
             //this.visualContent[i].moveIntoVisualDatastructure();
         }
     }
     moveIntoVisualDatastructure(element){
         if (this.originalSize < this.datastructure.size){
-            for (let i=this.originalSize; i<this.datastructure.size; i++){
-                console.log(i);
-                this.visualContent[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
-                this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-                this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-
-                this.visualTreeContent[i] = new VisualArrayElement(this.datastructure.getElement(i), this.treeNodeRadius);
-            }
-            this.originalSize = this.datastructure.size;
-            this.draw();
+            this.expand();
         }
-        this.updateTreeNodeCoords();
-        super.moveIntoVisualDatastructure(element);
+        let index = element.index;
+        console.log(element);
+        this.visualContent[index].updateElementValue(); // Get the current visualValue from physical datastructure
+        //this.visualContent[index].update();
+        this.visualContent[index].setIndex(index); // Update index
+        //super.moveIntoVisualDatastructure(element);
 
+        this.visualTreeContent[element.index] = new VisualTreeNode(this.datastructure.getElement(element.index), this.treeNodeRadius);
+        this.visualTreeContent.setLeft(this.datastructure.left(index));
+        this.visualTreeContent.setRight(this.datastructure.right(index));
+
+        this.updateTreeNodeCoords();
+        console.log(this.visualTreeContent[element.index]);
+
+        let stage0 = new AnimationSequence();
+        stage0.executeConcurrently = true;
+        //stage0.doNotDraw(this.visualContent[index]);
+
+        this.animationMoveIntoVisualDatastructure(index, stage0);
+
+        animationSequencer.add(stage0);
+
+        animationSequencer.go();
+    }
+    animationMoveIntoVisualDatastructure(index, stageToAddTo){
+        super.animationMoveIntoVisualDatastructure(index, stageToAddTo);
+
+        let stage0coordsSet2 = new CoordsSet();
+        stage0coordsSet2.setFromXY(this.visualTreeContent[index].getXY()[0], this.visualTreeContent[index].getXY()[1]);
+        stage0coordsSet2.setToXY(this.visualTreeContent[index].getXY()[0], this.visualTreeContent[index].getXY()[1]);
+
+        stageToAddTo.add(this.visualTreeContent[index], stage0coordsSet2, new MoveFadeIn());
+    }
+    expand(){
+        for (let i=this.originalSize; i<this.datastructure.size; i++){
+            console.log(i);
+            this.visualContent[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
+            this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+
+            //this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
+        }
+        this.originalSize = this.datastructure.size;
+/*        this.size = this.size*2;
+        for (let i=this.size/2; i<this.size; i++){
+            this.visualContent[i] = new ArrayElementController(null, this.showIndex);
+            this.visualContent[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.visualContent[i].setIndex(i);
+        }*/
     }
     updateTreeNodeCoords(){
-        let numLevels = Math.floor(Math.log2(this.datastructure.size));
+        let numLevels = Math.floor(Math.log2(this.datastructure.numElements));
 
         let radiusOfNode = 20;
         let gapUnit = radiusOfNode;
-        let nodeXSpacingFactor = 0;
-        let nodeYSpacingFactor = 0;
+        let nodeXSpacingFactor = 1;
+        let nodeYSpacingFactor = 1;
 
         let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
         let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
 
-        for (let i=0; i<this.visualTreeContent.length; i++){
+        for (let i=0; i<this.datastructure.numElements; i++){
             let currLevel = Math.floor(Math.log2(i+1));
             let nodesOnCurrLevel = Math.pow(2, currLevel);
             let nodePosOnLevel = Math.abs((nodesOnCurrLevel-i)-1);
@@ -469,7 +505,7 @@ class HeapArrayController extends SimpleArrayController{
 
 
             let y = (canvas.height / 2);
-            y += (currLevel * (radiusOfNode*2)) + (radiusOfNode*nodeYSpacingFactor);
+            y += (currLevel * (radiusOfNode*2)) + (radiusOfNode * nodeYSpacingFactor * currLevel );
 
             console.log("HELLO");
 
@@ -477,8 +513,8 @@ class HeapArrayController extends SimpleArrayController{
         }
     }
     draw() {
-        for (let i=0; i<this.datastructure.size; i++){
-            this.visualContent[i].draw();
+        for (let i=0; i<this.datastructure.numElements; i++){
+            //this.visualContent[i].draw();
             //ctx.fillRect(this.visualTreeContent[i].getXY()[0], this.visualTreeContent[i].getXY()[1],20,20);
             this.visualTreeContent[i].draw();
         }
@@ -487,7 +523,7 @@ class HeapArrayController extends SimpleArrayController{
 /*        let radiusOfNode = 20;
         let gapUnit = radiusOfNode;
         let nodeXSpacingFactor = 0;
-        let nodeYSpacingFactor = 0;
+        let nodeYSpacingFactor = 2;
 
         let numLevels = Math.floor(Math.log2(this.datastructure.size));
         let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);

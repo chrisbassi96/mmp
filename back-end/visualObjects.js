@@ -140,8 +140,6 @@ class VisualObject{
         }
         this.animationProperties.opacity = newOpacity;
 
-        console.log(this);
-
         for (let i=0; i<this.visualObjects.length; i++){
             this.visualObjects[i].animationProperties.opacity = newOpacity;
         }
@@ -176,20 +174,33 @@ class VisualTreeNode extends VisualObject{
 
         this.radius = radius;
 
-        this.visualCircle = new VisualCircle();
+        this.visualCircle = new VisualCircle(radius);
         this.visualValue = new VisualValue(physicalElement.getValue());
 
         this.visualObjects.push(this.visualCircle);
         this.visualObjects.push(this.visualValue);
     }
+    setLeft(leftIndex){
+        this.left = leftIndex;
+    }
+    setRight(rightIndex){
+        this.right = rightIndex;
+    }
     setXY(x, y){
         super.setXY(x, y);
+
+        this.setAllXY();
+    }
+    setAllXY(){
+        for (let i = 0; i < this.visualObjects.length; i++){
+            this.visualObjects[i].setXY(this.xy[0], this.xy[1]);
+        }
     }
     updateMiddleXY(x, y, progress){
         super.updateMiddleXY(x, y, progress);
 
         if (this.visualCircle.isBeingAnimated() || this.isBeingAnimated()){
-            this.visualCircle.updateMiddleXY()
+            this.visualCircle.updateMiddleXY(x, y, progress)
         }
         if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()){
             this.visualValue.updateMiddleXY(x, y, progress);
@@ -197,10 +208,10 @@ class VisualTreeNode extends VisualObject{
     }
     draw(){
         super.draw();
-        if (this.physicalElement.getValue() !== null){
-            this.visualCircle.draw();
-            this.visualValue.draw();
-        }
+        //if (this.physicalElement.getValue() !== null){
+            //this.visualCircle.draw();
+            //this.visualValue.draw();
+        //}
         for (let i =0; i<this.outgoingArrows; i++){
 
         }
@@ -279,14 +290,18 @@ class VisualArrow extends VisualObject{
 }
 
 class VisualCircle extends VisualObject{
-    constructor(){
+    constructor(radius){
         super();
+        this.radius = radius;
     }
     draw(){
+
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
         ctx.beginPath();
         ctx.arc(this.xy[0], this.xy[1], this.radius, 0, 2 * Math.PI);
+        console.log(this.xy);
+        console.log(this.radius);
         ctx.stroke();
         ctx.restore();
     }
