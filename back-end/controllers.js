@@ -409,7 +409,7 @@ class HeapArrayController extends SimpleArrayController{
             this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
 
-            //this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
+            this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
             //this.visualContent[i].setIndex(i);
             //this.visualContent[i].moveIntoVisualDatastructure();
         }
@@ -418,18 +418,39 @@ class HeapArrayController extends SimpleArrayController{
         if (this.originalSize < this.datastructure.size){
             this.expand();
         }
+
         let index = element.index;
         console.log(element);
         this.visualContent[index].updateElementValue(); // Get the current visualValue from physical datastructure
+        this.visualTreeContent[index].updateElementValue();
         //this.visualContent[index].update();
         this.visualContent[index].setIndex(index); // Update index
         //super.moveIntoVisualDatastructure(element);
 
-        this.visualTreeContent[element.index] = new VisualTreeNode(this.datastructure.getElement(element.index), this.treeNodeRadius);
-        this.visualTreeContent.setLeft(this.datastructure.left(index));
-        this.visualTreeContent.setRight(this.datastructure.right(index));
+        //this.visualTreeContent[index] = new VisualTreeNode(this.datastructure.getElement(element.index), this.treeNodeRadius);
 
+        //this.visualTreeContent[index].setLeft(this.visualTreeContent[HeapArray.left(index)]);
+        //this.visualTreeContent[index].setRight(this.visualTreeContent[HeapArray.right(index)]);
         this.updateTreeNodeCoords();
+        console.log("Here's the index: " + index);
+        if (index !== 0){
+            let parentTreeNode = this.visualTreeContent[HeapArray.parent(index)];
+            if (index % 2 !== 0){
+                console.log("Index is odd");
+                // Has parent
+                let leftArrow = new VisualArrow(null, null, this.treeNodeRadius, this.treeNodeRadius);
+                let rightArrow = new VisualArrow(null, null, this.treeNodeRadius, this.treeNodeRadius);
+
+                parentTreeNode.addOutgoingArrow(leftArrow);
+                parentTreeNode.leftArrow = leftArrow;
+                parentTreeNode.addOutgoingArrow(rightArrow);
+                parentTreeNode.rightArrow = rightArrow;
+                this.visualTreeContent[index].addIncomingArrow(parentTreeNode.leftArrow);
+            }else{
+                console.log("Index is even");
+                this.visualTreeContent[index].addIncomingArrow(parentTreeNode.rightArrow);
+            }
+        }
         console.log(this.visualTreeContent[element.index]);
 
         let stage0 = new AnimationSequence();
@@ -458,7 +479,7 @@ class HeapArrayController extends SimpleArrayController{
             this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
 
-            //this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
+            this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
         }
         this.originalSize = this.datastructure.size;
 /*        this.size = this.size*2;
@@ -473,8 +494,8 @@ class HeapArrayController extends SimpleArrayController{
 
         let radiusOfNode = 20;
         let gapUnit = radiusOfNode;
-        let nodeXSpacingFactor = 1;
-        let nodeYSpacingFactor = 1;
+        let nodeXSpacingFactor = 0.5;
+        let nodeYSpacingFactor = 0.5;
 
         let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
         let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
@@ -704,7 +725,6 @@ class VisualLinkedListElement extends VisualObject{
     }
     setIncomingArrowsXY(x, y){
         for (let i=0; i<this.incomingArrows.length; i++){
-            console.log("Hello there");
             this.incomingArrows[i].setEndXY(x, y-elementBoxHeight/2);
         }
     }

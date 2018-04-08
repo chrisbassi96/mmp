@@ -28,7 +28,7 @@ class HeapArrayPriorityQueue{
 
         while (j > 0){
 
-            let p = this.dataStructure.parent(j);
+            let p = HeapArray.parent(j);
 
             console.log("parent: " + p);
             // This won't work with strings...

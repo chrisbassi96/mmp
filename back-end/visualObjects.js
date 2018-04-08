@@ -103,9 +103,11 @@ class VisualObject{
         }
     }
     addIncomingArrow(visualArrow){
+        visualArrow.setEndXY(this.xy[0], this.xy[1]);
         this.incomingArrows.push(visualArrow);
     }
     addOutgoingArrow(visualArrow){
+        visualArrow.setStartXY(this.xy[0], this.xy[1]);
         this.outgoingArrows.push(visualArrow);
     }
     isBeingAnimated(){
@@ -167,9 +169,9 @@ class VisualObject{
 class VisualTreeNode extends VisualObject{
     constructor(physicalElement, radius){
         super();
-        this.parent = null;
-        this.left = null;
-        this.right = null;
+        this.parentNode = null;
+        this.leftArrow = null;
+        this.rightArrow = null;
         this.physicalElement = physicalElement;
 
         this.radius = radius;
@@ -179,6 +181,12 @@ class VisualTreeNode extends VisualObject{
 
         this.visualObjects.push(this.visualCircle);
         this.visualObjects.push(this.visualValue);
+    }
+    updateElementValue(){
+        this.visualValue.value = this.physicalElement.getValue();
+    }
+    setParent(parentIndex){
+        this.parent = parentIndex;
     }
     setLeft(leftIndex){
         this.left = leftIndex;
@@ -191,10 +199,11 @@ class VisualTreeNode extends VisualObject{
 
         this.setAllXY();
     }
-    setAllXY(){
-        for (let i = 0; i < this.visualObjects.length; i++){
+    setAllXY() {
+        for (let i = 0; i < this.visualObjects.length; i++) {
             this.visualObjects[i].setXY(this.xy[0], this.xy[1]);
         }
+        this.updateArrowXY(this.xy[0], this.xy[1]);
     }
     updateMiddleXY(x, y, progress){
         super.updateMiddleXY(x, y, progress);
@@ -205,6 +214,16 @@ class VisualTreeNode extends VisualObject{
         if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()){
             this.visualValue.updateMiddleXY(x, y, progress);
         }
+
+        this.updateArrowXY(x, y);
+    }
+    updateArrowXY(x, y){
+        for (let i=0; i<this.outgoingArrows.length; i++){
+            this.outgoingArrows[i].setStartXY(x, y);
+        }
+        for (let i=0; i<this.incomingArrows.length; i++){
+            this.incomingArrows[i].setEndXY(x, y);
+        }
     }
     draw(){
         super.draw();
@@ -212,33 +231,60 @@ class VisualTreeNode extends VisualObject{
             //this.visualCircle.draw();
             //this.visualValue.draw();
         //}
-        for (let i =0; i<this.outgoingArrows; i++){
-
+        for (let i =0; i<this.outgoingArrows.length; i++){
+            this.outgoingArrows[i].draw();
         }
     }
 
 }
 
 class VisualArrow extends VisualObject{
-    constructor(labelText="", labelPosition="start"){
+    constructor(labelText="", labelPosition="start", startMargin, endMargin){
         super();
         this.coordsSet = [];
+        this.startMargin = startMargin;
         this.startXY = [];
+        this.endMargin = endMargin;
         this.endXY = [];
         this.label = new VisualValue(labelText);
         this.labelPosition = labelPosition;
     }
-
     setCoords(coordsSet){
         this.coordsSet = coordsSet;
 
     }
     setStartXY(x, y){
         this.startXY = [x, y];
+
+        //this.recalculatePoints();
         this.updateLabelPosition();
     }
     setEndXY(x, y){
         this.endXY = [x, y];
+
+        console.log("setEndXY: " + x + " " + y);
+        //this.recalculatePoints();
+
+    }
+    recalculatePoints(){
+
+        // Only recalculate when the coordinates are "reasonable", i.e. they are numbers
+
+        if (this.startXY.length === 0 || this.endXY.length === 0){
+            return;
+        }
+
+        let lineAngleStart = Math.atan2(this.endXY[1]-this.startXY[1], this.endXY[0]-this.startXY[0]);
+        let adjustedStartX = this.startXY[0] + Math.cos(lineAngleStart)*this.startMargin;
+        let adjustedStartY = this.startXY[1] + Math.sin(lineAngleStart)*this.startMargin;
+
+        this.startXY = [adjustedStartX, adjustedStartY];
+
+        let lineAngleEnd = Math.atan2(this.startXY[1]-this.endXY[1], this.startXY[0]-this.endXY[0]);
+        let adjustedEndX = this.endXY[0] - Math.cos(lineAngleStart)*this.endMargin;
+        let adjustedEndY = this.endXY[1] - Math.sin(lineAngleStart)*this.endMargin;
+
+        this.endXY = [adjustedEndX, adjustedEndY];
     }
     setLabelText(text){
         this.label.setValue(text);
@@ -261,7 +307,43 @@ class VisualArrow extends VisualObject{
         this.label.draw();
 
         let lineAngle = Math.atan2(this.endXY[1]-this.startXY[1], this.endXY[0]-this.startXY[0]);
+
+        let adjustedStartX = this.startXY[0] + Math.cos(lineAngle)*this.startMargin;
+        let adjustedStartY = this.startXY[1] + Math.sin(lineAngle)*this.startMargin;
+
+        let adjustedEndX = this.endXY[0] - Math.cos(lineAngle)*this.endMargin;
+        let adjustedEndY = this.endXY[1] - Math.sin(lineAngle)*this.endMargin;
+
         let angleFromShaftToArrowHeadCorner = Math.PI/8;
+        //let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
+        let lengthOfArrowHeadSide = 10;
+
+        //ctx.fillText(this.label, fromX, fromY);
+        ctx.beginPath();
+        ctx.moveTo(adjustedStartX, adjustedStartY);
+        ctx.lineTo(adjustedEndX, adjustedEndY);
+        ctx.stroke();
+
+        let angleFromShaftToArrowHeadCornerTop = lineAngle + Math.PI + angleFromShaftToArrowHeadCorner;
+        let arrowHeadCornerTopX = adjustedEndX + Math.cos(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
+        let arrowHeadCornerTopY = adjustedEndY + Math.sin(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
+
+        let angleFromShaftToArrowHeadCornerBottom = lineAngle + Math.PI - angleFromShaftToArrowHeadCorner;
+        let arrowHeadCornerBottomX = adjustedEndX + Math.cos(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
+        let arrowHeadCornerBottomY = adjustedEndY + Math.sin(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
+
+
+        ctx.beginPath();
+        ctx.moveTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
+        ctx.lineTo(adjustedEndX, adjustedEndY);
+        ctx.lineTo(arrowHeadCornerBottomX,arrowHeadCornerBottomY);
+        ctx.lineTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
+        ctx.fill();
+
+
+
+
+/*        let angleFromShaftToArrowHeadCorner = Math.PI/8;
         //let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
         let lengthOfArrowHeadSide = 10;
 
@@ -285,7 +367,7 @@ class VisualArrow extends VisualObject{
         ctx.lineTo(this.endXY[0], this.endXY[1]);
         ctx.lineTo(arrowHeadCornerBottomX,arrowHeadCornerBottomY);
         ctx.lineTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
-        ctx.fill();
+        ctx.fill();*/
     }
 }
 
@@ -347,6 +429,9 @@ class VisualValue extends VisualObject{
     draw(){
         super.draw();
 
+        if (this.value == null || this.value === ""){
+            return;
+        }
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
         ctx.fillText(this.value, this.getXY()[0], this.getXY()[1]);

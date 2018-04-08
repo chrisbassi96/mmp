@@ -543,20 +543,20 @@ class HeapArray extends SimpleArray{
     constructor(size=20, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=true){
         super(size, elementBoxY, showIndex);
     }
-    parent(j){
+    static parent(j){
         return Math.floor((j-1) / 2);
     }
-    left(j){
+    static left(j){
         return 2*j + 1;
     }
-    right(j){
+    static right(j){
         return 2*j + 2;
     }
     hasLeft(j){
-        return this.left(j) < this.size;
+        return HeapArray.left(j) < this.size;
     }
     hasRight(j){
-        return this.right(j) < this.size;
+        return HeapArray.right(j) < this.size;
     }
     swap(i, j){
         let temp = this.content[i].getValue();
