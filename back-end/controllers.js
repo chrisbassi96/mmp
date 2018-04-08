@@ -403,11 +403,14 @@ class HeapArrayController extends SimpleArrayController{
         super(datastructure, elementBoxY, showIndex);
         this.originalSize = datastructure.size;
         this.visualTreeContent = [];
+        this.treeNodeRadius = 20;
 
         for (let i=0; i<this.datastructure.size; i++){
-            this.visualTreeContent[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
-            this.visualTreeContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.visualTreeContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.visualContent[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
+            this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+
+            this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
             //this.visualContent[i].setIndex(i);
             //this.visualContent[i].moveIntoVisualDatastructure();
         }
@@ -419,31 +422,82 @@ class HeapArrayController extends SimpleArrayController{
                 this.visualContent[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
                 this.visualContent[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
                 this.visualContent[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-                //this.visualContent[i].setIndex(i);
-                //this.visualContent[i].moveIntoVisualDatastructure();
-                this.visualContent[i].draw();
+
+                this.visualTreeContent[i] = new VisualArrayElement(this.datastructure.getElement(i), this.treeNodeRadius);
             }
             this.originalSize = this.datastructure.size;
+            this.draw();
         }
-
+        this.updateTreeNodeCoords();
         super.moveIntoVisualDatastructure(element);
 
     }
-    draw() {
-        super.draw();
+    updateTreeNodeCoords(){
+        let numLevels = Math.floor(Math.log2(this.datastructure.size));
+
         let radiusOfNode = 20;
         let gapUnit = radiusOfNode;
         let nodeXSpacingFactor = 0;
         let nodeYSpacingFactor = 0;
 
-        let numLevels = Math.floor(Math.log2(this.datastructure.numElements));
         let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
         let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
+
+        for (let i=0; i<this.visualTreeContent.length; i++){
+            let currLevel = Math.floor(Math.log2(i+1));
+            let nodesOnCurrLevel = Math.pow(2, currLevel);
+            let nodePosOnLevel = Math.abs((nodesOnCurrLevel-i)-1);
+            console.log("nodePosOnLevel: " + nodePosOnLevel);
+            console.log("numLevels: " + numLevels);
+            console.log("currLevel: " + currLevel);
+            //let reverseCurrLevel = (currLevel + 1) - (i+1);
+
+            let reverseCurrLevel = (numLevels+1) - currLevel;
+            console.log("reverseCurrLevel: " + reverseCurrLevel);
+            let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel)*nodeXSpacingFactor);
+            let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
+            let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
+
+
+            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
+            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
+
+            let x = canvas.width / 2 - (unitsToStart * radiusOfNode);
+            //x += (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode + radiusOfNode + (distanceBetweenNodes * radiusOfNode * nodePosOnLevel);
+            x += (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
+            x += nodePosOnLevel * (radiusOfNode + (distanceBetweenNodes * radiusOfNode));
+
+
+            let y = (canvas.height / 2);
+            y += (currLevel * (radiusOfNode*2)) + (radiusOfNode*nodeYSpacingFactor);
+
+            console.log("HELLO");
+
+            this.visualTreeContent[i].setXY(x, y);
+        }
+    }
+    draw() {
+        for (let i=0; i<this.datastructure.size; i++){
+            this.visualContent[i].draw();
+            //ctx.fillRect(this.visualTreeContent[i].getXY()[0], this.visualTreeContent[i].getXY()[1],20,20);
+            this.visualTreeContent[i].draw();
+        }
+
+        super.draw();
+/*        let radiusOfNode = 20;
+        let gapUnit = radiusOfNode;
+        let nodeXSpacingFactor = 0;
+        let nodeYSpacingFactor = 0;
+
+        let numLevels = Math.floor(Math.log2(this.datastructure.size));
+        let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
+        let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
+
+        console.log("numLevels: " + numLevels);
 
         let startingX = canvas.width / 2 - (unitsToStart * radiusOfNode);
         let startingY = (canvas.height / 2);
         ctx.fillRect(startingX,startingY,1,1);
-        console.log(Math.sqrt(this.datastructure.numElements));
         let currX = 0;
         let currY = startingY;
         let currNodeIndex = 0;
@@ -453,6 +507,10 @@ class HeapArrayController extends SimpleArrayController{
             let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
             let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
             let numOnThisLevel = Math.pow(2, i);
+            console.log("currLevel: " + i);
+            console.log("reverseCurrLevel: " + reverseCurrLevel);
+            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
+            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
 
             currX = startingX + (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
             currY = currY + (radiusOfNode*2) + (radiusOfNode*nodeYSpacingFactor);
@@ -469,7 +527,7 @@ class HeapArrayController extends SimpleArrayController{
                 currNodeIndex = currNodeIndex + 1;
                 currX = currX + radiusOfNode + (distanceBetweenNodes * radiusOfNode);
             }
-        }
+        }*/
     }
 }
 
@@ -604,8 +662,6 @@ class VisualLinkedListElement extends VisualObject{
         }
 
         this.setIncomingArrowsXY(x, y);
-
-
     }
     isOnTopOf(otherNode){
         return (this.xy[1] === otherNode.getXY()[1]) && (this.xy[1] === otherNode.xy[1]);

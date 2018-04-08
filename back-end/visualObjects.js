@@ -166,6 +166,48 @@ class VisualObject{
     }
 }
 
+class VisualTreeNode extends VisualObject{
+    constructor(physicalElement, radius){
+        super();
+        this.parent = null;
+        this.left = null;
+        this.right = null;
+        this.physicalElement = physicalElement;
+
+        this.radius = radius;
+
+        this.visualCircle = new VisualCircle();
+        this.visualValue = new VisualValue(physicalElement.getValue());
+
+        this.visualObjects.push(this.visualCircle);
+        this.visualObjects.push(this.visualValue);
+    }
+    setXY(x, y){
+        super.setXY(x, y);
+    }
+    updateMiddleXY(x, y, progress){
+        super.updateMiddleXY(x, y, progress);
+
+        if (this.visualCircle.isBeingAnimated() || this.isBeingAnimated()){
+            this.visualCircle.updateMiddleXY()
+        }
+        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()){
+            this.visualValue.updateMiddleXY(x, y, progress);
+        }
+    }
+    draw(){
+        super.draw();
+        if (this.physicalElement.getValue() !== null){
+            this.visualCircle.draw();
+            this.visualValue.draw();
+        }
+        for (let i =0; i<this.outgoingArrows; i++){
+
+        }
+    }
+
+}
+
 class VisualArrow extends VisualObject{
     constructor(labelText="", labelPosition="start"){
         super();
@@ -236,6 +278,21 @@ class VisualArrow extends VisualObject{
     }
 }
 
+class VisualCircle extends VisualObject{
+    constructor(){
+        super();
+    }
+    draw(){
+        ctx.save();
+        ctx.globalAlpha = this.animationProperties.opacity;
+        ctx.beginPath();
+        ctx.arc(this.xy[0], this.xy[1], this.radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+}
+
 class VisualElementBox extends VisualObject{
     constructor(){
         super();
@@ -244,7 +301,6 @@ class VisualElementBox extends VisualObject{
     }
     doAnimationComplete(){
         super.doAnimationComplete();
-
     }
     draw(){
         super.draw();
