@@ -3,9 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>DSAV - Queue</title>
+    <script src="DSAV.js"></script>
+
+    <script src="back-end/adts/queue.js"></script>
+
+    <script src="back-end/visual-objects.js"></script>
+    <script src="back-end/animations/animations.js"></script>
+    <script src="back-end/datastructures/P-datastructures.js"></script>
+
+    <script src="back-end/controllers/adt-controllers.js"></script>
+    <script src="back-end/controllers/datastructure-controllers.js"></script>
+    <script src="back-end/animations/animators.js"></script>
+
+    <script src="back-end/datastructures/V-datastructures.js"></script>
 </head>
 <body>
-<script src="../DSAV.js"></script>
 <form>
     <input type="button" onclick="createADT('queue'); document.getElementById('null_toggle').disabled = false;"
            value="Create Queue" id="create_adt" disabled/>
@@ -37,15 +49,7 @@
 <button onclick="adtController.peek();">Peek</button>
 <label id="output_msg"></label>
 
-<script src="../back-end/canvasMan.js"></script>
-<script src="../back-end/visualObjects.js"></script>
-<script src="../back-end/animations.js"></script>
+<script src="back-end/canvasMan.js"></script>
 
-<script src="../back-end/controllers.js"></script>
-<script src="../back-end/concrete-data-structures/dataStructures.js"></script>
-<script src="../back-end/adt/queue_implementations.js"></script>
-
-
-<!--<script src="canvasMan.js"></script>-->
 </body>
 </html>

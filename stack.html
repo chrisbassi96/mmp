@@ -3,10 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>DSAV - Stack</title>
-    <script src="../back-end/deepclone.js"></script>
+    <script src="DSAV.js"></script>
+
+    <script src="back-end/adts/stack.js"></script>
+
+    <script src="back-end/visual-objects.js"></script>
+
+    <script src="back-end/animations/animators.js"></script>
+    <script src="back-end/animations/animations.js"></script>
+    <script src="back-end/animations/animation-properties.js"></script>
+
+    <script src="back-end/datastructures/P-datastructures.js"></script>
+
+    <script src="back-end/controllers/adt-controllers.js"></script>
+    <script src="back-end/controllers/datastructure-controllers.js"></script>
+
+    <script src="back-end/datastructures/P-datastructures.js"></script>
+    <script src="back-end/datastructures/V-datastructures.js"></script>
+
+
 </head>
 <body>
-<script src="../DSAV.js"></script>
+
 <form>
     <input type="button" onclick="createADT('stack'); document.getElementById('null_toggle').disabled = false;"
            value="Create Stack" id="create_adt" disabled/>
@@ -40,16 +58,7 @@
 <br/>
 <input type="range" min="2" max="400" onchange="animationSteps=this.value;" style="direction: rtl"/>
 
-<script src="../back-end/canvasMan.js"></script>
-<script src="../back-end/visualObjects.js"></script>
-<script src="../back-end/animations.js"></script>
+<script src="back-end/canvasMan.js"></script>
 
-<script src="../back-end/controllers.js"></script>
-<script src="../back-end/concrete-data-structures/dataStructures.js"></script>
-<script src="../back-end/adt/stack_implementations.js"></script>
-
-
-
-<!--<script src="canvasMan.js"></script>-->
 </body>
 </html>

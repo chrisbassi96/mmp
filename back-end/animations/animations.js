@@ -187,7 +187,7 @@ class AnimationSequencer{
             this.sequenceQueue = [];
             this.numSequences = 0;
             this.currSequence = 0;
-            canvasFOMan.clear();
+            //4canvasFOMan.clear();
             console.log("Animation sequencer finished");
         }else{
             console.log("NEXT ONE!");

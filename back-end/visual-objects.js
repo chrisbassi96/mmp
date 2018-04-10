@@ -18,39 +18,7 @@ class CoordsSet{
     }
 }
 
-class AnimationProperties{
-    constructor(isMoving, isFading){
-        this.isMoving = isMoving;
-        this.isFading = isFading;
-        this.progress = 0;
-        this.fade = "none";
-        this.opacity = 1;
 
-    }
-    isBeingAnimated(){
-        return this.isMoving === true || this.isFading === true;
-    }
-}
-
-class MoveFadeIn extends AnimationProperties{
-    constructor(){
-        super(true, true);
-        this.fade = "in";
-    }
-}
-
-class MoveFadeOut extends AnimationProperties{
-    constructor(){
-        super(true, true);
-        this.fade = "out";
-    }
-}
-
-class MoveNoFade extends AnimationProperties{
-    constructor(){
-        super(true, false);
-    }
-}
 
 class VisualObject{
     constructor(){
@@ -166,77 +134,7 @@ class VisualObject{
     }
 }
 
-class VisualTreeNode extends VisualObject{
-    constructor(physicalElement, radius){
-        super();
-        this.parentNode = null;
-        this.leftArrow = null;
-        this.rightArrow = null;
-        this.physicalElement = physicalElement;
 
-        this.radius = radius;
-
-        this.visualCircle = new VisualCircle(radius);
-        this.visualValue = new VisualValue(physicalElement.getValue());
-
-        this.visualObjects.push(this.visualCircle);
-        this.visualObjects.push(this.visualValue);
-    }
-    updateElementValue(){
-        this.visualValue.value = this.physicalElement.getValue();
-    }
-    setParent(parentIndex){
-        this.parent = parentIndex;
-    }
-    setLeft(leftIndex){
-        this.left = leftIndex;
-    }
-    setRight(rightIndex){
-        this.right = rightIndex;
-    }
-    setXY(x, y){
-        super.setXY(x, y);
-
-        this.setAllXY();
-    }
-    setAllXY() {
-        for (let i = 0; i < this.visualObjects.length; i++) {
-            this.visualObjects[i].setXY(this.xy[0], this.xy[1]);
-        }
-        this.updateArrowXY(this.xy[0], this.xy[1]);
-    }
-    updateMiddleXY(x, y, progress){
-        super.updateMiddleXY(x, y, progress);
-
-        if (this.visualCircle.isBeingAnimated() || this.isBeingAnimated()){
-            this.visualCircle.updateMiddleXY(x, y, progress)
-        }
-        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()){
-            this.visualValue.updateMiddleXY(x, y, progress);
-        }
-
-        this.updateArrowXY(x, y);
-    }
-    updateArrowXY(x, y){
-        for (let i=0; i<this.outgoingArrows.length; i++){
-            this.outgoingArrows[i].setStartXY(x, y);
-        }
-        for (let i=0; i<this.incomingArrows.length; i++){
-            this.incomingArrows[i].setEndXY(x, y);
-        }
-    }
-    draw(){
-        super.draw();
-        //if (this.physicalElement.getValue() !== null){
-            //this.visualCircle.draw();
-            //this.visualValue.draw();
-        //}
-        for (let i =0; i<this.outgoingArrows.length; i++){
-            this.outgoingArrows[i].draw();
-        }
-    }
-
-}
 
 class VisualArrow extends VisualObject{
     constructor(labelText="", labelPosition="start", startMargin, endMargin){
@@ -251,25 +149,16 @@ class VisualArrow extends VisualObject{
     }
     setCoords(coordsSet){
         this.coordsSet = coordsSet;
-
     }
     setStartXY(x, y){
         this.startXY = [x, y];
-
-        //this.recalculatePoints();
         this.updateLabelPosition();
     }
     setEndXY(x, y){
         this.endXY = [x, y];
-
-        console.log("setEndXY: " + x + " " + y);
-        //this.recalculatePoints();
-
     }
     recalculatePoints(){
-
         // Only recalculate when the coordinates are "reasonable", i.e. they are numbers
-
         if (this.startXY.length === 0 || this.endXY.length === 0){
             return;
         }
@@ -332,42 +221,12 @@ class VisualArrow extends VisualObject{
         let arrowHeadCornerBottomX = adjustedEndX + Math.cos(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
         let arrowHeadCornerBottomY = adjustedEndY + Math.sin(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
 
-
         ctx.beginPath();
         ctx.moveTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
         ctx.lineTo(adjustedEndX, adjustedEndY);
         ctx.lineTo(arrowHeadCornerBottomX,arrowHeadCornerBottomY);
         ctx.lineTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
         ctx.fill();
-
-
-
-
-/*        let angleFromShaftToArrowHeadCorner = Math.PI/8;
-        //let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
-        let lengthOfArrowHeadSide = 10;
-
-        //ctx.fillText(this.label, fromX, fromY);
-        ctx.beginPath();
-        ctx.moveTo(this.startXY[0], this.startXY[1]);
-        ctx.lineTo(this.endXY[0], this.endXY[1]);
-        ctx.stroke();
-
-        let angleFromShaftToArrowHeadCornerTop = lineAngle + Math.PI + angleFromShaftToArrowHeadCorner;
-        let arrowHeadCornerTopX = this.endXY[0] + Math.cos(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
-        let arrowHeadCornerTopY = this.endXY[1] + Math.sin(angleFromShaftToArrowHeadCornerTop)*lengthOfArrowHeadSide;
-
-        let angleFromShaftToArrowHeadCornerBottom = lineAngle + Math.PI - angleFromShaftToArrowHeadCorner;
-        let arrowHeadCornerBottomX = this.endXY[0] + Math.cos(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
-        let arrowHeadCornerBottomY = this.endXY[1] + Math.sin(angleFromShaftToArrowHeadCornerBottom)*lengthOfArrowHeadSide;
-
-
-        ctx.beginPath();
-        ctx.moveTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
-        ctx.lineTo(this.endXY[0], this.endXY[1]);
-        ctx.lineTo(arrowHeadCornerBottomX,arrowHeadCornerBottomY);
-        ctx.lineTo(arrowHeadCornerTopX,arrowHeadCornerTopY);
-        ctx.fill();*/
     }
 }
 
@@ -380,6 +239,7 @@ class VisualCircle extends VisualObject{
 
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
+        ctx.lineWidth = this.animationProperties.lineWidth;
         ctx.beginPath();
         ctx.arc(this.xy[0], this.xy[1], this.radius, 0, 2 * Math.PI);
         console.log(this.xy);
@@ -390,26 +250,40 @@ class VisualCircle extends VisualObject{
 
 }
 
-class VisualElementBox extends VisualObject{
-    constructor(){
+class VisualBox extends VisualObject{
+    constructor(width=elementBoxWidth, height=elementBoxHeight){
         super();
         this.containingVisualObject = null;
+        this.width = width;
+        this.height = height;
         this.crossedThrough = false;
     }
     doAnimationComplete(){
         super.doAnimationComplete();
+    }
+    getWidth(){
+        return this.width;
+    }
+    setWidth(width){
+        this.width = width;
+    }
+    getHeight(){
+        return this.height;
+    }
+    setHeight(height){
+        this.height = height;
     }
     draw(){
         super.draw();
 
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
-        ctx.strokeRect(this.getXY()[0]-(elementBoxWidth/2), this.getXY()[1]-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        ctx.strokeRect(this.getXY()[0]-(this.width/2), this.getXY()[1]-(this.height/2), this.width, this.height);
         if(this.crossedThrough){
             // Draw a slanted line to indicate no object referenced
             ctx.beginPath();
-            ctx.moveTo(this.getXY()[0] - (elementBoxWidth/2), this.getXY()[1] + (elementBoxHeight/2));
-            ctx.lineTo(this.getXY()[0] + (elementBoxWidth/2), this.getXY()[1] - (elementBoxHeight/2));
+            ctx.moveTo(this.getXY()[0] - (this.width/2), this.getXY()[1] + (this.height/2));
+            ctx.lineTo(this.getXY()[0] + (this.width/2), this.getXY()[1] - (this.height/2));
             ctx.closePath();
             ctx.stroke();
         }

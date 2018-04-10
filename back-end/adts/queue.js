@@ -4,10 +4,11 @@ class CircularArrayQueue{
     }
     enqueue(element){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
-            this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
+
             let avail = (this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize();
+            this.dataStructure.setTail(avail);
             //console.log(avail);
-            //this.adt.setElementValue(avail, element);
+            //this.adts.setElementValue(avail, element);
             this.dataStructure.setElementValue(avail, element);
             this.dataStructure.numElements += 1;
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
@@ -21,7 +22,7 @@ class CircularArrayQueue{
             return null;
         }
 
-        let element = this.dataStructure.getElementValue(this.dataStructure.getHead());
+        let element = this.dataStructure.getElement(this.dataStructure.getHead()).getValue();
         this.dataStructure.setElementValue(this.dataStructure.getHead(), null);
 
         this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
@@ -34,8 +35,7 @@ class CircularArrayQueue{
             return null;
         }
 
-        return this.dataStructure.getElementValue(this.dataStructure.getHead());
-
+        return this.dataStructure.getElement(this.dataStructure.getHead()).getValue();
     }
 }
 
