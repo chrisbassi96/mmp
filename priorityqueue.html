@@ -3,16 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>DSAV - Priority Queue</title>
+    <script src="DSAV.js"></script>
+
+    <script src="back-end/adts/priority-queue.js"></script>
+
+    <script src="back-end/visual-objects.js"></script>
+
+    <script src="back-end/animations/animators.js"></script>
+    <script src="back-end/animations/animations.js"></script>
+    <script src="back-end/animations/animation-properties.js"></script>
+
+    <script src="back-end/datastructures/P-datastructures.js"></script>
+
+    <script src="back-end/controllers/adt-controllers.js"></script>
+    <script src="back-end/controllers/datastructure-controllers.js"></script>
+
+    <script src="back-end/datastructures/P-datastructures.js"></script>
+    <script src="back-end/datastructures/V-datastructures.js"></script>
 
 </head>
 <body>
-<script src="DSAV.js"></script>
 <form>
     <input type="button" onclick="createADT('priority-queue'); document.getElementById('null_toggle').disabled = false;"
            value="Create Priority Queue" id="create_adt" disabled/>
     <label>
         using
-        <select id="dataStructure"
+        <select id="datastructure"
                 onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
             <option value="select">Select implementation</option>
             <option value="heap-array">Heap array</option>
@@ -41,12 +57,5 @@
 <input type="range" min="2" max="200" onchange="animationSteps=this.value;" style="direction: rtl"/>
 
 <script src="back-end/canvasMan.js"></script>
-<script src="back-end/visual-objects.js"></script>
-<script src="back-end/animations/animations.js"></script>
-
-<script src="back-end/controllers.js"></script>
-<script src="back-end/datastructures/P-datastructures.js"></script>
-<script src="back-end/adts/priority-queue.js"></script>
-
 </body>
 </html>

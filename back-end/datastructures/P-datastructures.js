@@ -214,7 +214,7 @@ class SimpleArray{
         this.size = this.size*2;
         for (let i=this.size/2; i<this.size; i++){
             this.content[i] = new Element(null);
-            this.content[i].setIndex(i);
+            //this.content[i].setIndex(i);
         }
     }
 }
@@ -262,8 +262,10 @@ class HeapArray extends SimpleArray{
         let temp = this.content[i].getValue();
         console.log(temp);
         console.log(this.content[j].getValue());
-        this.content[i].visualValue = this.content[j].getValue();
-        this.content[j].visualValue = temp;
+        this.content[i].setValue(this.content[j].getValue());
+        this.content[j].setValue(temp);
+
+        adtController.datastructureController.swap(i, j);
     }
 }
 

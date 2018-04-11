@@ -4,7 +4,7 @@ let canvasObjectMan = null;
 let animationSequencer = null;
 
 function createADT(type){
-    let dtSelect = document.getElementById("dataStructure");
+    let dtSelect = document.getElementById("datastructure");
     let selected = dtSelect.options[dtSelect.selectedIndex].value;
     // below might set size as a String type...
     let size = document.getElementById("adt_size").value === ""?20:parseInt(document.getElementById("adt_size").value);
@@ -17,12 +17,12 @@ function createADT(type){
     switch (selected + "-" + type){
         case "simple-array-stack":
             adt = new SimpleArrayStack(size);
-            datastructureController = new SimpleArrayController(adt.dataStructure);
+            datastructureController = new SimpleArrayController(adt.datastructure);
             adtController = new StackController(adt, datastructureController);
             break;
         case "singly-linked-list-stack":
             adt = new SinglyLinkedListStack();
-            datastructureController = new SinglyLinkedListController(adt.dataStructure);
+            datastructureController = new SinglyLinkedListController(adt.datastructure);
             adtController  = new StackController(adt, datastructureController);
             break;
         case "circular-array-queue":
@@ -41,6 +41,6 @@ function createADT(type){
         default:
             console.log("Error in createADT function. type = " + type);
     }
-    //canvasObjectMan.addTempObject(adts.dataStructure);
+    //canvasObjectMan.addTempObject(adts.datastructure);
 }
 

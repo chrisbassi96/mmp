@@ -133,7 +133,7 @@ class SinglyLinkedListController{
         stage0.doNotDraw(this.head);
         stage0.executeConcurrently = true;
 
-        let stage0coordsSet1 = new CoordsSet();
+        let stage0coordsSet1 = new CoordSet();
         stage0coordsSet1.setFromXY(leftMargin + elementBoxWidth, canvas.height / 2);
         //stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
         stage0coordsSet1.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
@@ -144,10 +144,10 @@ class SinglyLinkedListController{
 
         let headValue = new VisualValue(this.head.physicalElement.getValue());
 
-        let stage0coordsSet2 = new CoordsSet();
+        let stage0coordsSet2 = new CoordSet();
         stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
         //stage0coordsSet2.middleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
-        stage0coordsSet2.setToXY(stage0coordsSet1.staticMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.staticMiddleXY[1]);
+        stage0coordsSet2.setToXY(stage0coordsSet1.toMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.toMiddleXY[1]);
 
         stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
         stage0.addTempObject(headValue);
@@ -157,10 +157,10 @@ class SinglyLinkedListController{
 
         let stage1 = new AnimationSequence();
 
-        let stage1coordsSetHead = new CoordsSet();
-        stage1coordsSetHead.oldMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        let stage1coordsSetHead = new CoordSet();
+        stage1coordsSetHead.fromMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
         //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage1coordsSetHead.staticMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1coordsSetHead.toMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
         stage1.add(this.head, stage1coordsSetHead, new MoveNoFade());
 
         animationSequencer.add(stage1);
@@ -168,10 +168,10 @@ class SinglyLinkedListController{
 
         let stage2 = new AnimationSequence();
 
-        let stage2coordsSet = new CoordsSet();
-        stage2coordsSet.oldMiddleXY = [stage1coordsSetHead.staticMiddleXY[0], stage1coordsSetHead.staticMiddleXY[1]];
+        let stage2coordsSet = new CoordSet();
+        stage2coordsSet.fromMiddleXY = [stage1coordsSetHead.toMiddleXY[0], stage1coordsSetHead.toMiddleXY[1]];
         //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage2coordsSet.staticMiddleXY =  [leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2)];
+        stage2coordsSet.toMiddleXY =  [leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2)];
 
         stage2.add(this.head, stage2coordsSet, new MoveNoFade());
 
@@ -190,7 +190,7 @@ class SinglyLinkedListController{
 
         let stage0 = new AnimationSequence();
 
-        let stage0coordsSetHeadDummy = new CoordsSet();
+        let stage0coordsSetHeadDummy = new CoordSet();
         stage0coordsSetHeadDummy.setFromXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
         stage0coordsSetHeadDummy.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
 
@@ -231,7 +231,7 @@ class SinglyLinkedListController{
             }else{
                 curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]-(3*elementBoxWidth), curr.getStaticMiddleXY()[1]);
             }
-            sequence.add(curr, curr.coordsSet, new MoveNoFade());
+            sequence.add(curr, curr.coordSet, new MoveNoFade());
 
             curr = curr.getNext();
         }

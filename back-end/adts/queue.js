@@ -2,18 +2,18 @@ class CircularArrayQueue{
     constructor(size){
         this.dataStructure = new CircularArray(size);
     }
-    enqueue(element){
+    enqueue(elementValue){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
 
             let avail = (this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize();
             this.dataStructure.setTail(avail);
             //console.log(avail);
-            //this.adts.setElementValue(avail, element);
-            this.dataStructure.setElementValue(avail, element);
+            //this.adts.setElementValue(avail, elementValue);
+            this.dataStructure.setElementValue(avail, elementValue);
             this.dataStructure.numElements += 1;
             this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
 
-            return {value: element, index: avail};
+            return {value: elementValue, index: avail};
         }
         return null;
     }

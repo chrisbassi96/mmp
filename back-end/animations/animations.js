@@ -41,15 +41,21 @@ function mrAnimator(objectToAnimate){
     }
 }
 
-function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
+function mrExperimentalAnimator(animationSequence, index, objectToAnimate){
 
     //let animationStart = null;
+/*    let currXY = objectToAnimate.getOldMiddleXY();
+    let toXY = objectToAnimate.getStaticMiddleXY();
+    let trajectoryAngle = Math.atan2(toXY.y-currXY.y, toXY.x-currXY.x);
+    let lineLength = Math.hypot(toXY.x-currXY.x, toXY.y-currXY.y);*/
+
     let currX = objectToAnimate.getOldMiddleXY()[0];
     let currY = objectToAnimate.getOldMiddleXY()[1];
     let targetX = objectToAnimate.getStaticMiddleXY()[0];
     let targetY = objectToAnimate.getStaticMiddleXY()[1];
     let trajectoryAngle = Math.atan2(targetY-currY, targetX-currX);
     let lineLength = Math.hypot(targetX-currX, targetY-currY);
+
     let lineSegment = lineLength / animationSteps;
     let stopID = 0;
     let progress = 0;
@@ -63,19 +69,23 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
 
         clearCanvas();
 
+/*        currXY.x += (Math.cos(trajectoryAngle) * lineSegment);
+        currXY.y += (Math.sin(trajectoryAngle) * lineSegment);
+
+        objectToAnimate.updateMiddleXY(currXY, progress);*/
 
         currX = currX + (Math.cos(trajectoryAngle) * lineSegment);
         currY = currY + (Math.sin(trajectoryAngle) * lineSegment);
 
         objectToAnimate.updateMiddleXY(currX, currY, progress);
 
-        //animationSequencer.draw();
+        //animationSequence.draw();
         //objectToAnimate.draw();
         //canvasObjectMan.draw();
         adtController.datastructureController.draw();
         //canvasFOMan.draw();
-        //console.log(animationSequencer);
-        animationSequencer.drawObjects();
+        //console.log(animationSequence);
+        animationSequence.drawObjects();
 
         if (progress!==animationSteps-1) {
             progress += 1;
@@ -92,13 +102,13 @@ function mrExperimentalAnimator(animationSequencer, index, objectToAnimate){
             //objectToAnimate.isBeingAnimated = false;
             //canvasFOMan.draw();
             adtController.datastructureController.draw();
-            animationSequencer.doNext(index+1);
+            animationSequence.doNext(index+1);
             window.cancelAnimationFrame(stopID);
         }
     }
 }
 
-function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimations){
+function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimations, index){
     let stopID = 0;
     let progress = 0;
 
@@ -208,9 +218,9 @@ class AnimationSequence{
 
         this.executeConcurrently = false;
     }
-    add(canvasObject, coordsSet, animationProperties){
+    add(canvasObject, coordSet, animationProperties){
         //this.animationQueue[this.numAnimations] = canvasObject;
-        this.animationQueue.push({canvasObject: canvasObject, coordsSet: coordsSet, animationProperties: animationProperties});
+        this.animationQueue.push({canvasObject: canvasObject, coordSet: coordSet, animationProperties: animationProperties});
         this.numAnimations++;
     }
     go(){
@@ -220,15 +230,16 @@ class AnimationSequence{
             this.doNotDrawObjects[i].setNotDrawn(true);
         }
         if (this.executeConcurrently){
+            console.log(this.animationQueue);
             for (let i = 0; i<this.numAnimations; i++){
-                this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordsSet);
+                this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordSet);
                 this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
                 //mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
             }
             mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
         }else{
             this.doNext(0);
-/*            this.animationQueue[0].canvasObject.coordsSet = this.animationQueue[0].coordsSet;
+/*            this.animationQueue[0].canvasObject.coordSet = this.animationQueue[0].coordSet;
             this.animationQueue[0].canvasObject.setAnimationProperties(this.animationQueue[0].animationProperties);*/
             //mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
         }
@@ -242,9 +253,9 @@ class AnimationSequence{
         }else{
             console.log("NEXT ONE!");
             console.log(this.animationQueue);
-            // Important to only apply the coordsSet when executing animation, otherwise if having the same object
+            // Important to only apply the coordSet when executing animation, otherwise if having the same object
             // animated with two coordsSets, it would be overridden
-            this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordsSet);
+            this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordSet);
             this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
             mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
         }

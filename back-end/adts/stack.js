@@ -1,67 +1,67 @@
 class SimpleArrayStack{
     constructor(size){
-        this.dataStructure = new SimpleArray(size);
+        this.datastructure = new SimpleArray(size);
     }
     push(elementValue){
-        if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
-            this.dataStructure.setElementValue(this.dataStructure.getNumElements(), elementValue);
-            this.dataStructure.numElements++;
+        if (this.datastructure.getNumElements() < this.datastructure.getSize()){
+            this.datastructure.setElementValue(this.datastructure.getNumElements(), elementValue);
+            this.datastructure.numElements++;
 
             // The following is used only for visualization
-            return {value: elementValue, index:this.dataStructure.numElements-1};
+            return {value: elementValue, index:this.datastructure.numElements-1};
         }
 
         // The following is used only for visualization
         return null;
 
-        //this.dataStructure.draw();
+        //this.datastructure.draw();
     }
     pop(){
-        if (this.dataStructure.isEmpty()){
+        if (this.datastructure.isEmpty()){
             return null;
         }
-        let poppedElementValue = this.dataStructure.getElement(this.dataStructure.getNumElements()-1).getValue();
-        //let element = this.dataStructure.getElementValue(this.dataStructure.getNumElements()-1);
-        this.dataStructure.setElementValue(this.dataStructure.getNumElements()-1, null);
-        this.dataStructure.numElements--;
+        let poppedElementValue = this.datastructure.getElement(this.datastructure.getNumElements()-1).getValue();
+        //let element = this.datastructure.getElementValue(this.datastructure.getNumElements()-1);
+        this.datastructure.setElementValue(this.datastructure.getNumElements()-1, null);
+        this.datastructure.numElements--;
 
-        //this.dataStructure.draw();
-        return {value: poppedElementValue, index: this.dataStructure.getNumElements()};
+        //this.datastructure.draw();
+        return {value: poppedElementValue, index: this.datastructure.getNumElements()};
     }
     peek(){
-        if (this.dataStructure.isEmpty()) {
+        if (this.datastructure.isEmpty()) {
             return null;
         }
 
-        //this.dataStructure.draw();
-        return this.dataStructure.getElement(this.dataStructure.getNumElements()-1).getValue();
+        //this.datastructure.draw();
+        return this.datastructure.getElement(this.datastructure.getNumElements()-1).getValue();
     }
 }
 
 class SinglyLinkedListStack{
     constructor(){
-        this.dataStructure = new SinglyLinkedList();
+        this.datastructure = new SinglyLinkedList();
     }
     push(elementValue){
         let newNode = new SinglyLinkedListNode(elementValue, null);
 
-        this.dataStructure.addFirst(newNode);
+        this.datastructure.addFirst(newNode);
         outputLabel.innerText = "Pushed " + elementValue;
 
         return newNode;
     }
     pop(){
-        if (this.dataStructure.isEmpty()) {
+        if (this.datastructure.isEmpty()) {
             return null;
         }
 
-        let poppedElementValue = this.dataStructure.head.getValue();
+        let poppedElementValue = this.datastructure.head.getValue();
 
-        this.dataStructure.removeFirst();
+        this.datastructure.removeFirst();
 
         return {value: poppedElementValue};
     }
     peek(){
-        outputLabel.innerText = this.dataStructure.getFirst();
+        outputLabel.innerText = this.datastructure.getFirst();
     }
 }

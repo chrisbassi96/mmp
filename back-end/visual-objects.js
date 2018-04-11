@@ -1,64 +1,62 @@
-class CoordsSet{
+class CoordSet{
     constructor(){
-        this.oldMiddleXY = [0, 0];
+        this.fromMiddleXY = [0, 0];
         //this.middleXY = [0, 0];
-        this.staticMiddleXY = [0, 0];
+        this.toMiddleXY = [0, 0];
     }
     getFromXY(){
-        return this.oldMiddleXY;
+        return this.fromMiddleXY;
     }
     setFromXY(x, y){
-        this.oldMiddleXY = [x, y];
+        this.fromMiddleXY = [x, y];
     }
     getToXY(){
-        return this.staticMiddleXY;
+        return this.toMiddleXY;
     }
     setToXY(x, y){
-        this.staticMiddleXY = [x, y];
+        this.toMiddleXY = [x, y];
     }
 }
 
-
-
 class VisualObject{
     constructor(){
-        this.xy = [0, 0];
+        this.middleXY = [0, 0];
         this.notDrawn = false;
         this.visualObjects = [];
         this.incomingArrows = [];
         this.outgoingArrows = [];
-        this.coordsSet = new CoordsSet();
+        this.coordSet = new CoordSet();
         this.animationProperties = new AnimationProperties();
     }
     // Return middle X and Y coordinates
     // @return middle X and Y coordinates as Array
     getXY(){
-        return this.xy;
+        return this.middleXY;
     }
     setXY(x, y){
-        this.xy = [x, y];
+        this.middleXY = [x, y];
     }
     getStaticMiddleXY(){
-        return this.coordsSet.getToXY();
+        return this.coordSet.getToXY();
     }
     setStaticMiddleXY(x, y){
-        this.coordsSet.setToXY(x, y);
+        this.coordSet.setToXY(x, y);
     }
     getOldMiddleXY(){
-        return this.coordsSet.getFromXY();
+        return this.coordSet.getFromXY();
     }
     setOldMiddleXY(x, y){
-        this.coordsSet.setFromXY(x, y);
+        this.coordSet.setFromXY(x, y);
         this.setAllOldMiddleXY();
     }
     setAllOldMiddleXY(){
         for (let i=0; i<this.visualObjects.length; i++){
-            this.visualObjects[i].setOldMiddleXY(this.coordsSet.getFromXY()[0], this.coordsSet.getFromXY()[1]);
+            this.visualObjects[i].setOldMiddleXY(this.coordSet.getFromXY()[0], this.coordSet.getFromXY()[1]);
         }
     }
     setCoords(coordsSet){
-        this.coordsSet = coordsSet;
-        this.xy = coordsSet.getFromXY();
+        this.coordSet = coordsSet;
+        this.middleXY = coordsSet.getFromXY();
     }
     updateMiddleXY(x, y, progress){
         this.animationProperties.progress = progress;
@@ -71,19 +69,19 @@ class VisualObject{
         }
     }
     addIncomingArrow(visualArrow){
-        visualArrow.setEndXY(this.xy[0], this.xy[1]);
+        visualArrow.setEndXY(this.middleXY[0], this.middleXY[1]);
         this.incomingArrows.push(visualArrow);
     }
     addOutgoingArrow(visualArrow){
-        visualArrow.setStartXY(this.xy[0], this.xy[1]);
+        visualArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
         this.outgoingArrows.push(visualArrow);
     }
     isBeingAnimated(){
         return this.animationProperties.isBeingAnimated();
     }
     setAnimationProperties(animationProperties){
-
         this.animationProperties = animationProperties;
+
         for (let i=0; i<this.visualObjects.length; i++){
             this.visualObjects[i].setAnimationProperties(animationProperties);
         }
@@ -102,7 +100,7 @@ class VisualObject{
             case "none":
                 return;
             case "in":
-                newOpacity = (this.animationProperties.progress/animationSteps);
+                newOpacity = this.animationProperties.progress/animationSteps;
                 break;
             case "out":
                 newOpacity = Math.abs(((this.animationProperties.progress-1)/animationSteps)-1);
@@ -133,8 +131,6 @@ class VisualObject{
         }
     }
 }
-
-
 
 class VisualArrow extends VisualObject{
     constructor(labelText="", labelPosition="start", startMargin, endMargin){
@@ -184,7 +180,7 @@ class VisualArrow extends VisualObject{
                 this.label.setXY(this.startXY[0], this.startXY[1]);
                 break;
             case "middle":
-                this.label.setXY(this.xy[0], this.xy[1]);
+                this.label.setXY(this.middleXY[0], this.middleXY[1]);
                 break;
             case "end":
                 this.label.setXY(this.endXY[0], this.endXY[1]);
@@ -236,13 +232,12 @@ class VisualCircle extends VisualObject{
         this.radius = radius;
     }
     draw(){
-
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
         ctx.lineWidth = this.animationProperties.lineWidth;
         ctx.beginPath();
-        ctx.arc(this.xy[0], this.xy[1], this.radius, 0, 2 * Math.PI);
-        console.log(this.xy);
+        ctx.arc(this.middleXY[0], this.middleXY[1], this.radius, 0, 2 * Math.PI);
+        console.log(this.middleXY);
         console.log(this.radius);
         ctx.stroke();
         ctx.restore();

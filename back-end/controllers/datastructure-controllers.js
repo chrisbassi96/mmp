@@ -3,16 +3,16 @@ class DatastructureController{
         this.datastructure = datastructure;
         this.elementBoxY = elementBoxY;
         this.showIndex = showIndex;
-        this.visualDatastructureNew = null;
+        this.visualDatastructure = null;
         this.visualDatastructureAnimator = null
 
     }
     moveIntoVisualDatastructure(element){
-        this.visualDatastructureNew.updateElementValueAndIndex(element);
+        this.visualDatastructure.updateElementValueAndIndex(element);
         this.visualDatastructureAnimator.moveIntoVisualDatastructure(element);
     }
     moveOutOfDatastructure(element) {
-        this.visualDatastructureNew.updateElementValueAndIndex(element);
+        this.visualDatastructure.updateElementValueAndIndex(element);
         this.visualDatastructureAnimator.moveOutOfDatastructure(element);
     }
 }
@@ -20,8 +20,8 @@ class DatastructureController{
 class SimpleArrayController extends DatastructureController{
     constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
         super(datastructure, elementBoxY, showIndex);
-        this.visualDatastructureNew = new VisualSimpleArray(this.datastructure, elementBoxY, showIndex);
-        this.visualDatastructureAnimator = new VisualSimpleArrayAnimator(this.visualDatastructureNew);
+        this.visualDatastructure = new VisualSimpleArray(this.datastructure, elementBoxY, showIndex);
+        this.visualDatastructureAnimator = new VisualSimpleArrayAnimator(this.visualDatastructure);
     }
     moveIntoVisualDatastructure(element){
         super.moveIntoVisualDatastructure(element);
@@ -30,86 +30,22 @@ class SimpleArrayController extends DatastructureController{
         super.moveOutOfDatastructure(element);
     }
     draw() {
-        this.visualDatastructureNew.draw();
+        this.visualDatastructure.draw();
     }
 }
 
-class HeapArrayController extends SimpleArrayController{
+class HeapArrayController extends DatastructureController{
     constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
         super(datastructure, elementBoxY, showIndex);
-        this.originalSize = datastructure.size;
-        this.visualTreeContent = [];
-        this.treeNodeRadius = 20;
-
-        this.createVisualElements(0, this.datastructure.size);
-
-        for (let i=0; i<this.datastructure.size; i++){
-            this.visualDatastructure[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
-            this.visualDatastructure[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.visualDatastructure[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-
-            this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
-        }
+        this.visualDatastructure = new VisualHeapArray(this.datastructure, elementBoxY, showIndex);
+        this.visualDatastructureAnimator = new VisualHeapArrayAnimator(this.visualDatastructure);
     }
-    moveIntoVisualDatastructure(element){
-        if (this.originalSize < this.datastructure.size){
-            this.expand();
+    moveIntoVisualDatastructure(element) {
+        if (this.originalSize < this.datastructure.size) {
+            this.visualDatastructure.expand();
         }
-
-        let index = element.index;
-        console.log(element);
-        this.visualDatastructure[index].updateElementValue(); // Get the current visualValue from physical datastructure
-        this.visualTreeContent[index].updateElementValue();
-        //this.visualDatastructure[index].update();
-        this.visualDatastructure[index].setIndex(index); // Update index
-        //super.moveIntoVisualDatastructure(element);
-
-        //this.visualTreeContent[index] = new VisualTreeNode(this.datastructure.getElement(element.index), this.treeNodeRadius);
-
-        //this.visualTreeContent[index].setLeft(this.visualTreeContent[HeapArray.left(index)]);
-        //this.visualTreeContent[index].setRight(this.visualTreeContent[HeapArray.right(index)]);
-        this.updateTreeNodeCoords();
-        console.log("Here's the index: " + index);
-        this.createNodeArrows();
-
-        if (index !== 0){
-            let parentTreeNode = this.visualTreeContent[HeapArray.parent(index)];
-            if (index % 2 !== 0){
-                console.log("Index is odd");
-                // Has parent
-                let leftArrow = new VisualArrow(null, null, this.treeNodeRadius, this.treeNodeRadius);
-                let rightArrow = new VisualArrow(null, null, this.treeNodeRadius, this.treeNodeRadius);
-
-                parentTreeNode.addOutgoingArrow(leftArrow);
-                parentTreeNode.leftArrow = leftArrow;
-                parentTreeNode.addOutgoingArrow(rightArrow);
-                parentTreeNode.rightArrow = rightArrow;
-                this.visualTreeContent[index].addIncomingArrow(parentTreeNode.leftArrow);
-            }else{
-                console.log("Index is even");
-                this.visualTreeContent[index].addIncomingArrow(parentTreeNode.rightArrow);
-            }
-        }
-        console.log(this.visualTreeContent[element.index]);
-
-        let stage0 = new AnimationSequence();
-        stage0.executeConcurrently = true;
-        //stage0.doNotDraw(this.visualDatastructure[index]);
-
-        this.animationMoveIntoVisualDatastructure(index, stage0);
-
-        animationSequencer.add(stage0);
-
-        animationSequencer.go();
-    }
-    animationMoveIntoVisualDatastructure(index, stageToAddTo){
-        super.animationMoveIntoVisualDatastructure(index, stageToAddTo);
-
-        let stage0coordsSet2 = new CoordsSet();
-        stage0coordsSet2.setFromXY(this.visualTreeContent[index].getXY()[0], this.visualTreeContent[index].getXY()[1]);
-        stage0coordsSet2.setToXY(this.visualTreeContent[index].getXY()[0], this.visualTreeContent[index].getXY()[1]);
-
-        stageToAddTo.add(this.visualTreeContent[index], stage0coordsSet2, new MoveFadeIn());
+        super.moveIntoVisualDatastructure(element);
+        this.visualDatastructureAnimator.animationSwapElements();
     }
     expand(){
         for (let i=this.originalSize; i<this.datastructure.size; i++){
@@ -121,84 +57,12 @@ class HeapArrayController extends SimpleArrayController{
             this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
         }
         this.originalSize = this.datastructure.size;
-        /*        this.size = this.size*2;
-                for (let i=this.size/2; i<this.size; i++){
-                    this.visualDatastructure[i] = new ArrayElementController(null, this.showIndex);
-                    this.visualDatastructure[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-                    this.visualDatastructure[i].setIndex(i);
-                }*/
     }
-    createNodeArrows(){
-        if (index !== 0){
-            let parentTreeNode = this.visualTreeContent[HeapArray.parent(index)];
-            if (index % 2 !== 0){
-                console.log("Index is odd");
-                // Has parent
-                let leftArrow = new VisualArrow(null, null, this.treeNodeRadius, this.treeNodeRadius);
-                let rightArrow = new VisualArrow(null, null, this.treeNodeRadius, this.treeNodeRadius);
-
-                parentTreeNode.addOutgoingArrow(leftArrow);
-                parentTreeNode.leftArrow = leftArrow;
-                parentTreeNode.addOutgoingArrow(rightArrow);
-                parentTreeNode.rightArrow = rightArrow;
-                this.visualTreeContent[index].addIncomingArrow(parentTreeNode.leftArrow);
-            }else{
-                console.log("Index is even");
-                this.visualTreeContent[index].addIncomingArrow(parentTreeNode.rightArrow);
-            }
-        }
-    }
-    updateTreeNodeCoords(){
-        let numLevels = Math.floor(Math.log2(this.datastructure.numElements));
-
-        let radiusOfNode = 20;
-        let gapUnit = radiusOfNode;
-        let nodeXSpacingFactor = 0.5;
-        let nodeYSpacingFactor = 0.5;
-
-        let totalExtraGap = (Math.pow(2, numLevels)*nodeXSpacingFactor);
-        let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
-
-        for (let i=0; i<this.datastructure.numElements; i++){
-            let currLevel = Math.floor(Math.log2(i+1));
-            let nodesOnCurrLevel = Math.pow(2, currLevel);
-            let nodePosOnLevel = Math.abs((nodesOnCurrLevel-i)-1);
-            console.log("nodePosOnLevel: " + nodePosOnLevel);
-            console.log("numLevels: " + numLevels);
-            console.log("currLevel: " + currLevel);
-            //let reverseCurrLevel = (currLevel + 1) - (i+1);
-
-            let reverseCurrLevel = (numLevels+1) - currLevel;
-            console.log("reverseCurrLevel: " + reverseCurrLevel);
-            let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel)*nodeXSpacingFactor);
-            let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
-            let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
-
-
-            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
-            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
-
-            let x = canvas.width / 2 - (unitsToStart * radiusOfNode);
-            //x += (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode + radiusOfNode + (distanceBetweenNodes * radiusOfNode * nodePosOnLevel);
-            x += (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
-            x += nodePosOnLevel * (radiusOfNode + (distanceBetweenNodes * radiusOfNode));
-
-
-            let y = (canvas.height / 2);
-            y += (currLevel * (radiusOfNode*2)) + (radiusOfNode * nodeYSpacingFactor * currLevel );
-
-            console.log("HELLO");
-
-            this.visualTreeContent[i].setXY(x, y);
-        }
+    swap(indexI, indexJ){
+        this.visualDatastructureAnimator.swap(indexI, indexJ);
     }
     draw() {
-        for (let i=0; i<this.datastructure.numElements; i++){
-            //this.visualDatastructure[i].draw();
-            //ctx.fillRect(this.visualTreeContent[i].getXY()[0], this.visualTreeContent[i].getXY()[1],20,20);
-            this.visualTreeContent[i].draw();
-        }
-        super.draw();
+        this.visualDatastructure.draw();
     }
 }
 
@@ -223,11 +87,11 @@ class CircularArrayController extends SimpleArrayController{
         // Setup for animation stage
         let stage0 = new AnimationSequence();
 
-        let tailArrowCoordSetStart = new CoordsSet();
+        let tailArrowCoordSetStart = new CoordSet();
         tailArrowCoordSetStart.setFromXY(this.tailArrow.startXY[0], this.tailArrow.startXY[1]);
         tailArrowCoordSetStart.setToXY(this.visualDatastructure[this.datastructure.tail].getXY()[0], this.tailArrow.startXY[1]);
 
-        let tailArrowCoordSetEnd = new CoordsSet();
+        let tailArrowCoordSetEnd = new CoordSet();
         tailArrowCoordSetEnd.setFromXY(this.tailArrow.endXY[0], this.tailArrow.endXY[1]);
         tailArrowCoordSetEnd.setToXY(this.visualDatastructure[this.datastructure.tail].getXY()[0], this.tailArrow.endXY[1]);
 
@@ -333,7 +197,7 @@ class VisualLinkedListElement extends VisualObject{
         this.setIncomingArrowsXY(x, y);
     }
     isOnTopOf(otherNode){
-        return (this.xy[1] === otherNode.getXY()[1]) && (this.xy[1] === otherNode.xy[1]);
+        return (this.middleXY[1] === otherNode.getXY()[1]) && (this.middleXY[1] === otherNode.middleXY[1]);
     }
     setIncomingArrowsXY(x, y){
         for (let i=0; i<this.incomingArrows.length; i++){
@@ -343,7 +207,7 @@ class VisualLinkedListElement extends VisualObject{
     addIncomingArrow(arrow){
         super.addIncomingArrow(arrow);
 
-        arrow.setEndXY(this.xy[0], this.xy[1]-elementBoxHeight/2);
+        arrow.setEndXY(this.middleXY[0], this.middleXY[1]-elementBoxHeight/2);
     }
     draw() {
         super.draw();
@@ -450,9 +314,9 @@ class VisualTreeNode extends VisualObject{
     }
     setAllXY() {
         for (let i = 0; i < this.visualObjects.length; i++) {
-            this.visualObjects[i].setXY(this.xy[0], this.xy[1]);
+            this.visualObjects[i].setXY(this.middleXY[0], this.middleXY[1]);
         }
-        this.updateArrowXY(this.xy[0], this.xy[1]);
+        this.updateArrowXY(this.middleXY[0], this.middleXY[1]);
     }
     updateMiddleXY(x, y, progress){
         super.updateMiddleXY(x, y, progress);
