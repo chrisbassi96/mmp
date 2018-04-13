@@ -1,8 +1,8 @@
 class AnimationProperties{
-    constructor(isMoving, isFading, isHighlighted){
+    constructor(isMoving, isFading, highlighter){
         this.isMoving = isMoving;
         this.isFading = isFading;
-        this.isHighlighted = isHighlighted;
+        this.highlighter = highlighter;
         this.progress = 0;
         this.fade = "none";
         this.opacity = 1;
@@ -35,4 +35,18 @@ class MoveNoFade extends AnimationProperties{
     constructor(){
         super(true, false);
     }
+}
+
+class HighlighterObserve{
+    constructor(){
+
+    }
+}
+
+class HighlighterCompare{
+
+}
+
+class HighlighterSwap{
+
 }

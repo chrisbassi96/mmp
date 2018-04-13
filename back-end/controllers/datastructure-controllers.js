@@ -209,7 +209,7 @@ class VisualArrayElement extends VisualObject{
 class VisualTreeNode extends VisualObject{
     constructor(physicalElement, radius){
         super();
-        this.parentNode = null;
+        //this.parentNode = null;
         this.leftArrow = null;
         this.rightArrow = null;
         this.physicalElement = physicalElement;

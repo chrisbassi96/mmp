@@ -1,6 +1,20 @@
+class VisualDatastructure{
+    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight){
+        this.physicalDatastructure = datastructure;
+        this.elementBoxY = elementBoxY;
+        this.content = [];
+    }
+    draw(){
+        for (let i=0; i<this.physicalDatastructure.size; i++){
+            this.content[i].draw();
+        }
+    }
+}
+
 class VisualSimpleArray{
     constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
         this.physicalDatastructure = datastructure;
+        this.animator = null;
         this.elementBoxY = elementBoxY;
         this.showIndex = showIndex;
         this.content = [];
@@ -37,6 +51,7 @@ class VisualSimpleArray{
 class VisualHeapArray extends VisualSimpleArray{
     constructor(datastructure, elementBoxY, showIndex){
         super(datastructure, elementBoxY, showIndex);
+        this.animator = new VisualHeapArrayAnimator();
         this.originalSize = datastructure.size;
         this.contentTree = [];
         this.treeNodeRadius = 20;
@@ -50,7 +65,7 @@ class VisualHeapArray extends VisualSimpleArray{
             this.expand();
         }
 
-        super.moveIntoDatastructure(element);
+        super.insertProcess(element);
 
         this.contentTree[element.index].updateElementValue();
 

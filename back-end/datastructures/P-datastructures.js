@@ -86,6 +86,15 @@ class DoublyLinkedListNode extends Element{
     }
 }
 
+class Datastructure {
+    constructor(){
+        this.numElements = 0;
+    }
+    isEmpty(){
+        return this.numElements === 0;
+    }
+}
+
 class SinglyLinkedList{
     constructor(){
         this.head = null;
@@ -131,7 +140,7 @@ class SinglyLinkedList{
     removeNext(){
 
     }
-    getSize(){
+    getNumElements(){
         return this.numElements;
     }
     isEmpty(){

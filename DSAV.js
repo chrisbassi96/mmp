@@ -12,6 +12,7 @@ function createADT(type){
     //ctx.textAlign = "center";
     let adt = null;
     let datastructureController = null;
+    let visualDatastructure = null;
     animationSequencer = new AnimationSequencer();
 
     switch (selected + "-" + type){

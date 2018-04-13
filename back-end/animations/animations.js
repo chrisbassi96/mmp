@@ -213,8 +213,8 @@ class AnimationSequence{
         this.animationQueue = [];
         this.numAnimations = 0;
         this.doNotDrawObjects = [];
-        this.objectsToDraw = [];
-        this.numObjectsToDraw = 0;
+        this.sequenceObjects = [];
+        this.numSequenceObjects = 0;
 
         this.executeConcurrently = false;
     }
@@ -224,11 +224,10 @@ class AnimationSequence{
         this.numAnimations++;
     }
     go(){
-        //this.setupDrawnObjects(true)
+        //this.setObjectDrawStates(true)
         console.log("GO GO GO");
-        for (let i=0; i<this.doNotDrawObjects.length; i++){
-            this.doNotDrawObjects[i].setNotDrawn(true);
-        }
+        this.setObjectDrawStates(true);
+
         if (this.executeConcurrently){
             console.log(this.animationQueue);
             for (let i = 0; i<this.numAnimations; i++){
@@ -244,10 +243,10 @@ class AnimationSequence{
             //mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
         }
     }
-    doNext(i){
+    doNext(queueIndex){
         console.log("numAnimations: " + this.numAnimations);
-        console.log("doNext i value: " + i);
-        if (this.numAnimations===(i)){
+        console.log("doNext i value: " + queueIndex);
+        if (this.numAnimations===(queueIndex)){
             console.log("FINITO!");
             this.finish();
         }else{
@@ -255,9 +254,9 @@ class AnimationSequence{
             console.log(this.animationQueue);
             // Important to only apply the coordSet when executing animation, otherwise if having the same object
             // animated with two coordsSets, it would be overridden
-            this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordSet);
-            this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
-            mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
+            this.animationQueue[queueIndex].canvasObject.setCoords(this.animationQueue[queueIndex].coordSet);
+            this.animationQueue[queueIndex].canvasObject.setAnimationProperties(this.animationQueue[queueIndex].animationProperties);
+            mrExperimentalAnimator(this, queueIndex, this.animationQueue[queueIndex].canvasObject);
         }
     }
     finish(){
@@ -269,13 +268,13 @@ class AnimationSequence{
         //this.clear();
         this.numAnimations = 0;
         //canvasFOMan.clear();
-        this.setupDrawnObjects(false);
+        this.setObjectDrawStates(false);
         this.doNotDrawObjects = [];
-        this.objectsToDraw = [];
+        this.sequenceObjects = [];
         this.animationSequencer.doNext();
         console.log("Animation sequence over");
     }
-    setupDrawnObjects(setNotDrawObjects){
+    setObjectDrawStates(setNotDrawObjects){
         console.log(setNotDrawObjects);
         for (let i=0; i<this.doNotDrawObjects.length; i++){
             this.doNotDrawObjects[i].setNotDrawn(setNotDrawObjects);
@@ -284,24 +283,20 @@ class AnimationSequence{
 
     // This function adds to the sequence's list of objects that need to be drawn. These can't be specified in the above
     // add function, as the object being added may be part of the data structure and so would be drawn twice.
-    addTempObject(canvasObject){
+    addTempObject(visualObject){
         console.log("hello from addTempObject");
-        this.objectsToDraw.push(canvasObject);
-        this.numObjectsToDraw++;
+        this.sequenceObjects.push(visualObject);
+        this.numSequenceObjects++;
     }
     drawObjects(){
-        for (let i = 0; i<this.numObjectsToDraw; i++){
-            this.objectsToDraw[i].draw();
+        for (let i = 0; i<this.numSequenceObjects; i++){
+            this.sequenceObjects[i].draw();
         }
     }
 
     doNotDraw(visualObject){
         //this.doNotDrawObjects = this.doNotDrawObjects.concat(visualObjects);
         this.doNotDrawObjects.push(visualObject);
-    }
-    doDraw(visualObject){
-        //this.objectsToDraw = this.objectsToDraw.concat(visualObjects)
-        this.objectsToDraw.push(visualObject);
     }
 }
 
