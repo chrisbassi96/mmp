@@ -16,7 +16,7 @@ class StackController extends AdtController{
             outputLabel.innerText = "Stack is full";
         }else{
             outputLabel.innerText = "Push " + pushedElement.value;
-            this.datastructureController.moveIntoVisualDatastructure(pushedElement);
+            this.datastructureController.moveIntoDatastructure(pushedElement);
         }
     }
     pop(){
@@ -51,7 +51,7 @@ class QueueController extends AdtController{
             outputLabel.innerText = "Queue is full";
         }else{
             outputLabel.innerText = "Enqueue " + enqueuedElement.value;
-            this.datastructureController.moveIntoVisualDatastructure(enqueuedElement);
+            this.datastructureController.moveIntoDatastructure(enqueuedElement);
         }
     }
     dequeue(){
@@ -86,7 +86,7 @@ class PriorityQueueController extends  AdtController{
 
         }else{
             outputLabel.innerText = "Insert " + element;
-            this.datastructureController.moveIntoVisualDatastructure(insertedElement);
+            this.datastructureController.moveIntoDatastructure(insertedElement);
         }
     }
 }
@@ -315,11 +315,11 @@ class DatastructureController{
 
     }
     moveIntoVisualDatastructure(element){
-        this.visualDatastructure.updateElementValueAndIndex(element);
-        this.visualDatastructureAnimator.moveIntoVisualDatastructure(element);
+        this.visualDatastructure.moveIntoDatastructure(element);
+        this.visualDatastructureAnimator.moveIntoDatastructure(element);
     }
     moveOutOfDatastructure(element) {
-        this.visualDatastructure.updateElementValueAndIndex(element);
+        this.visualDatastructure.moveIntoDatastructure(element);
         this.visualDatastructureAnimator.moveOutOfDatastructure(element);
     }
 }
@@ -353,7 +353,7 @@ class VisualSimpleArray{
             this.content[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             this.content[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
             //this.visualDatastructure[i].setIndex(i);
-            //this.visualDatastructure[i].moveIntoVisualDatastructure();
+            //this.visualDatastructure[i].moveIntoDatastructure();
             this.content[i].draw();
         }
     }
@@ -473,7 +473,7 @@ class HeapArrayController extends SimpleArrayController{
         this.visualTreeContent[index].updateElementValue();
         //this.visualDatastructure[index].update();
         this.visualDatastructure[index].setIndex(index); // Update index
-        //super.moveIntoVisualDatastructure(element);
+        //super.moveIntoDatastructure(element);
 
         //this.visualTreeContent[index] = new VisualTreeNode(this.datastructure.getElement(element.index), this.treeNodeRadius);
 
@@ -514,7 +514,7 @@ class HeapArrayController extends SimpleArrayController{
         animationSequencer.go();
     }
     animationMoveIntoVisualDatastructure(index, stageToAddTo){
-        super.animationMoveIntoVisualDatastructure(index, stageToAddTo);
+        super.animationMoveIntoDatastructure(index, stageToAddTo);
 
         let stage0coordsSet2 = new CoordSet();
         stage0coordsSet2.setFromXY(this.visualTreeContent[index].getXY()[0], this.visualTreeContent[index].getXY()[1]);

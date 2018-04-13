@@ -12,7 +12,7 @@ class VisualSimpleArray{
             this.content[i].draw();
         }
     }
-    updateElementValueAndIndex(element){
+    insertProcess(element){
         let index = element.index;
         console.log(element);
         this.content[index].updateElementValue(); // Get the current visualValue from physical datastructure
@@ -45,12 +45,12 @@ class VisualHeapArray extends VisualSimpleArray{
             this.contentTree[i] = new VisualTreeNode(this.physicalDatastructure.getElement(i), this.treeNodeRadius);
         }
     }
-    updateElementValueAndIndex(element){
+    insertProcess(element){
         if (this.originalSize < this.physicalDatastructure.size){
             this.expand();
         }
 
-        super.updateElementValueAndIndex(element);
+        super.moveIntoDatastructure(element);
 
         this.contentTree[element.index].updateElementValue();
 
@@ -150,5 +150,38 @@ class VisualHeapArray extends VisualSimpleArray{
         for (let i=0; i<this.physicalDatastructure.numElements; i++){
             this.contentTree[i].draw();
         }
+    }
+}
+
+class VisualCircularArray extends VisualSimpleArray{
+    constructor(datastructure, elementBoxY, showIndex){
+        super(datastructure, elementBoxY, showIndex);
+
+        this.headArrowLabel = new VisualValue("head / tail");
+        this.headArrow = new VisualArrow(null, "start", 0, 10);
+        //this.headArrow.setLabelText("head / tail");
+        this.headArrowLabel.addOutgoingArrow(this.headArrow);
+
+        this.headArrowLabel.setXY(this.content[0].getXY()[0], elementBoxLabelY);
+        this.headArrow.setStartXY(this.content[0].getXY()[0], elementBoxLabelY);
+        this.headArrow.setEndXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-elementBoxHeight/2);
+
+        this.tailArrowLabel = new VisualValue();
+        this.tailArrow = new VisualArrow(null, "start", 0, elementBoxHeight/2);
+        this.tailArrow.setStartXY(this.content[0].getXY()[0], elementBoxLabelY);
+        this.tailArrow.setEndXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-elementBoxHeight/2);
+
+        this.headArrowLabel.draw();
+        this.headArrow.draw();
+    }
+    draw(){
+        // Draw the common parts of any array structure
+        this.headArrowLabel.draw();
+        this.headArrow.draw();
+        if (this.physicalDatastructure.head !== this.physicalDatastructure.tail){
+            this.tailArrowLabel.draw();
+            this.tailArrow.draw();
+        }
+        super.draw();
     }
 }

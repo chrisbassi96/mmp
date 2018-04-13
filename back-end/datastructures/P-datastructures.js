@@ -264,8 +264,6 @@ class HeapArray extends SimpleArray{
         console.log(this.content[j].getValue());
         this.content[i].setValue(this.content[j].getValue());
         this.content[j].setValue(temp);
-
-        adtController.datastructureController.swap(i, j);
     }
 }
 

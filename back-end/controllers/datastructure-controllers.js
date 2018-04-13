@@ -1,19 +1,25 @@
 class DatastructureController{
     constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
         this.datastructure = datastructure;
-        this.elementBoxY = elementBoxY;
-        this.showIndex = showIndex;
+        //this.elementBoxY = elementBoxY;
+        //this.showIndex = showIndex;
         this.visualDatastructure = null;
         this.visualDatastructureAnimator = null
 
     }
-    moveIntoVisualDatastructure(element){
-        this.visualDatastructure.updateElementValueAndIndex(element);
-        this.visualDatastructureAnimator.moveIntoVisualDatastructure(element);
+    insertIntoVisualDatastructure(element){
+        this.visualDatastructure.insertProcess(element);
+        this.visualDatastructureAnimator.insertProcess(element);
     }
-    moveOutOfDatastructure(element) {
-        this.visualDatastructure.updateElementValueAndIndex(element);
-        this.visualDatastructureAnimator.moveOutOfDatastructure(element);
+    removeFromVisualDatastructure(element) {
+        //this.visualDatastructure.removeProcess(element);
+        this.visualDatastructureAnimator.removeProcess(element);
+    }
+    moveThroughDatatructure(){
+
+    }
+    draw(){
+        this.visualDatastructure.draw();
     }
 }
 
@@ -23,15 +29,6 @@ class SimpleArrayController extends DatastructureController{
         this.visualDatastructure = new VisualSimpleArray(this.datastructure, elementBoxY, showIndex);
         this.visualDatastructureAnimator = new VisualSimpleArrayAnimator(this.visualDatastructure);
     }
-    moveIntoVisualDatastructure(element){
-        super.moveIntoVisualDatastructure(element);
-    }
-    moveOutOfDatastructure(element){
-        super.moveOutOfDatastructure(element);
-    }
-    draw() {
-        this.visualDatastructure.draw();
-    }
 }
 
 class HeapArrayController extends DatastructureController{
@@ -40,103 +37,30 @@ class HeapArrayController extends DatastructureController{
         this.visualDatastructure = new VisualHeapArray(this.datastructure, elementBoxY, showIndex);
         this.visualDatastructureAnimator = new VisualHeapArrayAnimator(this.visualDatastructure);
     }
-    moveIntoVisualDatastructure(element) {
-        if (this.originalSize < this.datastructure.size) {
-            this.visualDatastructure.expand();
-        }
-        super.moveIntoVisualDatastructure(element);
-        this.visualDatastructureAnimator.animationSwapElements();
-    }
-    expand(){
-        for (let i=this.originalSize; i<this.datastructure.size; i++){
-            console.log(i);
-            this.visualDatastructure[i] = new VisualArrayElement(this.datastructure.getElement(i), i, this.showIndex);
-            this.visualDatastructure[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.visualDatastructure[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-
-            this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
-        }
-        this.originalSize = this.datastructure.size;
-    }
-    swap(indexI, indexJ){
-        this.visualDatastructureAnimator.swap(indexI, indexJ);
-    }
-    draw() {
-        this.visualDatastructure.draw();
-    }
 }
 
-class CircularArrayController extends SimpleArrayController{
-    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
+class CircularArrayController extends SimpleArrayController {
+    constructor(datastructure, elementBoxY = topBottomMargin + 90, showIndex = false) {
         super(datastructure, elementBoxY, showIndex);
-
-        this.headArrow = new VisualArrow();
-        this.headArrow.setLabelText("head / tail");
-        this.headArrow.setStartXY(this.visualDatastructure.getElement(0).getXY()[0], elementBoxLabelY);
-        this.headArrow.setEndXY(this.visualDatastructure.getElement(0).getXY()[0], this.visualDatastructure.getElement(0).getXY()[1]-elementBoxHeight/2);
-
-        this.tailArrow = new VisualArrow();
-        this.tailArrow.setStartXY(this.visualDatastructure.getElement(0).getXY()[0], elementBoxLabelY);
-        this.tailArrow.setEndXY(this.visualDatastructure.getElement(0).getXY()[0], this.visualDatastructure.getElement(0).getXY()[1]-elementBoxHeight/2);
-
-        this.headArrow.draw();
-
-    }
-    moveIntoVisualDatastructure(element){
-        super.moveIntoVisualDatastructure(element);
-        // Setup for animation stage
-        let stage0 = new AnimationSequence();
-
-        let tailArrowCoordSetStart = new CoordSet();
-        tailArrowCoordSetStart.setFromXY(this.tailArrow.startXY[0], this.tailArrow.startXY[1]);
-        tailArrowCoordSetStart.setToXY(this.visualDatastructure[this.datastructure.tail].getXY()[0], this.tailArrow.startXY[1]);
-
-        let tailArrowCoordSetEnd = new CoordSet();
-        tailArrowCoordSetEnd.setFromXY(this.tailArrow.endXY[0], this.tailArrow.endXY[1]);
-        tailArrowCoordSetEnd.setToXY(this.visualDatastructure[this.datastructure.tail].getXY()[0], this.tailArrow.endXY[1]);
-
-        stage0.add(this.tailLabel, tailArrowCoordSetStart, new MoveNoFade());
-        stage0.add(this.tailArrow, tailArrowCoordSetEnd, new MoveNoFade());
-
-        let headElement = this.visualDatastructure.getElement(this.datastructure.head);
-        let tailElement = this.visualDatastructure.getElement(this.datastructure.tail);
-
-        this.headArrow.setStartXY(headElement.getXY()[0], elementBoxLabelY);
-        this.headArrow.setEndXY(headElement.getXY()[0], headElement.getXY()[1]-elementBoxHeight/2);
-
-        this.headArrow.setLabelText("head");
-        this.tailArrow.setLabelText("tail");
-        this.tailArrow.setStartXY(tailElement.getXY()[0], elementBoxLabelY);
-        this.tailArrow.setEndXY(tailElement.getXY()[0], tailElement.getXY()[1]-elementBoxHeight/2);
-
-
-        //animationSequencer.add(stage0);
-
-        //animationSequencer.go();
-    }
-    moveOutOfDatastructure(element){
-        super.moveOutOfDatastructure(element);
-
-        let headElement = this.visualDatastructure.getElement(this.datastructure.head);
-
-        this.headArrow.setStartXY(headElement.getXY()[0], elementBoxLabelY);
-        this.headArrow.setEndXY(headElement.getXY()[0], headElement.getXY()[1]-elementBoxHeight/2);
-
-        if (this.datastructure.head === this.datastructure.tail){
-            this.headArrow.setLabelText("head / tail")
-        }
-    }
-    draw(){
-        // Draw the common parts of any array structure
-        this.headArrow.draw();
-        if (this.datastructure.head !== this.datastructure.tail){
-            this.tailArrow.draw();
-        }
-        super.draw();
+        this.visualDatastructure = new VisualCircularArray(this.datastructure, elementBoxY, showIndex);
+        this.visualDatastructureAnimator = new VisualCircularArrayAnimator(this.visualDatastructure);
     }
 }
 
-class VisualLinkedListElement extends VisualObject{
+class VisualElement extends VisualObject{
+    constructor(physicalElement){
+        super();
+        this.physicalElement = physicalElement;
+    }
+    updateElementValue(){
+
+    }
+    setXY(x, y){
+
+    }
+}
+
+class VisualSinglyLinkedListElement extends VisualObject{
     constructor(physicalElement){
         super();
         this.physicalElement = physicalElement;
@@ -226,12 +150,15 @@ class VisualArrayElement extends VisualObject{
         this.showIndex = showIndex;
 
         this.visualElementBox = new VisualBox();
-        this.visualValue = new VisualValue("null");
-        this.visualIndexNum = new VisualValue(indexNum);
-
         this.visualObjects.push(this.visualElementBox);
+
+        this.visualValue = new VisualValue("null");
         this.visualObjects.push(this.visualValue);
-        this.visualObjects.push(this.visualIndexNum);
+
+        this.visualIndexNum = new VisualValue(indexNum);
+        if (showIndex){
+            this.visualObjects.push(this.visualIndexNum);
+        }
     }
     updateElementValue(){
         this.visualValue.value = this.physicalElement.getValue();

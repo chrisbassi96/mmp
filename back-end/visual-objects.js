@@ -132,19 +132,14 @@ class VisualObject{
     }
 }
 
-class VisualArrow extends VisualObject{
+class VisualArrow {
     constructor(labelText="", labelPosition="start", startMargin, endMargin){
-        super();
-        this.coordsSet = [];
         this.startMargin = startMargin;
         this.startXY = [];
         this.endMargin = endMargin;
         this.endXY = [];
         this.label = new VisualValue(labelText);
         this.labelPosition = labelPosition;
-    }
-    setCoords(coordsSet){
-        this.coordsSet = coordsSet;
     }
     setStartXY(x, y){
         this.startXY = [x, y];
@@ -248,25 +243,9 @@ class VisualCircle extends VisualObject{
 class VisualBox extends VisualObject{
     constructor(width=elementBoxWidth, height=elementBoxHeight){
         super();
-        this.containingVisualObject = null;
         this.width = width;
         this.height = height;
         this.crossedThrough = false;
-    }
-    doAnimationComplete(){
-        super.doAnimationComplete();
-    }
-    getWidth(){
-        return this.width;
-    }
-    setWidth(width){
-        this.width = width;
-    }
-    getHeight(){
-        return this.height;
-    }
-    setHeight(height){
-        this.height = height;
     }
     draw(){
         super.draw();
@@ -282,7 +261,6 @@ class VisualBox extends VisualObject{
             ctx.closePath();
             ctx.stroke();
         }
-
         ctx.restore();
     }
 }

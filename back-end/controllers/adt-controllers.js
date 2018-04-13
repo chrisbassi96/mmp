@@ -16,7 +16,7 @@ class StackController extends AdtController{
             outputLabel.innerText = "Stack is full";
         }else{
             outputLabel.innerText = "Push " + pushedElement.value;
-            this.datastructureController.moveIntoVisualDatastructure(pushedElement);
+            this.datastructureController.insertIntoVisualDatastructure(pushedElement);
         }
     }
     pop(){
@@ -26,7 +26,7 @@ class StackController extends AdtController{
             outputLabel.innerText = "Stack is empty";
         }else{
             outputLabel.innerText = "Pop " + poppedElement.value;
-            this.datastructureController.moveOutOfDatastructure(poppedElement);
+            this.datastructureController.removeFromVisualDatastructure(poppedElement);
         }
     }
     peek(){
@@ -51,7 +51,7 @@ class QueueController extends AdtController{
             outputLabel.innerText = "Queue is full";
         }else{
             outputLabel.innerText = "Enqueue " + enqueuedElement.value;
-            this.datastructureController.moveIntoVisualDatastructure(enqueuedElement);
+            this.datastructureController.insertIntoVisualDatastructure(enqueuedElement);
         }
     }
     dequeue(){
@@ -61,7 +61,7 @@ class QueueController extends AdtController{
             outputLabel.innerText = "Queue is empty";
         }else{
             outputLabel.innerText = "Dequeue " + dequeuedElement.value;
-            this.datastructureController.moveOutOfDatastructure(dequeuedElement);
+            this.datastructureController.removeFromVisualDatastructure(dequeuedElement);
         }
     }
     peek(){
@@ -86,7 +86,16 @@ class PriorityQueueController extends  AdtController{
 
         }else{
             outputLabel.innerText = "Insert " + element;
-            this.datastructureController.moveIntoVisualDatastructure(insertedElement);
+            this.datastructureController.insertIntoVisualDatastructure(insertedElement);
+        }
+    }
+    removeMin(){
+        let removedMinElement = this.adt.removeMin();
+
+        if (removedMinElement == null){
+            outputLabel.innerText = "Priority Queue is empty";
+        }else{
+
         }
     }
 }
@@ -107,7 +116,7 @@ class SinglyLinkedListController{
         this.draw();
     }
     moveIntoVisualDatastructure(element){
-        let newNode = new VisualLinkedListElement(element);
+        let newNode = new VisualSinglyLinkedListElement(element);
 
         // This exchanging of coordinates is like setting the head to the new node: "="
         //newNode.setOldMiddleXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
@@ -138,7 +147,7 @@ class SinglyLinkedListController{
         //stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
         stage0coordsSet1.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
 
-        let tempElement = new VisualLinkedListElement();
+        let tempElement = new VisualSinglyLinkedListElement();
         stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
         stage0.addTempObject(tempElement);
 
@@ -194,7 +203,7 @@ class SinglyLinkedListController{
         stage0coordsSetHeadDummy.setFromXY(leftMargin + elementBoxWidth, this.elementBoxY+(elementBoxHeight/2));
         stage0coordsSetHeadDummy.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
 
-        let stage0HeadDummy = new VisualLinkedListElement();
+        let stage0HeadDummy = new VisualSinglyLinkedListElement();
         stage0HeadDummy.visualValue.value = element;
         stage0.addTempObject(stage0HeadDummy);
         stage0.doNotDraw(this.head);
