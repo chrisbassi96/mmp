@@ -82,7 +82,8 @@ function mrExperimentalAnimator(animationSequence, index, objectToAnimate){
         //animationSequence.draw();
         //objectToAnimate.draw();
         //canvasObjectMan.draw();
-        adtController.datastructureController.draw();
+        //adtController.datastructureController.draw();
+        adtController.visualDatastructure.draw();
         //canvasFOMan.draw();
         //console.log(animationSequence);
         animationSequence.drawObjects();
@@ -101,7 +102,8 @@ function mrExperimentalAnimator(animationSequence, index, objectToAnimate){
             //canvasObjectMan.remove(objectToAnimate);
             //objectToAnimate.isBeingAnimated = false;
             //canvasFOMan.draw();
-            adtController.datastructureController.draw();
+            //adtController.datastructureController.draw();
+            adtController.visualDatastructure.draw();
             animationSequence.doNext(index+1);
             window.cancelAnimationFrame(stopID);
         }
@@ -121,6 +123,7 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimati
         clearCanvas();
         //console.log(objectsToAnimate[0].canvasObject);
         for (let i=0; i<numAnimations; i++){
+            console.log(i);
             let currObject = objectsToAnimate[i].canvasObject;
             let fromX = currObject.getOldMiddleXY()[0];
             let fromY = currObject.getOldMiddleXY()[1];
@@ -136,7 +139,8 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimati
             currObject.updateMiddleXY(newX, newY, progress);
         }
 
-        adtController.datastructureController.draw();
+        //adtController.datastructureController.draw();
+        adtController.visualDatastructure.draw();
         //canvasFOMan.draw();
         animationSequence.drawObjects();
 
@@ -156,7 +160,8 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimati
             //canvasObjectMan.remove(objectToAnimate);
             animationSequence.finish();
             //canvasFOMan.draw();
-            adtController.datastructureController.draw();
+            //adtController.datastructureController.draw();
+            adtController.visualDatastructure.draw();
             window.cancelAnimationFrame(stopID);
         }
     }

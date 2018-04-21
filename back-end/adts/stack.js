@@ -43,10 +43,10 @@ class SinglyLinkedListStack{
         this.datastructure = new SinglyLinkedList();
     }
     push(elementValue){
-        let newNode = new SinglyLinkedListNode(elementValue, null);
+        let newNode = new SinglyLinkedListElement(elementValue, null);
 
         this.datastructure.addFirst(newNode);
-        outputLabel.innerText = "Pushed " + elementValue;
+        //outputLabel.innerText = "Pushed " + elementValue;
 
         return newNode;
     }

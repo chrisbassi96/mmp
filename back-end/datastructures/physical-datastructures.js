@@ -10,25 +10,7 @@ class Element{
     }
 }
 
-class BTNode extends Element{
-    constructor(){
-        super();
-        this.parent = new Element();
-        this.left = new Element();
-        this.right = new Element();
-    }
-    getParent(){
-        return this.parent;
-    }
-    getLeft(){
-        return this.left;
-    }
-    getRight(){
-        return this.right;
-    }
-}
-
-class SinglyLinkedListNode extends Element{
+class SinglyLinkedListElement extends Element{
     constructor(elementValue, next){
         super(elementValue);
         this.next = next;
@@ -41,7 +23,7 @@ class SinglyLinkedListNode extends Element{
     }
 }
 
-class DoublyLinkedListNode extends Element{
+class DoublyLinkedListElement extends Element{
     constructor(){
         super();
         this.next = null;
@@ -90,16 +72,19 @@ class Datastructure {
     constructor(){
         this.numElements = 0;
     }
+    getNumElements(){
+        return this.numElements;
+    }
     isEmpty(){
         return this.numElements === 0;
     }
 }
 
-class SinglyLinkedList{
+class SinglyLinkedList extends Datastructure{
     constructor(){
+        super();
         this.head = null;
         this.tail = null;
-        this.numElements = 0;
     }
     find(element){
         let cur = this.head;
@@ -140,16 +125,11 @@ class SinglyLinkedList{
     removeNext(){
 
     }
-    getNumElements(){
-        return this.numElements;
-    }
-    isEmpty(){
-        return this.numElements === 0;
-    }
 }
 
-class DoublyLinkedList{
+class DoublyLinkedList extends Datastructure{
     constructor(){
+        super();
         this.head = null;
         this.tail = null;
         this.size = 0;
@@ -190,10 +170,10 @@ class DoublyLinkedList{
     }
 }
 
-class SimpleArray{
+class SimpleArray extends Datastructure{
     constructor(size=20){
+        super();
         this.size = size;
-        this.numElements = 0;
         this.content = [];
         for (let i=0; i<size; i++){
             this.content[i] = new Element(null);
@@ -201,12 +181,6 @@ class SimpleArray{
     }
     getSize(){
         return this.size;
-    }
-    getNumElements(){
-        return this.numElements;
-    }
-    isEmpty(){
-        return this.numElements === 0;
     }
     getElement(index){
         if (index >= 0 && index < this.content.length){

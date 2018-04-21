@@ -44,7 +44,7 @@ class DoublyLinkedListQueue{
         this.dataStructure = new DoublyLinkedList();
     }
     push(element){
-        this.dataStructure.addLast(new DoublyLinkedListNode(element, null));
+        this.dataStructure.addLast(new DoublyLinkedListElement(element, null));
     }
     pop(){
         if (this.dataStructure.isEmpty()) {

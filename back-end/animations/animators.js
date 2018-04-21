@@ -1,8 +1,14 @@
-class VisualSimpleArrayAnimator{
+class VisualDatastructureAnimator{
     constructor(visualSimpleArray){
         this.visualDatastructure = visualSimpleArray;
     }
-    insertProcess(element){
+}
+
+class VisualSimpleArrayAnimator extends VisualDatastructureAnimator{
+    constructor(visualSimpleArray){
+        super(visualSimpleArray);
+    }
+    insertAnimation(element){
         let stage0 = new AnimationSequence();
         stage0.executeConcurrently = true;
 
@@ -36,7 +42,7 @@ class VisualSimpleArrayAnimator{
         stageToAddTo.add(tempElement, stage0coordsSetTempElement, new MoveNoFade());
         stageToAddTo.add(headValue, stage0coordsSet2, new MoveNoFade());
     }
-    removeProcess(element){
+    removeAnimation(element){
         console.log(element);
         this.visualDatastructure.getElement(element.index).updateElementValue(); // Get the current visualValue from physical datastructure
         //this.visualDatastructure[index].update();
@@ -140,7 +146,6 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
         stageToAddTo.add(this.visualDatastructure.getTreeElement(element.index), stage0coordsSet2, new MoveFadeIn());
 
         //this.animationSwapElements(element);
-
     }
     animationSwapElements(endElement){
         let stage0 = new AnimationSequence();
@@ -166,5 +171,99 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
             this.datastructure.swap(j, p);
             j = p;
         }
+    }
+}
+
+class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
+    constructor(visualSinglyLinkedList){
+        super(visualSinglyLinkedList);
+    }
+    insertAnimation(element){
+
+        this.shiftNodes("right");
+
+        let stage0 = new AnimationSequence();
+        stage0.doNotDraw(this.visualDatastructure.head);
+        stage0.executeConcurrently = true;
+
+        let stage0coordsSet1 = new CoordSet();
+        stage0coordsSet1.setFromXY(leftMargin + elementBoxWidth, canvas.height / 2);
+        //stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage0coordsSet1.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
+
+        let tempElement = new VisualSinglyLinkedListElement();
+        stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
+        stage0.addTempObject(tempElement);
+
+        let headValue = new VisualValue(element.getValue());
+
+        let stage0coordsSet2 = new CoordSet();
+        stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
+        //stage0coordsSet2.middleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
+        stage0coordsSet2.setToXY(stage0coordsSet1.toMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.toMiddleXY[1]);
+
+        stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
+        stage0.addTempObject(headValue);
+
+        animationSequencer.add(stage0);
+
+
+        let stage1 = new AnimationSequence();
+
+        let stage1coordsSetHead = new CoordSet();
+        stage1coordsSetHead.fromMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1coordsSetHead.toMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1.add(this.visualDatastructure.head, stage1coordsSetHead, new MoveNoFade());
+
+        animationSequencer.add(stage1);
+
+
+        let stage2 = new AnimationSequence();
+
+        let stage2coordsSet = new CoordSet();
+        stage2coordsSet.fromMiddleXY = [stage1coordsSetHead.toMiddleXY[0], stage1coordsSetHead.toMiddleXY[1]];
+        //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage2coordsSet.toMiddleXY =  [leftMargin + elementBoxWidth, this.visualDatastructure.elementBoxY+(elementBoxHeight/2)];
+
+        stage2.add(this.visualDatastructure.head, stage2coordsSet, new MoveNoFade());
+
+        console.log("Add send");
+        console.log("THE SEQUENCE: ");
+        console.log(stage1);
+        animationSequencer.add(stage2);
+        animationSequencer.go();
+    }
+    animationMoveIntoDatastructure(element, stageToAddTo){
+
+    }
+    shiftNodes(direction){
+        let curr = null;
+
+        if (direction==="right"){
+            if (this.visualDatastructure.datastructure.numElements===1){return;}
+            curr = this.visualDatastructure.head.getNext();
+        }else if(direction==="left"){
+            if (this.visualDatastructure.datastructure.numElements===0){return;}
+            curr = this.visualDatastructure.head;
+        }
+
+        let sequence = new AnimationSequence();
+
+        while (curr!==null){
+            curr.setOldMiddleXY(curr.getStaticMiddleXY()[0], curr.getStaticMiddleXY()[1]);
+            if (direction === "right"){
+                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]+(3*elementBoxWidth), curr.getStaticMiddleXY()[1]);
+            }else{
+                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]-(3*elementBoxWidth), curr.getStaticMiddleXY()[1]);
+            }
+            sequence.add(curr, curr.coordSet, new MoveNoFade());
+
+            curr = curr.getNext();
+        }
+        sequence.doNotDraw(this.visualDatastructure.head);
+        sequence.executeConcurrently = true;
+        console.log("HELLO HELLO");
+        animationSequencer.add(sequence);
     }
 }

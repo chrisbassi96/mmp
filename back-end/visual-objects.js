@@ -67,6 +67,13 @@ class VisualObject{
         if (this.animationProperties.isFading){
             this.updateOpacity();
         }
+
+        for (let i=0; i<this.incomingArrows.length; i++){
+            this.incomingArrows[i].setEndXY(this.middleXY[0], this.middleXY[1]);
+        }
+        for (let i=0; i<this.outgoingArrows.length; i++){
+            this.outgoingArrows[i].setStartXY(this.middleXY[0], this.middleXY[1]);
+        }
     }
     addIncomingArrow(visualArrow){
         visualArrow.setEndXY(this.middleXY[0], this.middleXY[1]);
@@ -112,9 +119,6 @@ class VisualObject{
             this.visualObjects[i].animationProperties.opacity = newOpacity;
         }
     }
-    addObject(visualObject){
-        this.visualObjects.push(visualObject);
-    }
     doAnimationComplete(){
         //this.isBeingAnimated = false;
         this.animationProperties = new AnimationProperties();
@@ -128,12 +132,13 @@ class VisualObject{
             for (let i = 0; i < this.visualObjects.length; i++) {
                 this.visualObjects[i].draw();
             }
+
         }
     }
 }
 
 class VisualArrow {
-    constructor(labelText="", labelPosition="start", startMargin, endMargin){
+    constructor(labelText="", labelPosition="start", startMargin=0, endMargin=0){
         this.startMargin = startMargin;
         this.startXY = [];
         this.endMargin = endMargin;
@@ -185,7 +190,7 @@ class VisualArrow {
     draw(){
         this.updateLabelPosition();
         this.label.draw();
-
+        console.log(this);
         let lineAngle = Math.atan2(this.endXY[1]-this.startXY[1], this.endXY[0]-this.startXY[0]);
 
         let adjustedStartX = this.startXY[0] + Math.cos(lineAngle)*this.startMargin;
