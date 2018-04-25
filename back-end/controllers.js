@@ -341,110 +341,6 @@ class SimpleArrayController extends DatastructureController{
     }
 }
 
-class VisualSimpleArray{
-    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
-        this.physicalDatastructure = datastructure;
-        this.elementBoxY = elementBoxY;
-        this.showIndex = showIndex;
-        this.content = [];
-
-        for (let i=0; i<datastructure.size; i++){
-            this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
-            this.content[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.content[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            //this.visualDatastructure[i].setIndex(i);
-            //this.visualDatastructure[i].moveIntoDatastructure();
-            this.content[i].draw();
-        }
-    }
-    updateElementValueAndIndex(element){
-        let index = element.index;
-        console.log(element);
-        this.content[index].updateElementValue(); // Get the current visualValue from physical datastructure
-        //this.visualDatastructure[index].update();
-        this.content[index].setIndex(index); // Update index
-    }
-    getElement(index){
-        if (index >= 0 && index < this.content.length){
-            return this.content[index];
-        }
-        // Give some sort of error
-        return null;
-    }
-    draw() {
-        //clearCanvas();
-        for (let i=0; i<this.physicalDatastructure.size; i++){
-            this.content[i].draw();
-        }
-    }
-}
-
-class VisualSimpleArrayAnimator{
-    constructor(visualSimpleArray){
-        this.visualDatastructure = visualSimpleArray;
-    }
-    moveIntoVisualDatastructure(element){
-        let stage0 = new AnimationSequence();
-        stage0.executeConcurrently = true;
-
-        this.animationMoveIntoVisualDatastructure(element, stage0);
-
-        animationSequencer.add(stage0);
-
-        animationSequencer.go();
-    }
-    animationMoveIntoVisualDatastructure(element, stageToAddTo){
-        // Setup for animation stage
-        stageToAddTo.doNotDraw(this.visualDatastructure.getElement(element.index));
-
-        // Declaration of objects involved in the animation stage
-        let tempElement = new VisualArrayElement(null, element.index, this.showIndex);
-        let headValue = new VisualValue(this.visualDatastructure.getElement(element.index).physicalElement.getValue());
-
-        stageToAddTo.addTempObject(tempElement);
-        stageToAddTo.addTempObject(headValue);
-
-        console.log(element.index);
-
-        let stage0coordsSetTempElement = new CoordSet();
-        stage0coordsSetTempElement.setFromXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
-        stage0coordsSetTempElement.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
-
-        let stage0coordsSet2 = new CoordSet();
-        stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
-        stage0coordsSet2.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
-
-        stageToAddTo.add(tempElement, stage0coordsSetTempElement, new MoveNoFade());
-        stageToAddTo.add(headValue, stage0coordsSet2, new MoveNoFade());
-    }
-    moveOutOfDatastructure(element){
-        console.log(element);
-        this.visualDatastructure.getElement(element.index).updateElementValue(); // Get the current visualValue from physical datastructure
-        //this.visualDatastructure[index].update();
-        this.visualDatastructure.getElement(element.index).setIndex(element.index); // Update index
-        //this.visualDatastructure[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
-
-        console.log("outElement value:" + element.value);
-        console.log("outElement index:" + element.index);
-
-        let stage0 = new AnimationSequence();
-
-        let poppedElement = new VisualValue(element.value);
-
-        stage0.addTempObject(poppedElement);
-
-        let stage0coordsSetPoppedElement = new CoordSet();
-        stage0coordsSetPoppedElement.setFromXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
-        stage0coordsSetPoppedElement.setToXY(canvas.width - leftMargin, canvas.height-topBottomMargin);
-
-        stage0.add(poppedElement, stage0coordsSetPoppedElement, new MoveFadeOut());
-
-        animationSequencer.add(stage0);
-
-        animationSequencer.go();
-    }
-}
-
 class HeapArrayController extends SimpleArrayController{
     constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
         super(datastructure, elementBoxY, showIndex);
@@ -532,12 +428,12 @@ class HeapArrayController extends SimpleArrayController{
             this.visualTreeContent[i] = new VisualTreeNode(this.datastructure.getElement(i), this.treeNodeRadius);
         }
         this.originalSize = this.datastructure.size;
-/*        this.size = this.size*2;
-        for (let i=this.size/2; i<this.size; i++){
-            this.visualDatastructure[i] = new ArrayElementController(null, this.showIndex);
-            this.visualDatastructure[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-            this.visualDatastructure[i].setIndex(i);
-        }*/
+        /*        this.size = this.size*2;
+                for (let i=this.size/2; i<this.size; i++){
+                    this.visualDatastructure[i] = new ArrayElementController(null, this.showIndex);
+                    this.visualDatastructure[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+                    this.visualDatastructure[i].setIndex(i);
+                }*/
     }
     createNodeArrows(){
         if (index !== 0){
@@ -682,6 +578,112 @@ class CircularArrayController extends SimpleArrayController{
         super.draw();
     }
 }
+
+class VisualSimpleArray{
+    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
+        this.physicalDatastructure = datastructure;
+        this.elementBoxY = elementBoxY;
+        this.showIndex = showIndex;
+        this.content = [];
+
+        for (let i=0; i<datastructure.size; i++){
+            this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
+            this.content[i].setXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            this.content[i].setStaticMiddleXY(leftMargin + (elementBoxWidth/2) + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
+            //this.visualDatastructure[i].setIndex(i);
+            //this.visualDatastructure[i].moveIntoDatastructure();
+            this.content[i].draw();
+        }
+    }
+    updateElementValueAndIndex(element){
+        let index = element.index;
+        console.log(element);
+        this.content[index].updateElementValue(); // Get the current visualValue from physical datastructure
+        //this.visualDatastructure[index].update();
+        this.content[index].setIndex(index); // Update index
+    }
+    getElement(index){
+        if (index >= 0 && index < this.content.length){
+            return this.content[index];
+        }
+        // Give some sort of error
+        return null;
+    }
+    draw() {
+        //clearCanvas();
+        for (let i=0; i<this.physicalDatastructure.size; i++){
+            this.content[i].draw();
+        }
+    }
+}
+
+class VisualSimpleArrayAnimator{
+    constructor(visualSimpleArray){
+        this.visualDatastructure = visualSimpleArray;
+    }
+    moveIntoVisualDatastructure(element){
+        let stage0 = new AnimationSequence();
+        stage0.executeConcurrently = true;
+
+        this.animationMoveIntoVisualDatastructure(element, stage0);
+
+        animationSequencer.add(stage0);
+
+        animationSequencer.go();
+    }
+    animationMoveIntoVisualDatastructure(element, stageToAddTo){
+        // Setup for animation stage
+        stageToAddTo.doNotDraw(this.visualDatastructure.getElement(element.index));
+
+        // Declaration of objects involved in the animation stage
+        let tempElement = new VisualArrayElement(null, element.index, this.showIndex);
+        let headValue = new VisualValue(this.visualDatastructure.getElement(element.index).physicalElement.getValue());
+
+        stageToAddTo.addTempObject(tempElement);
+        stageToAddTo.addTempObject(headValue);
+
+        console.log(element.index);
+
+        let stage0coordsSetTempElement = new CoordSet();
+        stage0coordsSetTempElement.setFromXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
+        stage0coordsSetTempElement.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
+
+        let stage0coordsSet2 = new CoordSet();
+        stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
+        stage0coordsSet2.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
+
+        stageToAddTo.add(tempElement, stage0coordsSetTempElement, new MoveNoFade());
+        stageToAddTo.add(headValue, stage0coordsSet2, new MoveNoFade());
+    }
+    moveOutOfDatastructure(element){
+        console.log(element);
+        this.visualDatastructure.getElement(element.index).updateElementValue(); // Get the current visualValue from physical datastructure
+        //this.visualDatastructure[index].update();
+        this.visualDatastructure.getElement(element.index).setIndex(element.index); // Update index
+        //this.visualDatastructure[index].setOldMiddleXY(leftMargin, canvas.height - topBottomMargin);
+
+        console.log("outElement value:" + element.value);
+        console.log("outElement index:" + element.index);
+
+        let stage0 = new AnimationSequence();
+
+        let poppedElement = new VisualValue(element.value);
+
+        stage0.addTempObject(poppedElement);
+
+        let stage0coordsSetPoppedElement = new CoordSet();
+        stage0coordsSetPoppedElement.setFromXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
+        stage0coordsSetPoppedElement.setToXY(canvas.width - leftMargin, canvas.height-topBottomMargin);
+
+        stage0.add(poppedElement, stage0coordsSetPoppedElement, new MoveFadeOut());
+
+        animationSequencer.add(stage0);
+
+        animationSequencer.go();
+    }
+}
+
+
 
 class VisualLinkedListElement extends VisualObject{
     constructor(physicalElement){

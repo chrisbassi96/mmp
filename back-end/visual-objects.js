@@ -153,24 +153,6 @@ class VisualArrow {
     setEndXY(x, y){
         this.endXY = [x, y];
     }
-    recalculatePoints(){
-        // Only recalculate when the coordinates are "reasonable", i.e. they are numbers
-        if (this.startXY.length === 0 || this.endXY.length === 0){
-            return;
-        }
-
-        let lineAngleStart = Math.atan2(this.endXY[1]-this.startXY[1], this.endXY[0]-this.startXY[0]);
-        let adjustedStartX = this.startXY[0] + Math.cos(lineAngleStart)*this.startMargin;
-        let adjustedStartY = this.startXY[1] + Math.sin(lineAngleStart)*this.startMargin;
-
-        this.startXY = [adjustedStartX, adjustedStartY];
-
-        let lineAngleEnd = Math.atan2(this.startXY[1]-this.endXY[1], this.startXY[0]-this.endXY[0]);
-        let adjustedEndX = this.endXY[0] - Math.cos(lineAngleStart)*this.endMargin;
-        let adjustedEndY = this.endXY[1] - Math.sin(lineAngleStart)*this.endMargin;
-
-        this.endXY = [adjustedEndX, adjustedEndY];
-    }
     setLabelText(text){
         this.label.setValue(text);
     }
@@ -190,7 +172,6 @@ class VisualArrow {
     draw(){
         this.updateLabelPosition();
         this.label.draw();
-        console.log(this);
         let lineAngle = Math.atan2(this.endXY[1]-this.startXY[1], this.endXY[0]-this.startXY[0]);
 
         let adjustedStartX = this.startXY[0] + Math.cos(lineAngle)*this.startMargin;
@@ -200,10 +181,8 @@ class VisualArrow {
         let adjustedEndY = this.endXY[1] - Math.sin(lineAngle)*this.endMargin;
 
         let angleFromShaftToArrowHeadCorner = Math.PI/8;
-        //let lengthOfArrowHeadSide = Math.abs(12/Math.cos(angleFromShaftToArrowHeadCorner));
         let lengthOfArrowHeadSide = 10;
 
-        //ctx.fillText(this.label, fromX, fromY);
         ctx.beginPath();
         ctx.moveTo(adjustedStartX, adjustedStartY);
         ctx.lineTo(adjustedEndX, adjustedEndY);
@@ -237,12 +216,9 @@ class VisualCircle extends VisualObject{
         ctx.lineWidth = this.animationProperties.lineWidth;
         ctx.beginPath();
         ctx.arc(this.middleXY[0], this.middleXY[1], this.radius, 0, 2 * Math.PI);
-        console.log(this.middleXY);
-        console.log(this.radius);
         ctx.stroke();
         ctx.restore();
     }
-
 }
 
 class VisualBox extends VisualObject{

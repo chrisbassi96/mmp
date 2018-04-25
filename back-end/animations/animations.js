@@ -123,7 +123,6 @@ function mrExperimentalAnimator2(animationSequence, objectsToAnimate, numAnimati
         clearCanvas();
         //console.log(objectsToAnimate[0].canvasObject);
         for (let i=0; i<numAnimations; i++){
-            console.log(i);
             let currObject = objectsToAnimate[i].canvasObject;
             let fromX = currObject.getOldMiddleXY()[0];
             let fromY = currObject.getOldMiddleXY()[1];
@@ -240,7 +239,8 @@ class AnimationSequence{
                 this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
                 //mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
             }
-            mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
+            //mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
+            this.animate(this.numAnimations-1, this.animationQueue, this.numAnimations)
         }else{
             this.doNext(0);
 /*            this.animationQueue[0].canvasObject.coordSet = this.animationQueue[0].coordSet;
@@ -261,7 +261,57 @@ class AnimationSequence{
             // animated with two coordsSets, it would be overridden
             this.animationQueue[queueIndex].canvasObject.setCoords(this.animationQueue[queueIndex].coordSet);
             this.animationQueue[queueIndex].canvasObject.setAnimationProperties(this.animationQueue[queueIndex].animationProperties);
-            mrExperimentalAnimator(this, queueIndex, this.animationQueue[queueIndex].canvasObject);
+            this.animate(queueIndex, [this.animationQueue[queueIndex]], 1);
+            //mrExperimentalAnimator(this, queueIndex, this.animationQueue[queueIndex].canvasObject);
+        }
+    }
+    animate(queueIndex, visualObjects, numVisualObjects){
+        let stopID = 0;
+        let progress = 0;
+        let sequenceReference = this;
+
+        window.requestAnimationFrame(step);
+
+        function step(timestamp){
+
+            clearCanvas();
+
+            for (let i=0; i<numVisualObjects; i++){
+                let currObject = visualObjects[i].canvasObject;
+                let fromX = currObject.getOldMiddleXY()[0];
+                let fromY = currObject.getOldMiddleXY()[1];
+                let toX = currObject.getStaticMiddleXY()[0];
+                let toY = currObject.getStaticMiddleXY()[1];
+                let trajectoryAngle = Math.atan2(toY-fromY, toX-fromX);
+                let lineLength = Math.hypot(toX-fromX, toY-fromY);
+                let lineSegment = lineLength / animationSteps;
+
+                let newX = currObject.getXY()[0] + (Math.cos(trajectoryAngle) * lineSegment);
+                let newY = currObject.getXY()[1] + (Math.sin(trajectoryAngle) * lineSegment);
+
+                currObject.updateMiddleXY(newX, newY, progress);
+            }
+
+            adtController.visualDatastructure.draw();
+            sequenceReference.drawObjects();
+
+            if (progress!==animationSteps-1) {
+                progress += 1;
+                stopID = window.requestAnimationFrame(step);
+            }else{
+                clearCanvas();
+
+                if (numVisualObjects !== 1){
+                    sequenceReference.finish();
+                }else{
+                    console.log("HELLO");
+                    sequenceReference.doNext(queueIndex+1);
+                }
+
+                adtController.visualDatastructure.draw();
+
+                window.cancelAnimationFrame(stopID);
+            }
         }
     }
     finish(){

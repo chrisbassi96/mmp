@@ -24,7 +24,7 @@ class VisualSimpleArrayAnimator extends VisualDatastructureAnimator{
 
         // Declaration of objects involved in the animation stage
         let tempElement = new VisualArrayElement(null, element.index, this.showIndex);
-        let headValue = new VisualValue(this.visualDatastructure.getElement(element.index).physicalElement.getValue());
+        let headValue = new VisualValue(element.value);
 
         stageToAddTo.addTempObject(tempElement);
         stageToAddTo.addTempObject(headValue);
@@ -136,41 +136,124 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
     constructor(visualHeapArray){
         super(visualHeapArray);
     }
+    insertAnimation(element){
+        let stage0 = new AnimationSequence();
+        stage0.executeConcurrently = true;
+        animationSequencer.add(stage0);
+
+        if (element.index !== 0 && this.visualDatastructure.getElement(element.index).physicalElement.getValue() !== element.value){
+            this.animationSwap(element);
+            //element.index = HeapArray.parent(element.index);
+        }
+
+        this.animationMoveIntoDatastructure(element, stage0);
+
+        this.visualDatastructure.getElement(element.index).updateElementValue(element.value);
+        this.visualDatastructure.getTreeElement(element.index).updateElementValue(element.value);
+
+        animationSequencer.go();
+    }
     animationMoveIntoDatastructure(element, stageToAddTo){
         super.animationMoveIntoDatastructure(element, stageToAddTo);
+
+/*        let treeElement = this.visualDatastructure.getTreeElement(element.index);
+
+        let tempElement = new VisualTreeNode(null, 20);
+        tempElement.setXY(treeElement.getXY()[0], treeElement.getXY()[1]);
+        tempElement.updateElementValue(element.value);
+        console.log(tempElement);*/
 
         let stage0coordsSet2 = new CoordSet();
         stage0coordsSet2.setFromXY(this.visualDatastructure.getTreeElement(element.index).getXY()[0], this.visualDatastructure.getTreeElement(element.index).getXY()[1]);
         stage0coordsSet2.setToXY(this.visualDatastructure.getTreeElement(element.index).getXY()[0], this.visualDatastructure.getTreeElement(element.index).getXY()[1]);
 
+        //stageToAddTo.doNotDraw(this.visualDatastructure.getTreeElement(element.index));
+        //stageToAddTo.addTempObject(tempElement);
+        //stageToAddTo.add(tempElement, stage0coordsSet2, new MoveFadeIn());
+        //stageToAddTo.add(tempElement, stage0coordsSet2, new MoveFadeIn());
         stageToAddTo.add(this.visualDatastructure.getTreeElement(element.index), stage0coordsSet2, new MoveFadeIn());
 
         //this.animationSwapElements(element);
     }
-    animationSwapElements(endElement){
-        let stage0 = new AnimationSequence();
-        stage0.executeConcurrently = true;
+    animationSwap(element) {
+        if (element.index === 0) return;
 
-        animationSequencer.add(stage0);
+        let j = element.index;
 
-
-
-        this.visualDatastructure.content[endElement.index].updateElementValue();
-        //this.visualDatastructure.numElements = this.datastructure.numElements + 1;
-        let j = this.datastructure.getNumElements()-1;
-
-        while (j > 0){
+        while (j > 0) {
             let p = HeapArray.parent(j);
 
             console.log("parent: " + p);
             // This won't work with strings...
-            if (this.visualDatastructure.content[j].getValue() >= this.visualDatastructure.content[p].getValue()){
-                break;
+            if (this.visualDatastructure.getElement(j).visualValue.value >= this.visualDatastructure.getElement(p).visualValue.value) {
+                console.log("test");
+                return;
             }
+            console.log("GOT THROUGH");
 
-            this.datastructure.swap(j, p);
+            let stage0 = new AnimationSequence();
+            stage0.executeConcurrently = true;
+
+            this.generateSwapAnimation(j, p, stage0);
+
+            animationSequencer.add(stage0);
+
+
             j = p;
         }
+
+        //animationSequencer.go();
+
+    }
+    generateSwapAnimation(j, p, stageToAddTo){
+        console.log("BOB");
+
+        console.log(this.visualDatastructure.getElement(p));
+
+        let tempParentNode = new VisualTreeNode(null, 20);
+        tempParentNode.updateElementValue(this.visualDatastructure.getElement(p).visualValue.value);
+        stageToAddTo.doNotDraw(this.visualDatastructure.getElement(p));
+
+        this.visualDatastructure.getElement(j).updateElementValue();
+        this.visualDatastructure.getElement(p).updateElementValue();
+        this.visualDatastructure.getTreeElement(j).updateElementValue();
+        this.visualDatastructure.getTreeElement(p).updateElementValue();
+
+        let flatJ = this.visualDatastructure.getElement(j).visualValue;
+        let flatP = this.visualDatastructure.getElement(p).visualValue;
+        let treeJ = this.visualDatastructure.getTreeElement(j).visualValue;
+        let treeP = this.visualDatastructure.getTreeElement(p).visualValue;
+
+        console.log(p + " " + j);
+        console.log(flatJ.value);
+        console.log(flatP.value);
+        console.log(treeJ.value);
+        console.log(treeP.value);
+
+
+        let flatJCoordSet = new CoordSet();
+        flatJCoordSet.setFromXY(flatJ.getXY()[0], flatJ.getXY()[1]);
+        flatJCoordSet.setToXY(flatP.getXY()[0], flatP.getXY()[1]);
+
+        let flatPCoordSet = new CoordSet();
+        flatPCoordSet.setFromXY(flatP.getXY()[0], flatP.getXY()[1]);
+        flatPCoordSet.setToXY(flatJ.getXY()[0], flatJ.getXY()[1]);
+
+        let treeJCoordSet = new CoordSet();
+        treeJCoordSet.setFromXY(treeJ.getXY()[0], treeJ.getXY()[1]);
+        treeJCoordSet.setToXY(treeP.getXY()[0], treeP.getXY()[1]);
+
+        let treePCoordSet = new CoordSet();
+        treePCoordSet.setFromXY(treeP.getXY()[0], treeP.getXY()[1]);
+        treePCoordSet.setToXY(treeJ.getXY()[0], treeJ.getXY()[1]);
+
+        stageToAddTo.add(flatJ, flatJCoordSet, new MoveNoFade());
+        stageToAddTo.add(flatP, flatPCoordSet, new MoveNoFade());
+        stageToAddTo.add(treeJ, treeJCoordSet, new MoveNoFade());
+        stageToAddTo.add(treeP, treePCoordSet, new MoveNoFade());
+        console.log(stageToAddTo);
+
+
     }
 }
 

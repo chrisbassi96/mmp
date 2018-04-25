@@ -1,3 +1,121 @@
+class VisualObject2{
+    constructor(){
+        this.middleXY = [0, 0];
+        this.notDrawn = false;
+        this.visualObjects = [];
+        this.incomingArrows = [];
+        this.outgoingArrows = [];
+        this.coordSet = new CoordSet();
+        this.animationProperties = new AnimationProperties();
+    }
+    // Return middle X and Y coordinates
+    // @return middle X and Y coordinates as Array
+    getXY(){
+        return this.middleXY;
+    }
+    setXY(x, y){
+        this.middleXY = [x, y];
+    }
+    getStaticMiddleXY(){
+        return this.coordSet.getToXY();
+    }
+    setStaticMiddleXY(x, y){
+        this.coordSet.setToXY(x, y);
+    }
+    getOldMiddleXY(){
+        return this.coordSet.getFromXY();
+    }
+    setOldMiddleXY(x, y){
+        this.coordSet.setFromXY(x, y);
+        this.setAllOldMiddleXY();
+    }
+    setAllOldMiddleXY(){
+        for (let i=0; i<this.visualObjects.length; i++){
+            this.visualObjects[i].setOldMiddleXY(this.coordSet.getFromXY()[0], this.coordSet.getFromXY()[1]);
+        }
+    }
+    setCoords(coordsSet){
+        this.coordSet = coordsSet;
+        this.middleXY = coordsSet.getFromXY();
+    }
+    updateMiddleXY(x, y, progress){
+        this.animationProperties.progress = progress;
+
+        if (this.animationProperties.isMoving){
+            this.setXY(x, y);
+        }
+        if (this.animationProperties.isFading){
+            this.updateOpacity();
+        }
+
+        for (let i=0; i<this.incomingArrows.length; i++){
+            this.incomingArrows[i].setEndXY(this.middleXY[0], this.middleXY[1]);
+        }
+        for (let i=0; i<this.outgoingArrows.length; i++){
+            this.outgoingArrows[i].setStartXY(this.middleXY[0], this.middleXY[1]);
+        }
+    }
+    addIncomingArrow(visualArrow){
+        visualArrow.setEndXY(this.middleXY[0], this.middleXY[1]);
+        this.incomingArrows.push(visualArrow);
+    }
+    addOutgoingArrow(visualArrow){
+        visualArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
+        this.outgoingArrows.push(visualArrow);
+    }
+    isBeingAnimated(){
+        return this.animationProperties.isBeingAnimated();
+    }
+    setAnimationProperties(animationProperties){
+        this.animationProperties = animationProperties;
+
+        for (let i=0; i<this.visualObjects.length; i++){
+            this.visualObjects[i].setAnimationProperties(animationProperties);
+        }
+    }
+    setNotDrawn(notDrawn){
+        this.notDrawn = notDrawn;
+
+        for (let i=0; i<this.visualObjects; i++){
+            this.visualObjects[i].setNotDrawn(notDrawn);
+        }
+    }
+    updateOpacity(){
+        let newOpacity = 0;
+
+        switch(this.animationProperties.fade){
+            case "none":
+                return;
+            case "in":
+                newOpacity = this.animationProperties.progress/animationSteps;
+                break;
+            case "out":
+                newOpacity = Math.abs(((this.animationProperties.progress-1)/animationSteps)-1);
+                break;
+        }
+        this.animationProperties.opacity = newOpacity;
+
+        for (let i=0; i<this.visualObjects.length; i++){
+            this.visualObjects[i].animationProperties.opacity = newOpacity;
+        }
+    }
+    doAnimationComplete(){
+        //this.isBeingAnimated = false;
+        this.animationProperties = new AnimationProperties();
+
+        for (let i=0; i<this.visualObjects.length; i++){
+            this.visualObjects[i].doAnimationComplete();
+        }
+    }
+    draw(){
+        if (!this.notDrawn) {
+            for (let i = 0; i < this.visualObjects.length; i++) {
+                this.visualObjects[i].draw();
+            }
+
+        }
+    }
+}
 class VisualElement extends VisualObject{
     constructor(physicalElement){
         super();
@@ -5,8 +123,8 @@ class VisualElement extends VisualObject{
         this.visualValue = new VisualValue("null");
         this.visualObjects.push(this.visualValue);
     }
-    updateElementValue(){
-        this.visualValue.value = this.physicalElement.getValue();
+    updateElementValue(value=this.physicalElement.getValue()){
+        this.visualValue.value = value;
     }
 }
 
@@ -237,7 +355,6 @@ class VisualSimpleArray extends VisualDatastructure{
         this.content[index].setIndex(index); // Update index
 
         this.animator.insertAnimation(element);
-
     }
     remove(element){
 
@@ -275,12 +392,21 @@ class VisualHeapArray extends VisualSimpleArray{
             this.expand();
         }
 
-        super.insert(element);
-
-        this.contentTree[element.index].updateElementValue();
-
         this.updateTreeNodeCoords();
+
+        this.animator.insertAnimation(element);
+
+        console.log("hello");
+
+        //this.visualDatastructure.getElement(p).updateElementValue();
+        //this.visualDatastructure.getTreeElement(p).updateElementValue();
+
+        //this.contentTree[element.index].updateElementValue();
+        //super.insert(element);
+
+
         this.createNodeArrows(element.index);
+
     }
     getTreeElement(index){
         if (index >= 0 && index < this.contentTree.length){
@@ -324,31 +450,18 @@ class VisualHeapArray extends VisualSimpleArray{
             let currLevel = Math.floor(Math.log2(i+1));
             let nodesOnCurrLevel = Math.pow(2, currLevel);
             let nodePosOnLevel = Math.abs((nodesOnCurrLevel-i)-1);
-            console.log("nodePosOnLevel: " + nodePosOnLevel);
-            console.log("numLevels: " + numLevels);
-            console.log("currLevel: " + currLevel);
-            //let reverseCurrLevel = (currLevel + 1) - (i+1);
 
             let reverseCurrLevel = (numLevels+1) - currLevel;
-            console.log("reverseCurrLevel: " + reverseCurrLevel);
             let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel)*nodeXSpacingFactor);
             let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
             let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
 
-
-            console.log("distanceFromLeftToFirstNode: " + distanceFromLeftToFirstNode);
-            console.log("distanceBetweenNodes: " + distanceBetweenNodes);
-
             let x = canvas.width / 2 - (unitsToStart * radiusOfNode);
-            //x += (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode + radiusOfNode + (distanceBetweenNodes * radiusOfNode * nodePosOnLevel);
             x += (distanceFromLeftToFirstNode * radiusOfNode) + radiusOfNode;
             x += nodePosOnLevel * (radiusOfNode + (distanceBetweenNodes * radiusOfNode));
 
-
             let y = (canvas.height / 2);
             y += (currLevel * (radiusOfNode*2)) + (radiusOfNode * nodeYSpacingFactor * currLevel );
-
-            console.log("HELLO");
 
             this.contentTree[i].setXY(x, y);
         }
@@ -363,12 +476,6 @@ class VisualHeapArray extends VisualSimpleArray{
             this.contentTree[i] = new VisualTreeNode(this.physicalDatastructure.getElement(i), this.treeNodeRadius);
         }
         this.originalSize = this.physicalDatastructure.size;
-        /*        this.size = this.size*2;
-                for (let i=this.size/2; i<this.size; i++){
-                    this.visualDatastructure[i] = new ArrayElementController(null, this.showIndex);
-                    this.visualDatastructure[i].setXY(leftMargin + elementBoxWidth + (elementBoxWidth*i), this.elementBoxY+(elementBoxHeight/2));
-                    this.visualDatastructure[i].setIndex(i);
-                }*/
     }
     draw() {
         super.draw();
