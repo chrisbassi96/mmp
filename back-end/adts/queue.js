@@ -4,7 +4,7 @@ class CircularArrayQueue{
     }
     enqueue(elementValue){
         if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
-
+            console.log(this.dataStructure.getNumElements() + " " + this.dataStructure.getSize());
             let avail = (this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize();
             this.dataStructure.setTail(avail);
             //console.log(avail);

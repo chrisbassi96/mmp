@@ -219,6 +219,7 @@ class AnimationSequence{
         this.doNotDrawObjects = [];
         this.sequenceObjects = [];
         this.numSequenceObjects = 0;
+        this.currObject = 0;
 
         this.executeConcurrently = false;
     }
@@ -232,6 +233,7 @@ class AnimationSequence{
         console.log("GO GO GO");
         this.setObjectDrawStates(true);
 
+
         if (this.executeConcurrently){
             console.log(this.animationQueue);
             for (let i = 0; i<this.numAnimations; i++){
@@ -240,7 +242,7 @@ class AnimationSequence{
                 //mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
             }
             //mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
-            this.animate(this.numAnimations-1, this.animationQueue, this.numAnimations)
+            this.animate(this.animationQueue, this.numAnimations)
         }else{
             this.doNext(0);
 /*            this.animationQueue[0].canvasObject.coordSet = this.animationQueue[0].coordSet;
@@ -248,10 +250,9 @@ class AnimationSequence{
             //mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
         }
     }
-    doNext(queueIndex){
-        console.log("numAnimations: " + this.numAnimations);
-        console.log("doNext i value: " + queueIndex);
-        if (this.numAnimations===(queueIndex)){
+    doNext(){
+
+        if (this.numAnimations===(this.currObject) || this.executeConcurrently){
             console.log("FINITO!");
             this.finish();
         }else{
@@ -259,13 +260,14 @@ class AnimationSequence{
             console.log(this.animationQueue);
             // Important to only apply the coordSet when executing animation, otherwise if having the same object
             // animated with two coordsSets, it would be overridden
-            this.animationQueue[queueIndex].canvasObject.setCoords(this.animationQueue[queueIndex].coordSet);
-            this.animationQueue[queueIndex].canvasObject.setAnimationProperties(this.animationQueue[queueIndex].animationProperties);
-            this.animate(queueIndex, [this.animationQueue[queueIndex]], 1);
+            this.animationQueue[this.currObject].canvasObject.setCoords(this.animationQueue[this.currObject].coordSet);
+            this.animationQueue[this.currObject].canvasObject.setAnimationProperties(this.animationQueue[this.currObject].animationProperties);
+            this.animate([this.animationQueue[this.currObject]], 1);
+            this.currObject++;
             //mrExperimentalAnimator(this, queueIndex, this.animationQueue[queueIndex].canvasObject);
         }
     }
-    animate(queueIndex, visualObjects, numVisualObjects){
+    animate(visualObjects, numVisualObjects){
         let stopID = 0;
         let progress = 0;
         let sequenceReference = this;
@@ -301,12 +303,7 @@ class AnimationSequence{
             }else{
                 clearCanvas();
 
-                if (numVisualObjects !== 1){
-                    sequenceReference.finish();
-                }else{
-                    console.log("HELLO");
-                    sequenceReference.doNext(queueIndex+1);
-                }
+                sequenceReference.doNext();
 
                 adtController.visualDatastructure.draw();
 

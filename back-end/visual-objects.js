@@ -58,25 +58,29 @@ class VisualObject{
         this.coordSet = coordsSet;
         this.middleXY = coordsSet.getFromXY();
     }
-    updateMiddleXY(x, y, progress){
+    updateMiddleXY(x, y, progress) {
         this.animationProperties.progress = progress;
 
-        if (this.animationProperties.isMoving){
+        if (this.animationProperties.isMoving) {
             this.setXY(x, y);
         }
-        if (this.animationProperties.isFading){
+        if (this.animationProperties.isFading) {
             this.updateOpacity();
         }
 
-        for (let i=0; i<this.incomingArrows.length; i++){
-            this.incomingArrows[i].setEndXY(this.middleXY[0], this.middleXY[1]);
-        }
+        this.updateArrowsXY();
+    }
+    updateArrowsXY(){
         for (let i=0; i<this.outgoingArrows.length; i++){
             this.outgoingArrows[i].setStartXY(this.middleXY[0], this.middleXY[1]);
+        }
+        for (let i=0; i<this.incomingArrows.length; i++){
+            this.incomingArrows[i].setEndXY(this.middleXY[0], this.middleXY[1]);
         }
     }
     addIncomingArrow(visualArrow){
         visualArrow.setEndXY(this.middleXY[0], this.middleXY[1]);
+        console.log(this.getXY());
         this.incomingArrows.push(visualArrow);
     }
     addOutgoingArrow(visualArrow){
@@ -180,6 +184,8 @@ class VisualArrow {
         let adjustedEndX = this.endXY[0] - Math.cos(lineAngle)*this.endMargin;
         let adjustedEndY = this.endXY[1] - Math.sin(lineAngle)*this.endMargin;
 
+        console.log(adjustedEndY);
+
         let angleFromShaftToArrowHeadCorner = Math.PI/8;
         let lengthOfArrowHeadSide = 10;
 
@@ -253,6 +259,17 @@ class VisualValue extends VisualObject{
     }
     setValue(value){
         this.value = value;
+    }
+    updateMiddleXY(x, y, progress){
+        super.updateMiddleXY(x, y, progress);
+        this.updateArrowsXY();
+
+
+    }
+    updateArrowsXY(){
+        for (let i=0; i<this.outgoingArrows.length; i++){
+            this.outgoingArrows[i].setStartXY(this.middleXY[0], this.middleXY[1]);
+        }
     }
     draw(){
         super.draw();

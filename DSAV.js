@@ -31,7 +31,7 @@ function createADT(type){
         case "circular-array-queue":
             adt = new CircularArrayQueue(size);
             //datastructureController = new CircularArrayController(adt.dataStructure);
-            visualDatastructure = new QueueController(adt.dataStructure);
+            visualDatastructure = new VisualCircularArray(adt.dataStructure);
             adtController = new QueueController(adt, visualDatastructure);
             break;
         case "doubly-linked-list-queue":

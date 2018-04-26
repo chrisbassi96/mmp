@@ -45,6 +45,7 @@ class QueueController extends AdtController{
         super(adt, visualDatastructure);
     }
     enqueue(value){
+        console.log("hello");
         let enqueuedElement = this.adt.enqueue(value);
 
         if (enqueuedElement==null){
