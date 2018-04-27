@@ -1,43 +1,45 @@
 class HeapArrayPriorityQueue{
     constructor(size){
-        this.dataStructure = new HeapArray(size);
+        this.datastructure = new HeapArray(size);
     }
     insert(element){
-        if (this.dataStructure.getNumElements()===this.dataStructure.getSize()){ this.dataStructure.expand(); }
+        if (this.datastructure.getNumElements()===this.datastructure.getSize()){ this.datastructure.expand(); }
 
-        //this.datastructure.visualDatastructure[this.datastructure.getNumElements()].visualValue = element;
-        this.dataStructure.content[this.dataStructure.getNumElements()].setValue(element);
-        this.dataStructure.numElements = this.dataStructure.numElements + 1;
-        let j = this.dataStructure.getNumElements()-1;
+        this.datastructure.content[this.datastructure.getNumElements()].setValue(element);
+        this.datastructure.numElements = this.datastructure.numElements + 1;
+
+        let j = this.datastructure.getNumElements()-1;
 
         while (j > 0){
             let p = HeapArray.parent(j);
 
             console.log("parent: " + p);
             // This won't work with strings...
-            if (this.dataStructure.content[j].getValue() >= this.dataStructure.content[p].getValue()){
+            if (this.datastructure.content[j].getValue() >= this.datastructure.content[p].getValue()){
                 break;
             }
-            this.dataStructure.swap(j, p);
+            this.datastructure.swap(j, p);
             j = p;
         }
 
-        return {value: element, index: this.dataStructure.getNumElements()-1};
+        return {value: element, index: this.datastructure.getNumElements()-1};
     }
     removeMin(){
-        if (this.dataStructure.isEmpty()){
+        if (this.datastructure.isEmpty()){
             outputLabel.innerText = "Queue is empty";
             return;
         }
 
-        this.dataStructure.draw();
+        return {value: element, index: (this.datastructure.getHead()-1)%this.datastructure.getSize()};
+
+        this.datastructure.draw();
     }
     getMin(){
-        if (this.dataStructure.isEmpty()) {
+        if (this.datastructure.isEmpty()) {
             outputLabel.innerText = "Queue is empty";
             return;
         }
-        outputLabel.innerText = this.dataStructure.getElement(this.dataStructure.getHead());
-        this.dataStructure.draw();
+        outputLabel.innerText = this.datastructure.getElement(this.datastructure.getHead());
+        this.datastructure.draw();
     }
 }

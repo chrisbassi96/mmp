@@ -9,38 +9,26 @@ class VisualSimpleArrayAnimator extends VisualDatastructureAnimator{
         super(visualSimpleArray);
     }
     insertAnimation(element){
-        let stage0 = new AnimationSequence();
-        stage0.executeConcurrently = true;
-
-        this.animationMoveIntoDatastructure(element, stage0);
-
-        animationSequencer.add(stage0);
+        let sequence = this.animationMoveIntoDatastructure(element);
 
         animationSequencer.go();
     }
-    animationMoveIntoDatastructure(element, stageToAddTo){
-        // Setup for animation stage
-        stageToAddTo.doNotDraw(this.visualDatastructure.getElement(element.index));
+    animationMoveIntoDatastructure(element){
+        let stage0 = new AnimationSequence();
 
-        // Declaration of objects involved in the animation stage
-        let tempElement = new VisualArrayElement(null, element.index, this.showIndex);
-        let headValue = new VisualValue(element.value);
+        // The headValue needs to move from the bottom into the element
+        let stage0CoordsSetValue = new CoordSet();
+        stage0CoordsSetValue.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
+        stage0CoordsSetValue.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
 
-        stageToAddTo.addTempObject(tempElement);
-        stageToAddTo.addTempObject(headValue);
+        // Add objects to animated to AnimationSequence
+        //stage0.add(tempElement, stage0CoordSetTempElement, new MoveNoFade());
+        //stage0.add(headValue, stage0CoordsSetValue, new MoveNoFade());
+        stage0.add(this.visualDatastructure.getElement(element.index).visualValue, stage0CoordsSetValue, new MoveNoFade());
 
-        console.log(element.index);
+        animationSequencer.add(stage0);
 
-        let stage0coordsSetTempElement = new CoordSet();
-        stage0coordsSetTempElement.setFromXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
-        stage0coordsSetTempElement.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
-
-        let stage0coordsSet2 = new CoordSet();
-        stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
-        stage0coordsSet2.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
-
-        stageToAddTo.add(tempElement, stage0coordsSetTempElement, new MoveNoFade());
-        stageToAddTo.add(headValue, stage0coordsSet2, new MoveNoFade());
+        return stage0;
     }
     removeAnimation(element){
         let stage0 = new AnimationSequence();
@@ -72,15 +60,9 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
     constructor(visualCircularArray){
         super(visualCircularArray);
     }
-    animationMoveIntoDatastructure(element, stageToAddTo){
-        console.log("TESTING");
-        super.animationMoveIntoDatastructure(element, stageToAddTo);
-        //super.moveIntoDatastructure(element);
-        // Setup for animation stage
-        //let stage0 = new AnimationSequence();
-        let previousTail = (this.visualDatastructure.physicalDatastructure.getHead() + (this.visualDatastructure.physicalDatastructure.getNumElements()-1)) % this.visualDatastructure.physicalDatastructure.getSize();
-
-        console.log(this.visualDatastructure);
+    animationMoveIntoDatastructure(element){
+        let sequence = super.animationMoveIntoDatastructure(element);
+        sequence.executeConcurrently = true;
 
         let tailArrow = this.visualDatastructure.tailArrow;
         let headIndex = this.visualDatastructure.physicalDatastructure.head;
@@ -97,10 +79,8 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
         tailArrowCoordSetEnd.setFromXY(this.visualDatastructure.tailArrowEnd.getXY()[0], this.visualDatastructure.tailArrowEnd.getXY()[1]);
         tailArrowCoordSetEnd.setToXY(this.visualDatastructure.getElement(tailIndex).getXY()[0], this.visualDatastructure.tailArrowEnd.getXY()[1]);
 
-        //stageToAddTo.add(this.tailLabel, tailArrowCoordSetStart, new MoveNoFade());
-
-        stageToAddTo.add(this.visualDatastructure.tailArrowLabel, tailArrowCoordSetStart, new MoveNoFade());
-        stageToAddTo.add(this.visualDatastructure.tailArrowEnd, tailArrowCoordSetEnd, new MoveNoFade());
+        sequence.add(this.visualDatastructure.tailArrowLabel, tailArrowCoordSetStart, new MoveNoFade());
+        sequence.add(this.visualDatastructure.tailArrowEnd, tailArrowCoordSetEnd, new MoveNoFade());
     }
     animationMoveOutOfDatastructure(element, stageToAddTo){
         super.animationMoveOutOfDatastructure(element, stageToAddTo);
@@ -129,100 +109,84 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
     constructor(visualHeapArray){
         super(visualHeapArray);
     }
-    insertAnimation(element){
-        let stage0 = new AnimationSequence();
-        stage0.executeConcurrently = true;
-        animationSequencer.add(stage0);
+    animationMoveIntoDatastructure(element){
+        let sequence = super.animationMoveIntoDatastructure(element);
 
-        if (element.index !== 0 && this.visualDatastructure.getElement(element.index).physicalElement.getValue() !== element.value){
-            this.animationSwap(element);
-            //element.index = HeapArray.parent(element.index);
-        }
-
-        this.animationMoveIntoDatastructure(element, stage0);
-
+        // The newly inserted value is given to the respective element to visualize
         this.visualDatastructure.getElement(element.index).updateElementValue(element.value);
         this.visualDatastructure.getTreeElement(element.index).updateElementValue(element.value);
-
-        animationSequencer.go();
-    }
-    animationMoveIntoDatastructure(element, stageToAddTo){
-        super.animationMoveIntoDatastructure(element, stageToAddTo);
-
-/*        let treeElement = this.visualDatastructure.getTreeElement(element.index);
-
-        let tempElement = new VisualTreeNode(null, 20);
-        tempElement.setXY(treeElement.getXY()[0], treeElement.getXY()[1]);
-        tempElement.updateElementValue(element.value);
-        console.log(tempElement);*/
 
         let stage0coordsSet2 = new CoordSet();
         stage0coordsSet2.setFromXY(this.visualDatastructure.getTreeElement(element.index).getXY()[0], this.visualDatastructure.getTreeElement(element.index).getXY()[1]);
         stage0coordsSet2.setToXY(this.visualDatastructure.getTreeElement(element.index).getXY()[0], this.visualDatastructure.getTreeElement(element.index).getXY()[1]);
 
-        //stageToAddTo.doNotDraw(this.visualDatastructure.getTreeElement(element.index));
-        //stageToAddTo.addTempObject(tempElement);
-        //stageToAddTo.add(tempElement, stage0coordsSet2, new MoveFadeIn());
-        //stageToAddTo.add(tempElement, stage0coordsSet2, new MoveFadeIn());
-        stageToAddTo.add(this.visualDatastructure.getTreeElement(element.index), stage0coordsSet2, new MoveFadeIn());
+        sequence.add(this.visualDatastructure.getTreeElement(element.index), stage0coordsSet2, new MoveFadeIn());
 
-        //this.animationSwapElements(element);
+        if (element.index !== 0 && this.visualDatastructure.getElement(element.index).physicalElement.getValue() !== element.value){
+            this.animationSwap(element);
+        }
     }
     animationSwap(element) {
         if (element.index === 0) return;
 
-        let j = element.index;
+        let curr = element.index;
 
-        while (j > 0) {
-            let p = HeapArray.parent(j);
+        while (curr > 0) {
+            let p = HeapArray.parent(curr);
 
-            console.log("parent: " + p);
-            // This won't work with strings...
-            if (this.visualDatastructure.getElement(j).visualValue.value >= this.visualDatastructure.getElement(p).visualValue.value) {
-                console.log("test");
+            if (this.visualDatastructure.getElement(curr).visualValue.value === this.visualDatastructure.physicalDatastructure.getElement(parent).getValue()) {
                 return;
             }
-            console.log("GOT THROUGH");
 
             let stage0 = new AnimationSequence();
             stage0.executeConcurrently = true;
 
-            this.generateSwapAnimation(j, p, stage0);
+            this.generateSwapAnimation(curr, parent, stage0);
 
             animationSequencer.add(stage0);
 
-
-            j = p;
+            curr = p;
         }
-
-        //animationSequencer.go();
-
     }
-    generateSwapAnimation(j, p, stageToAddTo){
-        console.log("BOB");
+    generateSwapAnimation(childIndex, parentIndex, stageToAddTo){
+        let flatJ = this.visualDatastructure.getElement(childIndex);
+        let flatP = this.visualDatastructure.getElement(parentIndex);
+        let treeJ = this.visualDatastructure.getTreeElement(childIndex);
+        let treeP = this.visualDatastructure.getTreeElement(parentIndex);
 
-        console.log(this.visualDatastructure.getElement(p));
+        console.log(flatJ.physicalElement);
+        console.log(flatP.physicalElement);
 
-        let tempParentNode = new VisualTreeNode(null, 20);
-        tempParentNode.updateElementValue(this.visualDatastructure.getElement(p).visualValue.value);
-        stageToAddTo.doNotDraw(this.visualDatastructure.getElement(p));
+        let flatJTemp = new VisualArrayElement(null, null, null);
+        flatJTemp.setXY(flatJ.getXY()[0], flatJ.getXY()[1]);
+        flatJTemp.updateElementValue(flatJ.visualValue.value);
 
-        this.visualDatastructure.getElement(j).updateElementValue();
-        this.visualDatastructure.getElement(p).updateElementValue();
-        this.visualDatastructure.getTreeElement(j).updateElementValue();
-        this.visualDatastructure.getTreeElement(p).updateElementValue();
+        let flatPTemp = new VisualArrayElement(null, null, null);
+        flatPTemp.setXY(flatP.getXY()[0], flatP.getXY()[1]);
+        flatPTemp.updateElementValue(flatP.visualValue.value);
 
-        let flatJ = this.visualDatastructure.getElement(j).visualValue;
-        let flatP = this.visualDatastructure.getElement(p).visualValue;
-        let treeJ = this.visualDatastructure.getTreeElement(j).visualValue;
-        let treeP = this.visualDatastructure.getTreeElement(p).visualValue;
+        let treeJTemp = new VisualTreeNode(null, treeJ.visualCircle.radius);
+        treeJTemp.setXY(treeJ.getXY()[0], treeJ.getXY()[1]);
+        treeJTemp.updateElementValue(treeJ.visualValue.value);
 
-        console.log(p + " " + j);
-        console.log(flatJ.value);
-        console.log(flatP.value);
-        console.log(treeJ.value);
-        console.log(treeP.value);
+        let treePTemp = new VisualTreeNode(null, treeP.visualCircle.radius);
+        treePTemp.setXY(treeP.getXY()[0], treeP.getXY()[1]);
+        treePTemp.updateElementValue(treeP.visualValue.value);
 
+        stageToAddTo.addTempObject(flatJTemp);
+        stageToAddTo.addTempObject(flatPTemp);
+        stageToAddTo.addTempObject(treeJTemp);
+        stageToAddTo.addTempObject(treePTemp);
+
+        stageToAddTo.doNotDraw(flatJ);
+        stageToAddTo.doNotDraw(flatP);
+        stageToAddTo.doNotDraw(treeJ);
+        stageToAddTo.doNotDraw(treeP);
+
+        //stageToAddTo.addObjectToUpdateAtEnd(this.visualDatastructure.getElement(childIndex));
+        stageToAddTo.addObjectToUpdateAtEnd(this.visualDatastructure.getElement(parentIndex));
+        //stageToAddTo.addObjectToUpdateAtEnd(this.visualDatastructure.getTreeElement(childIndex));
+        stageToAddTo.addObjectToUpdateAtEnd(this.visualDatastructure.getTreeElement(parentIndex));
 
         let flatJCoordSet = new CoordSet();
         flatJCoordSet.setFromXY(flatJ.getXY()[0], flatJ.getXY()[1]);
@@ -240,13 +204,13 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
         treePCoordSet.setFromXY(treeP.getXY()[0], treeP.getXY()[1]);
         treePCoordSet.setToXY(treeJ.getXY()[0], treeJ.getXY()[1]);
 
-        stageToAddTo.add(flatJ, flatJCoordSet, new MoveNoFade());
-        stageToAddTo.add(flatP, flatPCoordSet, new MoveNoFade());
-        stageToAddTo.add(treeJ, treeJCoordSet, new MoveNoFade());
-        stageToAddTo.add(treeP, treePCoordSet, new MoveNoFade());
-        console.log(stageToAddTo);
-
-
+        stageToAddTo.add(flatJTemp.visualValue, flatJCoordSet, new MoveNoFade());
+        stageToAddTo.add(flatPTemp.visualValue, flatPCoordSet, new MoveNoFade());
+        stageToAddTo.add(treeJTemp.visualValue, treeJCoordSet, new MoveNoFade());
+        stageToAddTo.add(treePTemp.visualValue, treePCoordSet, new MoveNoFade());
+    }
+    animationMoveOutOfDatastructure(element){
+        let sequence = super.animationMoveOutOfDatastructure(element);
     }
 }
 
@@ -259,7 +223,7 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         this.shiftNodes("right");
 
         let stage0 = new AnimationSequence();
-        stage0.doNotDraw(this.visualDatastructure.head);
+        //stage0.doNotDraw(this.visualDatastructure.head);
         stage0.executeConcurrently = true;
 
         let stage0coordsSet1 = new CoordSet();
@@ -268,8 +232,9 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         stage0coordsSet1.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
 
         let tempElement = new VisualSinglyLinkedListElement();
-        stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
-        stage0.addTempObject(tempElement);
+        //stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
+        //stage0.addTempObject(tempElement);
+        stage0.add(this.visualDatastructure.head, stage0coordsSet1, new MoveFadeIn());
 
         let headValue = new VisualValue(element.getValue());
 
@@ -278,7 +243,9 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         //stage0coordsSet2.middleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
         stage0coordsSet2.setToXY(stage0coordsSet1.toMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.toMiddleXY[1]);
 
-        stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
+        //stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
+        stage0.add(this.visualDatastructure.head.visualValue, stage0coordsSet2, new MoveNoFade());
+
         stage0.addTempObject(headValue);
 
         animationSequencer.add(stage0);

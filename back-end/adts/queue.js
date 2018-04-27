@@ -1,60 +1,60 @@
 class CircularArrayQueue{
     constructor(size){
-        this.dataStructure = new CircularArray(size);
+        this.datastructure = new CircularArray(size);
     }
     enqueue(elementValue){
-        if (this.dataStructure.getNumElements() < this.dataStructure.getSize()){
-            console.log(this.dataStructure.getNumElements() + " " + this.dataStructure.getSize());
-            let avail = (this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize();
-            this.dataStructure.setTail(avail);
+        if (this.datastructure.getNumElements() < this.datastructure.getSize()){
+            console.log(this.datastructure.getNumElements() + " " + this.datastructure.getSize());
+            let avail = (this.datastructure.getHead() + this.datastructure.getNumElements()) % this.datastructure.getSize();
+            this.datastructure.setTail(avail);
             //console.log(avail);
             //this.adts.setElementValue(avail, elementValue);
-            this.dataStructure.setElementValue(avail, elementValue);
-            this.dataStructure.numElements += 1;
-            this.dataStructure.setTail((this.dataStructure.getHead() + this.dataStructure.getNumElements()) % this.dataStructure.getSize());
+            this.datastructure.setElementValue(avail, elementValue);
+            this.datastructure.numElements += 1;
+            this.datastructure.setTail((this.datastructure.getHead() + this.datastructure.getNumElements()) % this.datastructure.getSize());
 
             return {value: elementValue, index: avail};
         }
         return null;
     }
     dequeue(){
-        if (this.dataStructure.isEmpty()){
+        if (this.datastructure.isEmpty()){
             return null;
         }
 
-        let element = this.dataStructure.getElement(this.dataStructure.getHead()).getValue();
-        this.dataStructure.setElementValue(this.dataStructure.getHead(), null);
+        let element = this.datastructure.getElement(this.datastructure.getHead()).getValue();
+        this.datastructure.setElementValue(this.datastructure.getHead(), null);
 
-        this.dataStructure.setHead((this.dataStructure.getHead()+1)%this.dataStructure.getSize());
-        this.dataStructure.numElements--;
+        this.datastructure.setHead((this.datastructure.getHead()+1)%this.datastructure.getSize());
+        this.datastructure.numElements--;
 
-        return {value: element, index: (this.dataStructure.getHead()-1)%this.dataStructure.getSize()};
+        return {value: element, index: (this.datastructure.getHead()-1)%this.datastructure.getSize()};
     }
     peek(){
-        if (this.dataStructure.isEmpty()) {
+        if (this.datastructure.isEmpty()) {
             return null;
         }
 
-        return this.dataStructure.getElement(this.dataStructure.getHead()).getValue();
+        return this.datastructure.getElement(this.datastructure.getHead()).getValue();
     }
 }
 
 class DoublyLinkedListQueue{
     constructor(){
-        this.dataStructure = new DoublyLinkedList();
+        this.datastructure = new DoublyLinkedList();
     }
     push(element){
-        this.dataStructure.addLast(new DoublyLinkedListElement(element, null));
+        this.datastructure.addLast(new DoublyLinkedListElement(element, null));
     }
     pop(){
-        if (this.dataStructure.isEmpty()) {
+        if (this.datastructure.isEmpty()) {
             outputLabel.innerText = "Stack is empty";
             return;
         }
-        this.dataStructure.removeFirst();
-        this.dataStructure.draw();
+        this.datastructure.removeFirst();
+        this.datastructure.draw();
     }
     peek(){
-        outputLabel.innerText = this.dataStructure.getFirst();
+        outputLabel.innerText = this.datastructure.getFirst();
     }
 }

@@ -123,12 +123,12 @@ class VisualObject{
             this.visualObjects[i].animationProperties.opacity = newOpacity;
         }
     }
-    doAnimationComplete(){
+    resetAnimationProperties(){
         //this.isBeingAnimated = false;
         this.animationProperties = new AnimationProperties();
 
         for (let i=0; i<this.visualObjects.length; i++){
-            this.visualObjects[i].doAnimationComplete();
+            this.visualObjects[i].resetAnimationProperties();
         }
     }
     draw(){
@@ -142,40 +142,19 @@ class VisualObject{
 }
 
 class VisualArrow {
-    constructor(labelText="", labelPosition="start", startMargin=0, endMargin=0){
+    constructor(startMargin=0, endMargin=0){
         this.startMargin = startMargin;
-        this.startXY = [];
+        this.startXY = [0, 0];
         this.endMargin = endMargin;
-        this.endXY = [];
-        this.label = new VisualValue(labelText);
-        this.labelPosition = labelPosition;
+        this.endXY = [0, 0];
     }
     setStartXY(x, y){
         this.startXY = [x, y];
-        this.updateLabelPosition();
     }
     setEndXY(x, y){
         this.endXY = [x, y];
     }
-    setLabelText(text){
-        this.label.setValue(text);
-    }
-    updateLabelPosition(){
-        switch (this.labelPosition){
-            case "start":
-                this.label.setXY(this.startXY[0], this.startXY[1]);
-                break;
-            case "middle":
-                this.label.setXY(this.middleXY[0], this.middleXY[1]);
-                break;
-            case "end":
-                this.label.setXY(this.endXY[0], this.endXY[1]);
-                break;
-        }
-    }
     draw(){
-        this.updateLabelPosition();
-        this.label.draw();
         let lineAngle = Math.atan2(this.endXY[1]-this.startXY[1], this.endXY[0]-this.startXY[0]);
 
         let adjustedStartX = this.startXY[0] + Math.cos(lineAngle)*this.startMargin;
@@ -183,8 +162,6 @@ class VisualArrow {
 
         let adjustedEndX = this.endXY[0] - Math.cos(lineAngle)*this.endMargin;
         let adjustedEndY = this.endXY[1] - Math.sin(lineAngle)*this.endMargin;
-
-        console.log(adjustedEndY);
 
         let angleFromShaftToArrowHeadCorner = Math.PI/8;
         let lengthOfArrowHeadSide = 10;
@@ -263,8 +240,6 @@ class VisualValue extends VisualObject{
     updateMiddleXY(x, y, progress){
         super.updateMiddleXY(x, y, progress);
         this.updateArrowsXY();
-
-
     }
     updateArrowsXY(){
         for (let i=0; i<this.outgoingArrows.length; i++){
@@ -274,13 +249,12 @@ class VisualValue extends VisualObject{
     draw(){
         super.draw();
 
-        if (this.value == null || this.value === ""){
+/*        if (this.value == null || this.value === ""){
             return;
-        }
+        }*/
         ctx.save();
         ctx.globalAlpha = this.animationProperties.opacity;
         ctx.fillText(this.value, this.getXY()[0], this.getXY()[1]);
         ctx.restore();
     }
 }
-

@@ -19,6 +19,7 @@ function createADT(type){
         case "simple-array-stack":
             adt = new SimpleArrayStack(size);
             //datastructureController = new SimpleArrayController(adt.datastructure);
+            console.log(adt.datastructure);
             visualDatastructure = new VisualSimpleArray(adt.datastructure);
             adtController = new StackController(adt, visualDatastructure);
             break;
@@ -30,8 +31,8 @@ function createADT(type){
             break;
         case "circular-array-queue":
             adt = new CircularArrayQueue(size);
-            //datastructureController = new CircularArrayController(adt.dataStructure);
-            visualDatastructure = new VisualCircularArray(adt.dataStructure);
+            //datastructureController = new CircularArrayController(adt.datastructure);
+            visualDatastructure = new VisualCircularArray(adt.datastructure);
             adtController = new QueueController(adt, visualDatastructure);
             break;
         case "doubly-linked-list-queue":
@@ -39,8 +40,8 @@ function createADT(type){
             break;
         case "heap-array-priority-queue":
             adt = new HeapArrayPriorityQueue(size);
-            //datastructureController = new HeapArrayController(adt.dataStructure);
-            visualDatastructure = new VisualHeapArray(adt.dataStructure);
+            //datastructureController = new HeapArrayController(adt.datastructure);
+            visualDatastructure = new VisualHeapArray(adt.datastructure);
             adtController = new PriorityQueueController(adt, visualDatastructure);
             break;
         default:

@@ -202,6 +202,9 @@ class AnimationSequencer{
             this.numSequences = 0;
             this.currSequence = 0;
             //4canvasFOMan.clear();
+/*            for (let i=0; i<adtController.adt.datastructure.getNumElements(); i++){
+                adtController.visualDatastructure.getElement(i).updateElementValue();
+            }*/
             console.log("Animation sequencer finished");
         }else{
             console.log("NEXT ONE!");
@@ -214,6 +217,8 @@ class AnimationSequencer{
 class AnimationSequence{
     constructor(){
         this.animationSequencer = animationSequencer;
+        this.objectsToUpdateAtEnd = [];
+        this.numObjectsToUpdateAtEnd = 0;
         this.animationQueue = [];
         this.numAnimations = 0;
         this.doNotDrawObjects = [];
@@ -227,6 +232,10 @@ class AnimationSequence{
         //this.animationQueue[this.numAnimations] = canvasObject;
         this.animationQueue.push({canvasObject: canvasObject, coordSet: coordSet, animationProperties: animationProperties});
         this.numAnimations++;
+    }
+    addObjectToUpdateAtEnd(visualObject){
+        this.objectsToUpdateAtEnd.push(visualObject);
+        this.numObjectsToUpdateAtEnd++;
     }
     go(){
         //this.setObjectDrawStates(true)
@@ -255,6 +264,7 @@ class AnimationSequence{
         if (this.numAnimations===(this.currObject) || this.executeConcurrently){
             console.log("FINITO!");
             this.finish();
+
         }else{
             console.log("NEXT ONE!");
             console.log(this.animationQueue);
@@ -314,7 +324,10 @@ class AnimationSequence{
     finish(){
         // Finished animating all items
         for (let i = 0; i<this.numAnimations; i++){
-            this.animationQueue[i].canvasObject.doAnimationComplete();
+            this.animationQueue[i].canvasObject.resetAnimationProperties();
+        }
+        for (let i = 0; i<this.numObjectsToUpdateAtEnd; i++){
+            this.objectsToUpdateAtEnd[i].doAnimationComplete();
         }
         this.animationQueue = [];
         //this.clear();
@@ -323,6 +336,11 @@ class AnimationSequence{
         this.setObjectDrawStates(false);
         this.doNotDrawObjects = [];
         this.sequenceObjects = [];
+        this.objectsToUpdateAtEnd = [];
+        this.numObjectsToUpdateAtEnd = 0;
+
+
+
         this.animationSequencer.doNext();
         console.log("Animation sequence over");
     }
@@ -351,4 +369,3 @@ class AnimationSequence{
         this.doNotDrawObjects.push(visualObject);
     }
 }
-
