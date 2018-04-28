@@ -34,23 +34,23 @@ class DoublyLinkedListElement extends Element{
     }
     draw(){
         // Draw the actual box
-        ctx.strokeRect(this.middleX-elementBoxWidth, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        ctx.strokeRect(this.middleX-boxWidth, this.middleY-(boxHeight/2), boxWidth, boxHeight);
         // Draw the box for "visualNext"
-        ctx.strokeRect(this.middleX, this.middleY-(elementBoxHeight/2), elementBoxWidth, elementBoxHeight);
+        ctx.strokeRect(this.middleX, this.middleY-(boxHeight/2), boxWidth, boxHeight);
 
         if (this.element==null){
             // Draw a slanted line to indicate no object referenced
             ctx.beginPath();
-            ctx.moveTo(this.middleX - (elementBoxWidth/2), this.middleY + (elementBoxHeight/2)); // Margin of 5 pixels
-            ctx.lineTo(this.middleX + (elementBoxWidth/2), this.middleY - (elementBoxHeight/2));
+            ctx.moveTo(this.middleX - (boxWidth/2), this.middleY + (boxHeight/2)); // Margin of 5 pixels
+            ctx.lineTo(this.middleX + (boxWidth/2), this.middleY - (boxHeight/2));
             ctx.closePath();
             ctx.stroke();
         }else {
             // Draw the actual visualValue
-            ctx.fillText(this.element, this.middleX-(elementBoxWidth/2), this.middleY);
+            ctx.fillText(this.element, this.middleX-(boxWidth/2), this.middleY);
             // Draw the "visualNext"
-            ctx.fillText("next", this.middleX+(elementBoxWidth/2), this.middleY);
-            drawLabelledArrow("next", 0, this.middleX+(elementBoxWidth/2), this.middleY, this.middleX+(elementBoxWidth*2), this.middleY);
+            ctx.fillText("next", this.middleX+(boxWidth/2), this.middleY);
+            drawLabelledArrow("next", 0, this.middleX+(boxWidth/2), this.middleY, this.middleX+(boxWidth*2), this.middleY);
         }
 
     }
@@ -223,7 +223,7 @@ class CircularArray extends SimpleArray{
 }
 
 class HeapArray extends SimpleArray{
-    constructor(size=20, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=true){
+    constructor(size=20, elementBoxY=topBottomMargin+boxHeight, showIndex=true){
         super(size, elementBoxY, showIndex);
     }
     static parent(index){

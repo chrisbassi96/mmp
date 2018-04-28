@@ -1,5 +1,5 @@
 class DatastructureController{
-    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
+    constructor(datastructure, elementBoxY=topBottomMargin+boxHeight, showIndex=false){
         this.datastructure = datastructure;
         //this.elementBoxY = elementBoxY;
         //this.showIndex = showIndex;
@@ -24,7 +24,7 @@ class DatastructureController{
 }
 
 class SimpleArrayController extends DatastructureController{
-    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
+    constructor(datastructure, elementBoxY=topBottomMargin+boxHeight, showIndex=false){
         super(datastructure, elementBoxY, showIndex);
         this.visualDatastructure = new VisualSimpleArray(this.datastructure, elementBoxY, showIndex);
         this.visualDatastructureAnimator = new VisualSimpleArrayAnimator(this.visualDatastructure);
@@ -32,7 +32,7 @@ class SimpleArrayController extends DatastructureController{
 }
 
 class HeapArrayController extends DatastructureController{
-    constructor(datastructure, elementBoxY=topBottomMargin+elementBoxHeight, showIndex=false){
+    constructor(datastructure, elementBoxY=topBottomMargin+boxHeight, showIndex=false){
         super(datastructure, elementBoxY, showIndex);
         this.visualDatastructure = new VisualHeapArray(this.datastructure, elementBoxY, showIndex);
         this.visualDatastructureAnimator = new VisualHeapArrayAnimator(this.visualDatastructure);

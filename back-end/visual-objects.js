@@ -144,9 +144,9 @@ class VisualObject{
 class VisualArrow {
     constructor(startMargin=0, endMargin=0){
         this.startMargin = startMargin;
-        this.startXY = [0, 0];
+        this.startXY = [];
         this.endMargin = endMargin;
-        this.endXY = [0, 0];
+        this.endXY = [];
     }
     setStartXY(x, y){
         this.startXY = [x, y];
@@ -205,7 +205,7 @@ class VisualCircle extends VisualObject{
 }
 
 class VisualBox extends VisualObject{
-    constructor(width=elementBoxWidth, height=elementBoxHeight){
+    constructor(width=boxWidth, height=boxHeight){
         super();
         this.width = width;
         this.height = height;

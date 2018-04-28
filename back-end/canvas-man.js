@@ -4,22 +4,24 @@ canvas.width = 1200;
 canvas.height = 600;
 ctx.textAlign = "center";
 ctx.textBaseline = "middle";
-ctx.font="10px Arial";
+ctx.font="15px Arial";
 
 //Visualization settings
-let topBottomMargin = 10;
-let leftMargin = 50;
+let topBottomMargin = 50;
+let leftMargin = 75;
 
 // Canvas elements
-let elementBoxLabelY = 10;
-let elementBoxWidth = 50;
-let elementBoxHeight = 50;
+let elementBoxLabelY = 20;
+let boxWidth = 80;
+let boxHeight = 80;
+let circleRadius = 30;
+let treeNodeSpacingFactorX = 0.5;
+let treeNodeSpacingFactorY = 0.5;
 
 // Animation settings
 let animationSteps = 200; // i.e. speed
 
 let outputLabel = document.getElementById("output_msg");
-let drawScale = 1;
 
 function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);

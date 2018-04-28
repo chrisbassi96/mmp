@@ -18,7 +18,7 @@ class VisualSimpleArrayAnimator extends VisualDatastructureAnimator{
 
         // The headValue needs to move from the bottom into the element
         let stage0CoordsSetValue = new CoordSet();
-        stage0CoordsSetValue.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
+        stage0CoordsSetValue.setFromXY(leftMargin + boxWidth, canvas.height - topBottomMargin);
         stage0CoordsSetValue.setToXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
 
         // Add objects to animated to AnimationSequence
@@ -111,6 +111,7 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
     }
     animationMoveIntoDatastructure(element){
         let sequence = super.animationMoveIntoDatastructure(element);
+        sequence.executeConcurrently = true;
 
         // The newly inserted value is given to the respective element to visualize
         this.visualDatastructure.getElement(element.index).updateElementValue(element.value);
@@ -153,9 +154,6 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
         let flatP = this.visualDatastructure.getElement(parentIndex);
         let treeJ = this.visualDatastructure.getTreeElement(childIndex);
         let treeP = this.visualDatastructure.getTreeElement(parentIndex);
-
-        console.log(flatJ.physicalElement);
-        console.log(flatP.physicalElement);
 
         let flatJTemp = new VisualArrayElement(null, null, null);
         flatJTemp.setXY(flatJ.getXY()[0], flatJ.getXY()[1]);
@@ -227,9 +225,9 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         stage0.executeConcurrently = true;
 
         let stage0coordsSet1 = new CoordSet();
-        stage0coordsSet1.setFromXY(leftMargin + elementBoxWidth, canvas.height / 2);
-        //stage0coordsSet1.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage0coordsSet1.setToXY(leftMargin + elementBoxWidth, canvas.height / 2);
+        stage0coordsSet1.setFromXY(leftMargin + boxWidth, canvas.height / 2);
+        //stage0coordsSet1.middleXY = [leftMargin + boxWidth, canvas.height / 2];
+        stage0coordsSet1.setToXY(leftMargin + boxWidth, canvas.height / 2);
 
         let tempElement = new VisualSinglyLinkedListElement();
         //stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
@@ -239,9 +237,9 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         let headValue = new VisualValue(element.getValue());
 
         let stage0coordsSet2 = new CoordSet();
-        stage0coordsSet2.setFromXY(leftMargin + elementBoxWidth, canvas.height - topBottomMargin);
-        //stage0coordsSet2.middleXY = [leftMargin + elementBoxWidth, canvas.height - topBottomMargin];
-        stage0coordsSet2.setToXY(stage0coordsSet1.toMiddleXY[0]-elementBoxWidth/2, stage0coordsSet1.toMiddleXY[1]);
+        stage0coordsSet2.setFromXY(leftMargin + boxWidth, canvas.height - topBottomMargin);
+        //stage0coordsSet2.middleXY = [leftMargin + boxWidth, canvas.height - topBottomMargin];
+        stage0coordsSet2.setToXY(stage0coordsSet1.toMiddleXY[0]-boxWidth/2, stage0coordsSet1.toMiddleXY[1]);
 
         //stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
         stage0.add(this.visualDatastructure.head.visualValue, stage0coordsSet2, new MoveNoFade());
@@ -254,9 +252,9 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         let stage1 = new AnimationSequence();
 
         let stage1coordsSetHead = new CoordSet();
-        stage1coordsSetHead.fromMiddleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage1coordsSetHead.toMiddleXY =  [leftMargin + elementBoxWidth, canvas.height / 2];
+        stage1coordsSetHead.fromMiddleXY = [leftMargin + boxWidth, canvas.height / 2];
+        //stage1coordsSet.middleXY = [leftMargin + boxWidth, canvas.height / 2];
+        stage1coordsSetHead.toMiddleXY =  [leftMargin + boxWidth, canvas.height / 2];
         stage1.add(this.visualDatastructure.head, stage1coordsSetHead, new MoveNoFade());
 
         animationSequencer.add(stage1);
@@ -266,8 +264,8 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
 
         let stage2coordsSet = new CoordSet();
         stage2coordsSet.fromMiddleXY = [stage1coordsSetHead.toMiddleXY[0], stage1coordsSetHead.toMiddleXY[1]];
-        //stage1coordsSet.middleXY = [leftMargin + elementBoxWidth, canvas.height / 2];
-        stage2coordsSet.toMiddleXY =  [leftMargin + elementBoxWidth, this.visualDatastructure.elementBoxY+(elementBoxHeight/2)];
+        //stage1coordsSet.middleXY = [leftMargin + boxWidth, canvas.height / 2];
+        stage2coordsSet.toMiddleXY =  [leftMargin + boxWidth, this.visualDatastructure.elementBoxY+(boxHeight/2)];
 
         stage2.add(this.visualDatastructure.head, stage2coordsSet, new MoveNoFade());
 
@@ -298,9 +296,9 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         while (curr!==null){
             curr.setOldMiddleXY(curr.getStaticMiddleXY()[0], curr.getStaticMiddleXY()[1]);
             if (direction === "right"){
-                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]+(3*elementBoxWidth), curr.getStaticMiddleXY()[1]);
+                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]+(3*boxWidth), curr.getStaticMiddleXY()[1]);
             }else{
-                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]-(3*elementBoxWidth), curr.getStaticMiddleXY()[1]);
+                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]-(3*boxWidth), curr.getStaticMiddleXY()[1]);
             }
             sequence.add(curr, curr.coordSet, new MoveNoFade());
 
