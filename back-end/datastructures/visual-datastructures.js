@@ -224,9 +224,8 @@ class VisualDatastructure{
         this.content = [];
     }
     draw(){
-        for (let i=0; i<this.physicalDatastructure.size; i++){
-            this.content[i].draw();
-        }
+        clearCanvas();
+
     }
 }
 
@@ -268,9 +267,77 @@ class VisualSimpleArray extends VisualDatastructure{
         return null;
     }
     draw() {
-        //clearCanvas();
+        clearCanvas();
         for (let i=0; i<this.physicalDatastructure.size; i++){
             this.content[i].draw();
+        }
+    }
+}
+
+class VisualCircularArray extends VisualSimpleArray{
+    constructor(datastructure, elementBoxY, showIndex){
+        super(datastructure, elementBoxY, showIndex);
+        this.animator = new VisualCircularArrayAnimator(this);
+
+        // Set up for the head arrow
+        this.headArrowLabel = new VisualValue("head / tail");
+        this.headArrow = new VisualArrow(0, 10);
+        this.headArrowEnd = new VisualObject();
+
+        this.headArrowEnd.setXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-boxHeight/2);
+        this.headArrowLabel.setXY(this.content[0].getXY()[0], elementBoxLabelY);
+        this.headArrow.setStartXY(this.content[0].getXY()[0], elementBoxLabelY);
+        this.headArrow.setEndXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-boxHeight/2);
+
+        this.headArrowLabel.addOutgoingArrow(this.headArrow);
+        this.headArrowEnd.addIncomingArrow(this.headArrow);
+
+
+        this.tailArrowLabel = new VisualValue("tail");
+        this.tailArrow = new VisualArrow(0, 10);
+        this.tailArrowEnd = new VisualObject(); // Create dummy end point object so that the arrow follows during anim
+        this.tailArrowLabel.setXY(this.content[0].getXY()[0], elementBoxLabelY);
+        this.tailArrowEnd.setXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-boxHeight/2);
+        this.tailArrowLabel.addOutgoingArrow(this.tailArrow);
+        this.tailArrowEnd.addIncomingArrow(this.tailArrow);
+        this.draw();
+    }
+    insert(element){
+        let head = this.physicalDatastructure.getHead();
+        let tail = this.physicalDatastructure.getTail();
+
+        if (head === tail){
+            this.headArrowLabel.setValue("head / tail");
+        }else{
+            this.headArrowLabel.setValue("head")
+        }
+
+        super.insert(element);
+    }
+    remove(element){
+        let head = this.physicalDatastructure.getHead();
+        let tail = this.physicalDatastructure.getTail();
+
+        if (head === tail){
+            this.headArrowLabel.setValue("head / tail");
+        }else{
+            this.headArrowLabel.setValue("head");
+        }
+
+        super.remove(element);
+    }
+    draw(){
+        super.draw();
+
+        // Draw the common parts of any array structure
+        this.headArrowLabel.draw();
+
+        let numElements = this.physicalDatastructure.getNumElements();
+        let head = this.physicalDatastructure.getHead();
+        let tail = this.physicalDatastructure.getTail();
+
+        if (head !== tail){
+            this.tailArrowLabel.draw();
         }
     }
 }
@@ -377,76 +444,6 @@ class VisualHeapArray extends VisualSimpleArray{
         for (let i=0; i<this.physicalDatastructure.numElements; i++){
             this.contentTree[i].draw();
         }
-    }
-}
-
-class VisualCircularArray extends VisualSimpleArray{
-    constructor(datastructure, elementBoxY, showIndex){
-        super(datastructure, elementBoxY, showIndex);
-        this.animator = new VisualCircularArrayAnimator(this);
-
-        // Set up for the head arrow
-        this.headArrowLabel = new VisualValue("head / tail");
-        this.headArrow = new VisualArrow(0, 10);
-        this.headArrowEnd = new VisualObject();
-
-        this.headArrowEnd.setXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-boxHeight/2);
-        this.headArrowLabel.setXY(this.content[0].getXY()[0], elementBoxLabelY);
-        this.headArrow.setStartXY(this.content[0].getXY()[0], elementBoxLabelY);
-        this.headArrow.setEndXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-boxHeight/2);
-
-        this.headArrowLabel.addOutgoingArrow(this.headArrow);
-        this.headArrowEnd.addIncomingArrow(this.headArrow);
-
-
-        this.tailArrowLabel = new VisualValue("tail");
-        this.tailArrow = new VisualArrow(0, 10);
-        this.tailArrowEnd = new VisualObject(); // Create dummy end point object so that the arrow follows during anim
-        this.tailArrowLabel.setXY(this.content[0].getXY()[0], elementBoxLabelY);
-        this.tailArrowEnd.setXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-boxHeight/2);
-        this.tailArrowLabel.addOutgoingArrow(this.tailArrow);
-        this.tailArrowEnd.addIncomingArrow(this.tailArrow);
-
-        //this.tailArrow.setStartXY(this.content[0].getXY()[0], elementBoxLabelY);
-        //this.tailArrow.setEndXY(this.content[0].getXY()[0], this.content[0].getXY()[1]-boxHeight/2);
-
-        this.headArrowLabel.draw();
-        this.headArrow.draw();
-    }
-    insert(element){
-        let tail = (this.physicalDatastructure.getHead() + (this.physicalDatastructure.getNumElements())) % this.physicalDatastructure.getSize();
-
-        if (this.physicalDatastructure.getHead() === this.physicalDatastructure.getTail()){
-            this.headArrowLabel.setValue("head / tail")
-        }else{
-            this.headArrowLabel.setValue("head");
-        }
-
-        super.insert(element);
-    }
-    remove(element){
-        if (this.physicalDatastructure.getHead() === this.physicalDatastructure.getTail()){
-            this.headArrowLabel.setValue("head / tail")
-        }else{
-            this.headArrowLabel.setValue("head");
-        }
-
-        super.remove(element);
-    }
-    draw(){
-        // Draw the common parts of any array structure
-        this.headArrowLabel.draw();
-        this.headArrow.draw();
-
-        console.log(this.getElement(this.physicalDatastructure.head).getXY());
-        console.log(this.getElement(this.physicalDatastructure.tail).getXY());
-
-        if (this.getElement(this.physicalDatastructure.head).getXY() !== this.getElement(this.physicalDatastructure.tail).getXY()){
-            this.tailArrowLabel.draw();
-            this.tailArrow.draw();
-        }
-        console.log(this.tailArrowLabel);
-        super.draw();
     }
 }
 

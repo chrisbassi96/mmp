@@ -35,6 +35,7 @@ class VisualObject{
     }
     setXY(x, y){
         this.middleXY = [x, y];
+        this.updateArrowsXY();
     }
     getStaticMiddleXY(){
         return this.coordSet.getToXY();
@@ -136,7 +137,9 @@ class VisualObject{
             for (let i = 0; i < this.visualObjects.length; i++) {
                 this.visualObjects[i].draw();
             }
-
+            for (let i = 0; i < this.outgoingArrows.length; i++) {
+                this.outgoingArrows[i].draw();
+            }
         }
     }
 }

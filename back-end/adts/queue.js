@@ -23,12 +23,14 @@ class CircularArrayQueue{
         }
 
         let element = this.datastructure.getElement(this.datastructure.getHead()).getValue();
+        let oldHead = this.datastructure.getHead();
+
         this.datastructure.setElementValue(this.datastructure.getHead(), null);
 
         this.datastructure.setHead((this.datastructure.getHead()+1)%this.datastructure.getSize());
         this.datastructure.numElements--;
 
-        return {value: element, index: (this.datastructure.getHead()-1)%this.datastructure.getSize()};
+        return {value: element, index: oldHead};
     }
     peek(){
         if (this.datastructure.isEmpty()) {

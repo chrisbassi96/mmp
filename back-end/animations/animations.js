@@ -242,6 +242,7 @@ class AnimationSequence{
         console.log("GO GO GO");
         this.setObjectDrawStates(true);
 
+        toggleControlInputs();
 
         if (this.executeConcurrently){
             console.log(this.animationQueue);
@@ -253,7 +254,7 @@ class AnimationSequence{
             //mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
             this.animate(this.animationQueue, this.numAnimations)
         }else{
-            this.doNext(0);
+            this.doNext();
 /*            this.animationQueue[0].canvasObject.coordSet = this.animationQueue[0].coordSet;
             this.animationQueue[0].canvasObject.setAnimationProperties(this.animationQueue[0].animationProperties);*/
             //mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
@@ -286,7 +287,7 @@ class AnimationSequence{
 
         function step(timestamp){
 
-            clearCanvas();
+            //clearCanvas();
 
             for (let i=0; i<numVisualObjects; i++){
                 let currObject = visualObjects[i].canvasObject;
@@ -311,7 +312,7 @@ class AnimationSequence{
                 progress += 1;
                 stopID = window.requestAnimationFrame(step);
             }else{
-                clearCanvas();
+                //clearCanvas();
 
                 sequenceReference.doNext();
 
@@ -322,6 +323,7 @@ class AnimationSequence{
         }
     }
     finish(){
+        toggleControlInputs();
         // Finished animating all items
         for (let i = 0; i<this.numAnimations; i++){
             this.animationQueue[i].canvasObject.resetAnimationProperties();

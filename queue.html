@@ -56,7 +56,7 @@
 
         <main role="main" class="col pt-1 px-4">
 
-            <form class="form-inline row mb-2">
+            <form class="form-inline row mb-2" id="creation-panel">
                 <input class="btn btn-primary mr-1" type="button"
                        onclick="createADT('queue'); document.getElementById('null_toggle').disabled = false;"
                        value="Create Queue" id="create_adt" disabled/>
@@ -75,25 +75,25 @@
                 </div>
             </form>
 
-            <canvas class="row" id="myCanvas" style="border:1px solid #c3c3c3; width:100%; height:auto;"></canvas>
+            <canvas class="row" id="canvas-area" style="border:1px solid #c3c3c3; width:100%; height:auto;"></canvas>
 
-            <form class="form-inline row mt-2">
+            <form class="form-inline row mt-2" id="interaction-panel">
                 <input class="btn mr-1" type="button" onclick="adtController.enqueue(+document.getElementById('add_value').value);" value="Enqueue" />
                 <input class="form-control mr-1" type="number" name="add_value" id="add_value" title="value to insert"/>
                 <input class="btn mr-1" type="button" onclick="adtController.dequeue();" value="Dequeue"/>
                 <input class="btn mr-1" type="button" onclick="adtController.peek();" value="Peek"/>
                 <label class="mr-1" id="output_msg"></label>
             </form>
-            <form class="form-inline row">
+            <form class="form-inline row" id="visualization-control-panel">
                 <div class="form-group">
                     <label for="anim_speed">Animation speed</label>
                     <input class="input-control" type="range" min="2" max="200" id="anim_speed" onchange="animationSteps=this.value;" style="direction: rtl"/>
                 </div>
 
-                <label>
-                    <input type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
-                    Show null values
-                </label>
+                <div class="form-group">
+                    <label class="form-check-label" for="null_toggle">Show null values</label>
+                    <input class="form-check-input" type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
+                </div>
             </form>
         </main>
     </div>

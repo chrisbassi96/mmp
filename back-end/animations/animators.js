@@ -64,26 +64,53 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
         let sequence = super.animationMoveIntoDatastructure(element);
         sequence.executeConcurrently = true;
 
-        let tailArrow = this.visualDatastructure.tailArrow;
-        let headIndex = this.visualDatastructure.physicalDatastructure.head;
-        let tailIndex = this.visualDatastructure.physicalDatastructure.tail;
-
         // If data structure is full, do not move tail
-        if (tailIndex === 0){ return; }
+        if (this.visualDatastructure.physicalDatastructure.tail === 0 && this.visualDatastructure.physicalDatastructure.isFull()){
+            //adtController.visualDatastructure.draw();
+            //return;
+        }
+
+
+
+        let tailArrowLabel = this.visualDatastructure.tailArrowLabel;
+        let tailArrowEnd = this.visualDatastructure.tailArrowEnd;
+
+        let headIndex = this.visualDatastructure.physicalDatastructure.head;
+        let headArrowLabel = this.visualDatastructure.headArrowLabel;
+        let headArrowEnd = this.visualDatastructure.headArrowEnd;
+
+        let tailIndex = this.visualDatastructure.physicalDatastructure.tail;
+        let tailElement = this.visualDatastructure.getElement(tailIndex);
+
 
         let tailArrowCoordSetStart = new CoordSet();
-        tailArrowCoordSetStart.setFromXY(this.visualDatastructure.tailArrowLabel.getXY()[0], this.visualDatastructure.tailArrowLabel.getXY()[1]);
-        tailArrowCoordSetStart.setToXY(this.visualDatastructure.getElement(tailIndex).getXY()[0], tailArrow.startXY[1]);
+        tailArrowCoordSetStart.setFromXY(tailArrowLabel.getXY()[0], tailArrowLabel.getXY()[1]);
+        tailArrowCoordSetStart.setToXY(tailElement.getXY()[0], tailArrowLabel.getXY()[1]);
 
         let tailArrowCoordSetEnd = new CoordSet();
-        tailArrowCoordSetEnd.setFromXY(this.visualDatastructure.tailArrowEnd.getXY()[0], this.visualDatastructure.tailArrowEnd.getXY()[1]);
-        tailArrowCoordSetEnd.setToXY(this.visualDatastructure.getElement(tailIndex).getXY()[0], this.visualDatastructure.tailArrowEnd.getXY()[1]);
+        tailArrowCoordSetEnd.setFromXY(tailArrowEnd.getXY()[0], tailArrowEnd.getXY()[1]);
+        tailArrowCoordSetEnd.setToXY(tailElement.getXY()[0], tailArrowEnd.getXY()[1]);
 
-        sequence.add(this.visualDatastructure.tailArrowLabel, tailArrowCoordSetStart, new MoveNoFade());
-        sequence.add(this.visualDatastructure.tailArrowEnd, tailArrowCoordSetEnd, new MoveNoFade());
+        // If the tail becomes the head effectively, animate the head going from where the tail is to the head
+        if (((tailIndex)%this.visualDatastructure.physicalDatastructure.size) === headIndex){
+            sequence.add(this.visualDatastructure.headArrowLabel, tailArrowCoordSetStart, new MoveNoFade());
+            sequence.add(this.visualDatastructure.headArrowEnd, tailArrowCoordSetEnd, new MoveNoFade());
+            tailArrowLabel.setXY(headArrowLabel.getXY()[0], headArrowLabel.getXY()[1]);
+            tailArrowEnd.setXY(headArrowEnd.getXY()[0], headArrowEnd.getXY()[1]);
+            //tailElement.setXY(headElement.getXY()[0], headElement.getXY()[1]);
+        }else{
+            sequence.add(this.visualDatastructure.tailArrowLabel, tailArrowCoordSetStart, new MoveNoFade());
+            sequence.add(this.visualDatastructure.tailArrowEnd, tailArrowCoordSetEnd, new MoveNoFade());
+        }
     }
     animationMoveOutOfDatastructure(element, stageToAddTo){
         super.animationMoveOutOfDatastructure(element, stageToAddTo);
+
+        // If data structure is full, do not move tail
+        if (this.visualDatastructure.physicalDatastructure.isFull()){
+            adtController.visualDatastructure.draw();
+            return;
+        }
 
         let headArrowLabel = this.visualDatastructure.headArrowLabel;
         let headArrowEnd = this.visualDatastructure.headArrowEnd;
@@ -102,6 +129,7 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
 
         stageToAddTo.add(headArrowLabel, headArrowLabelCoordSet, new MoveNoFade());
         stageToAddTo.add(headArrowEnd, headArrowEndCoordSet, new MoveNoFade());
+
     }
 }
 

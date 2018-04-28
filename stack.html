@@ -59,7 +59,7 @@
         </nav>
 
         <main role="main" class="col pt-1 px-4">
-            <form class="form-inline row mb-2">
+            <form class="form-inline row mb-2" id="creation-panel">
                 <input class="btn btn-primary mr-1" type="button"
                        onclick="createADT('stack'); document.getElementById('null_toggle').disabled = false;"
                        value="Create Stack" id="create_adt" disabled/>
@@ -78,26 +78,31 @@
                 </div>
             </form>
 
-            <canvas class="row" id="myCanvas" style="border:1px solid #c3c3c3; width:100%; height:auto;"></canvas>
+            <canvas class="row" id="canvas-area" style="border:1px solid #c3c3c3; width:100%; height:auto;"></canvas>
 
-            <form class="form-inline row mt-2">
+            <form class="form-inline row mt-2" id="interaction-panel">
                 <input class="btn mr-1" type="button" onclick="adtController.push(+document.getElementById('add_value').value);" value="Push" />
                 <input class="form-control mr-1" type="number" name="add_value" id="add_value" title="value to insert"/>
                 <input class="btn mr-1" type="button" onclick="adtController.pop();" value="Pop"/>
                 <input class="btn mr-1" type="button" onclick="adtController.peek();" value="Peek"/>
                 <label class="mr-1" id="output_msg"></label>
             </form>
-            <form class="form-inline row">
-                <div class="form-group">
-                    <label for="anim_speed">Animation speed</label>
-                    <input class="input-control" type="range" min="2" max="200" id="anim_speed" onchange="animationSteps=this.value;" style="direction: rtl"/>
-                </div>
+                <form class="form-inline row" id="visualization-control-panel">
+                    <div class="form-group">
+                        <label for="anim_speed">Animation speed</label>
+                        <input class="input-control" type="range" min="2" max="200" id="anim_speed" onchange="animationSteps=this.value;" style="direction: rtl"/>
+                    </div>
 
-                <label>
-                    <input type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
-                    Show null values
-                </label>
-            </form>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <label class="form-check-label" for="null_toggle">Show null values</label>
+                            <input class="form-check-input" type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
+                        </div>
+                    </div>
+                </form>
+
+
+
         </main>
     </div>
 </div>
@@ -114,43 +119,4 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 </body>
-
-<!--<body>
-
-<form>
-    <input type="button" onclick="createADT('stack'); document.getElementById('null_toggle').disabled = false;"
-           value="Create Stack" id="create_adt" disabled/>
-    <label>
-        using
-        <select id="datastructure"
-                onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
-            <option value="select">Select implementation</option>
-            <option value="simple-array">Simple array</option>
-            <option value="singly-linked-list">Singly linked list</option>
-        </select>
-    </label>
-    <label>
-        of size
-        <input type="number" id="adt_size" value="5" min="5" max="20"/>
-    </label>
-    <br/>
-    <label>
-        <input type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
-        Show null values
-    </label>
-</form>
-<br/>
-<canvas id="myCanvas" style="border:1px solid #c3c3c3;"></canvas>
-<br/>
-<input type="text" name="add_value" id="add_value" />
-<button onclick="adtController.push(document.getElementById('add_value').value);">Push</button>
-<button onclick="adtController.pop();">Pop</button>
-<button onclick="adtController.peek();">Peek</button>
-<label id="output_msg"></label>
-<br/>
-<input type="range" min="2" max="400" onchange="animationSteps=this.value;" style="direction: rtl"/>
-
-<script src="back-end/canvas-man.js"></script>
-
-</body>-->
 </html>

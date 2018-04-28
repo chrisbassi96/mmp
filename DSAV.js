@@ -50,3 +50,17 @@ function createADT(type){
     //canvasObjectMan.addTempObject(adts.datastructure);
 }
 
+function toggleControlInputs(){
+    // Code for this function adapted from https://stackoverflow.com/questions/1202087/how-do-i-disable-all-input-buttons-without-using-jquery
+
+    let inputsInteractionPanel = document.getElementById("interaction-panel").getElementsByTagName("INPUT");
+    let inputsVisualizationControlPanel = document.getElementById("visualization-control-panel").getElementsByTagName("INPUT");
+
+    for (let i = 0; i < inputsInteractionPanel.length; i++) {
+        inputsInteractionPanel[i].disabled = !inputsInteractionPanel[i].disabled;
+    }
+    for (let i = 0; i < inputsVisualizationControlPanel.length; i++) {
+        inputsVisualizationControlPanel[i].disabled = !inputsVisualizationControlPanel[i].disabled;
+    }
+}
+

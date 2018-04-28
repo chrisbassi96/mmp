@@ -80,6 +80,89 @@ class Datastructure {
     }
 }
 
+class SimpleArray extends Datastructure{
+    constructor(size=20){
+        super();
+        this.size = size;
+        this.content = [];
+        for (let i=0; i<size; i++){
+            this.content[i] = new Element(null);
+        }
+    }
+    getSize(){
+        return this.size;
+    }
+    isFull(){
+        return this.numElements === this.size;
+    }
+    getElement(index){
+        if (index >= 0 && index < this.content.length){
+            return this.content[index];
+        }
+        // Give some sort of error
+        return null;
+    }
+    setElementValue(index, value){
+        this.content[index].setValue(value);
+    }
+    // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
+    expand(){
+        this.size = this.size*2;
+        for (let i=this.size/2; i<this.size; i++){
+            this.content[i] = new Element(null);
+            //this.content[i].setIndex(i);
+        }
+    }
+}
+
+class CircularArray extends SimpleArray{
+    constructor(size=20, showIndex=false){
+        super(size, topBottomMargin+90, showIndex);
+        this.head = 0;
+        this.tail = 0;
+    }
+    getHead(){
+        return this.head;
+    }
+    setHead(head){
+        this.head = head;
+    }
+    getTail(){
+        return this.tail;
+    }
+    setTail(tail){
+        this.tail = tail;
+    }
+}
+
+class HeapArray extends SimpleArray{
+    constructor(size=20, elementBoxY=topBottomMargin+boxHeight, showIndex=true){
+        super(size, elementBoxY, showIndex);
+    }
+    static parent(index){
+        return Math.floor((index-1) / 2);
+    }
+    static left(index){
+        return 2*index + 1;
+    }
+    static right(index){
+        return 2*index + 2;
+    }
+    hasLeft(index){
+        return HeapArray.left(index) < this.size;
+    }
+    hasRight(index){
+        return HeapArray.right(index) < this.size;
+    }
+    swap(i, j){
+        let temp = this.content[i].getValue();
+        console.log(temp);
+        console.log(this.content[j].getValue());
+        this.content[i].setValue(this.content[j].getValue());
+        this.content[j].setValue(temp);
+    }
+}
+
 class SinglyLinkedList extends Datastructure{
     constructor(){
         super();
@@ -167,113 +250,5 @@ class DoublyLinkedList extends Datastructure{
     // Created 07/03/18
     draw(){
 
-    }
-}
-
-class SimpleArray extends Datastructure{
-    constructor(size=20){
-        super();
-        this.size = size;
-        this.content = [];
-        for (let i=0; i<size; i++){
-            this.content[i] = new Element(null);
-        }
-    }
-    getSize(){
-        return this.size;
-    }
-    getElement(index){
-        if (index >= 0 && index < this.content.length){
-            return this.content[index];
-        }
-        // Give some sort of error
-        return null;
-    }
-    setElementValue(index, value){
-        this.content[index].setValue(value);
-    }
-    // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
-    expand(){
-        this.size = this.size*2;
-        for (let i=this.size/2; i<this.size; i++){
-            this.content[i] = new Element(null);
-            //this.content[i].setIndex(i);
-        }
-    }
-}
-
-class CircularArray extends SimpleArray{
-    constructor(size=20, showIndex=false){
-        super(size, topBottomMargin+90, showIndex);
-        this.head = 0;
-        this.tail = 0;
-    }
-    getHead(){
-        return this.head;
-    }
-    setHead(head){
-        this.head = head;
-    }
-    getTail(){
-        return this.tail;
-    }
-    setTail(tail){
-        this.tail = tail;
-    }
-}
-
-class HeapArray extends SimpleArray{
-    constructor(size=20, elementBoxY=topBottomMargin+boxHeight, showIndex=true){
-        super(size, elementBoxY, showIndex);
-    }
-    static parent(index){
-        return Math.floor((index-1) / 2);
-    }
-    static left(index){
-        return 2*index + 1;
-    }
-    static right(index){
-        return 2*index + 2;
-    }
-    hasLeft(index){
-        return HeapArray.left(index) < this.size;
-    }
-    hasRight(index){
-        return HeapArray.right(index) < this.size;
-    }
-    swap(i, j){
-        let temp = this.content[i].getValue();
-        console.log(temp);
-        console.log(this.content[j].getValue());
-        this.content[i].setValue(this.content[j].getValue());
-        this.content[j].setValue(temp);
-    }
-}
-
-class BinarySearchTree{
-    constructor(){
-        this.root = null;
-        this.size = 0;
-    }
-    treeInsert() {
-
-    }
-    treeSearch(){
-
-    }
-    treeRemove(){
-
-    }
-    getMinimum(){
-
-    }
-    getMaximum(){
-
-    }
-    getSize(){
-        return this.size;
-    }
-    isEmpty(){
-        return this.size === 0;
     }
 }

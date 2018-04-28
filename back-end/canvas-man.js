@@ -1,4 +1,4 @@
-let canvas = document.getElementById("myCanvas");
+let canvas = document.getElementById("canvas-area");
 let ctx = canvas.getContext("2d");
 canvas.width = 1200;
 canvas.height = 600;
