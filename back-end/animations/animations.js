@@ -173,42 +173,23 @@ class AnimationSequencer{
         this.currSequence = 0;
     }
     add(animationSequence){
-
-        console.log("ADDY ADDY");
-        console.log(animationSequence);
         this.sequenceQueue[this.numSequences] = animationSequence;
         this.numSequences++;
-        console.log("numSequences: " + this.numSequences);
-    }
-    // Resource used: https://davidwalsh.name/remove-item-array-javascript
-    remove(canvasObject){
-        let i = this.animationQueue.indexOf(canvasObject);
-        if (i !== -1){
-            this.animationQueue.splice(i, 1);
-        }
     }
     go(){
-        console.log("GO!");
-        console.log(this.sequenceQueue);
+        toggleControlInputs();
         this.sequenceQueue[0].go();
     }
     doNext(){
         this.currSequence++;
-        console.log("Animation queue length: " + this.sequenceQueue.length);
-        console.log("Next sequence in queue: " + this.currSequence);
         if (this.numSequences===this.currSequence){
-            // Finished animating all items
+            // Finished animating sequences
+
+            toggleControlInputs();
             this.sequenceQueue = [];
             this.numSequences = 0;
             this.currSequence = 0;
-            //4canvasFOMan.clear();
-/*            for (let i=0; i<adtController.adt.datastructure.getNumElements(); i++){
-                adtController.visualDatastructure.getElement(i).updateElementValue();
-            }*/
-            console.log("Animation sequencer finished");
         }else{
-            console.log("NEXT ONE!");
-            console.log(this.sequenceQueue);
             this.sequenceQueue[this.currSequence].go();
         }
     }
@@ -217,8 +198,6 @@ class AnimationSequencer{
 class AnimationSequence{
     constructor(){
         this.animationSequencer = animationSequencer;
-        this.objectsToUpdateAtEnd = [];
-        this.numObjectsToUpdateAtEnd = 0;
         this.animationQueue = [];
         this.numAnimations = 0;
         this.doNotDrawObjects = [];
@@ -233,49 +212,29 @@ class AnimationSequence{
         this.animationQueue.push({canvasObject: canvasObject, coordSet: coordSet, animationProperties: animationProperties});
         this.numAnimations++;
     }
-    addObjectToUpdateAtEnd(visualObject){
-        this.objectsToUpdateAtEnd.push(visualObject);
-        this.numObjectsToUpdateAtEnd++;
-    }
     go(){
-        //this.setObjectDrawStates(true)
-        console.log("GO GO GO");
         this.setObjectDrawStates(true);
-
-        toggleControlInputs();
 
         if (this.executeConcurrently){
             console.log(this.animationQueue);
             for (let i = 0; i<this.numAnimations; i++){
                 this.animationQueue[i].canvasObject.setCoords(this.animationQueue[i].coordSet);
                 this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
-                //mrExperimentalAnimator(this, i, this.animationQueue[i].canvasObject);
             }
-            //mrExperimentalAnimator2(this, this.animationQueue, this.numAnimations);
             this.animate(this.animationQueue, this.numAnimations)
         }else{
             this.doNext();
-/*            this.animationQueue[0].canvasObject.coordSet = this.animationQueue[0].coordSet;
-            this.animationQueue[0].canvasObject.setAnimationProperties(this.animationQueue[0].animationProperties);*/
-            //mrExperimentalAnimator(this, 0, this.animationQueue[0].canvasObject);
         }
     }
     doNext(){
-
         if (this.numAnimations===(this.currObject) || this.executeConcurrently){
-            console.log("FINITO!");
             this.finish();
-
         }else{
-            console.log("NEXT ONE!");
             console.log(this.animationQueue);
-            // Important to only apply the coordSet when executing animation, otherwise if having the same object
-            // animated with two coordsSets, it would be overridden
             this.animationQueue[this.currObject].canvasObject.setCoords(this.animationQueue[this.currObject].coordSet);
             this.animationQueue[this.currObject].canvasObject.setAnimationProperties(this.animationQueue[this.currObject].animationProperties);
             this.animate([this.animationQueue[this.currObject]], 1);
             this.currObject++;
-            //mrExperimentalAnimator(this, queueIndex, this.animationQueue[queueIndex].canvasObject);
         }
     }
     animate(visualObjects, numVisualObjects){
@@ -323,28 +282,12 @@ class AnimationSequence{
         }
     }
     finish(){
-        toggleControlInputs();
         // Finished animating all items
         for (let i = 0; i<this.numAnimations; i++){
             this.animationQueue[i].canvasObject.resetAnimationProperties();
         }
-        for (let i = 0; i<this.numObjectsToUpdateAtEnd; i++){
-            this.objectsToUpdateAtEnd[i].doAnimationComplete();
-        }
-        this.animationQueue = [];
-        //this.clear();
-        this.numAnimations = 0;
-        //canvasFOMan.clear();
         this.setObjectDrawStates(false);
-        this.doNotDrawObjects = [];
-        this.sequenceObjects = [];
-        this.objectsToUpdateAtEnd = [];
-        this.numObjectsToUpdateAtEnd = 0;
-
-
-
         this.animationSequencer.doNext();
-        console.log("Animation sequence over");
     }
     setObjectDrawStates(setNotDrawObjects){
         console.log(setNotDrawObjects);

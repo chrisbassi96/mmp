@@ -45,10 +45,15 @@ class DoublyLinkedListQueue{
     constructor(){
         this.datastructure = new DoublyLinkedList();
     }
-    push(element){
-        this.datastructure.addLast(new DoublyLinkedListElement(element, null));
+    enqueue(elementValue){
+        let newNode = new DoublyLinkedListElement(elementValue);
+
+        this.datastructure.addLast(newNode);
+        console.log(newNode);
+
+        return newNode;
     }
-    pop(){
+    dequeue(){
         if (this.datastructure.isEmpty()) {
             outputLabel.innerText = "Stack is empty";
             return;

@@ -13,8 +13,6 @@ class SimpleArrayStack{
 
         // The following is used only for visualization
         return null;
-
-        //this.datastructure.draw();
     }
     pop(){
         if (this.datastructure.isEmpty()){

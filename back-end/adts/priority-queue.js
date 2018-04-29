@@ -2,10 +2,10 @@ class HeapArrayPriorityQueue{
     constructor(size){
         this.datastructure = new HeapArray(size);
     }
-    insert(element){
+    insert(elementValue){
         if (this.datastructure.getNumElements()===this.datastructure.getSize()){ this.datastructure.expand(); }
 
-        this.datastructure.content[this.datastructure.getNumElements()].setValue(element);
+        this.datastructure.content[this.datastructure.getNumElements()].setValue(elementValue);
         this.datastructure.numElements = this.datastructure.numElements + 1;
 
         let j = this.datastructure.getNumElements()-1;
@@ -22,7 +22,7 @@ class HeapArrayPriorityQueue{
             j = p;
         }
 
-        return {value: element, index: this.datastructure.getNumElements()-1};
+        return {value: elementValue, index: this.datastructure.getNumElements()-1};
     }
     removeMin(){
         if (this.datastructure.isEmpty()){
@@ -31,8 +31,6 @@ class HeapArrayPriorityQueue{
         }
 
         return {value: element, index: (this.datastructure.getHead()-1)%this.datastructure.getSize()};
-
-        this.datastructure.draw();
     }
     getMin(){
         if (this.datastructure.isEmpty()) {

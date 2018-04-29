@@ -24,8 +24,8 @@ class SinglyLinkedListElement extends Element{
 }
 
 class DoublyLinkedListElement extends Element{
-    constructor(){
-        super();
+    constructor(elementValue){
+        super(elementValue);
         this.next = null;
         this.prev = null;
     }
@@ -169,13 +169,6 @@ class SinglyLinkedList extends Datastructure{
         this.head = null;
         this.tail = null;
     }
-    find(element){
-        let cur = this.head;
-        while (cur.getValue() !== element) {
-            cur = cur.getNext();
-        }
-        return cur;
-    }
     addFirst(node) {
         if (this.head == null) {
             node.setNext(null);
@@ -215,7 +208,7 @@ class DoublyLinkedList extends Datastructure{
         super();
         this.head = null;
         this.tail = null;
-        this.size = 0;
+
     }
     find(element){
 
@@ -223,11 +216,35 @@ class DoublyLinkedList extends Datastructure{
     addFirst(node){
 
     }
+    getFirst(){
+        return this.head.getValue();
+    }
     removeFirst(){
+        let first = this.head;
+        this.head = first.getNext();
 
+        // Added to make this work in JavaScript
+        if (this.head===null){this.tail = null;}
+
+        this.numElements = this.numElements - 1;
     }
     addLast(node){
-        this.addAfter(this.tail, node);
+        console.log(node);
+        //this.addAfter(this.tail, node);
+        if (this.tail == null){
+            if (this.head == null){
+                this.head = node;
+                this.tail = node;
+            }else{
+                node.setNext(this.head);
+                this.head = node;
+            }
+        }else{
+            node.setPrev(this.tail);
+            this.tail.setNext(node);
+            this.tail = node;
+        }
+        this.numElements++;
     }
     removeLast(){
 
@@ -237,18 +254,5 @@ class DoublyLinkedList extends Datastructure{
         node.setNext(prev.getNext());
         prev.setNext(node);
         node.getNext().setPrev(node);
-    }
-    removeNext(){
-
-    }
-    getSize(){
-
-    }
-    isEmpty(){
-
-    }
-    // Created 07/03/18
-    draw(){
-
     }
 }

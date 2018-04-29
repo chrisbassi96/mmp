@@ -2,19 +2,31 @@ class VisualDatastructureAnimator{
     constructor(visualSimpleArray){
         this.visualDatastructure = visualSimpleArray;
     }
+    insertAnimation(element){
+        this.animationMoveIntoDatastructure(element);
+
+        animationSequencer.go();
+    }
+    animationMoveIntoDatastructure(element){
+
+    }
+    removeAnimation(element){
+        this.animationMoveOutOfDatastructure(element);
+
+        animationSequencer.go();
+    }
+    animationMoveOutOfDatastructure(element){
+
+    }
 }
 
 class VisualSimpleArrayAnimator extends VisualDatastructureAnimator{
     constructor(visualSimpleArray){
         super(visualSimpleArray);
     }
-    insertAnimation(element){
-        let sequence = this.animationMoveIntoDatastructure(element);
-
-        animationSequencer.go();
-    }
     animationMoveIntoDatastructure(element){
-        let stage0 = new AnimationSequence();
+        //let stage0 = new AnimationSequence();
+        let sequence = new AnimationSequence();
 
         // The headValue needs to move from the bottom into the element
         let stage0CoordsSetValue = new CoordSet();
@@ -24,35 +36,29 @@ class VisualSimpleArrayAnimator extends VisualDatastructureAnimator{
         // Add objects to animated to AnimationSequence
         //stage0.add(tempElement, stage0CoordSetTempElement, new MoveNoFade());
         //stage0.add(headValue, stage0CoordsSetValue, new MoveNoFade());
-        stage0.add(this.visualDatastructure.getElement(element.index).visualValue, stage0CoordsSetValue, new MoveNoFade());
+        sequence.add(this.visualDatastructure.getElement(element.index).visualValue, stage0CoordsSetValue, new MoveNoFade());
 
-        animationSequencer.add(stage0);
+        animationSequencer.add(sequence);
 
-        return stage0;
+        return sequence;
     }
-    removeAnimation(element){
-        let stage0 = new AnimationSequence();
-        stage0.executeConcurrently = true;
+    animationMoveOutOfDatastructure(element){
+        let sequence = new AnimationSequence();
+        sequence.executeConcurrently = true;
 
-        this.visualDatastructure.getElement(element.index).updateElementValue(); // Get the current visualValue from physical datastructure
-        this.visualDatastructure.getElement(element.index).setIndex(element.index); // Update index
-
-        this.animationMoveOutOfDatastructure(element, stage0);
-
-        animationSequencer.add(stage0);
-
-        animationSequencer.go();
-    }
-    animationMoveOutOfDatastructure(element, stageToAddTo){
         let poppedElement = new VisualValue(element.value);
 
-        stageToAddTo.addTempObject(poppedElement);
+        sequence.addTempObject(poppedElement);
 
         let stage0coordsSetPoppedElement = new CoordSet();
         stage0coordsSetPoppedElement.setFromXY(this.visualDatastructure.getElement(element.index).getXY()[0], this.visualDatastructure.getElement(element.index).getXY()[1]);
         stage0coordsSetPoppedElement.setToXY(canvas.width - leftMargin, canvas.height-topBottomMargin);
 
-        stageToAddTo.add(poppedElement, stage0coordsSetPoppedElement, new MoveFadeOut());
+        sequence.add(poppedElement, stage0coordsSetPoppedElement, new MoveFadeOut());
+
+        animationSequencer.add(sequence);
+
+        return sequence;
     }
 }
 
@@ -63,14 +69,6 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
     animationMoveIntoDatastructure(element){
         let sequence = super.animationMoveIntoDatastructure(element);
         sequence.executeConcurrently = true;
-
-        // If data structure is full, do not move tail
-        if (this.visualDatastructure.physicalDatastructure.tail === 0 && this.visualDatastructure.physicalDatastructure.isFull()){
-            //adtController.visualDatastructure.draw();
-            //return;
-        }
-
-
 
         let tailArrowLabel = this.visualDatastructure.tailArrowLabel;
         let tailArrowEnd = this.visualDatastructure.tailArrowEnd;
@@ -103,8 +101,8 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
             sequence.add(this.visualDatastructure.tailArrowEnd, tailArrowCoordSetEnd, new MoveNoFade());
         }
     }
-    animationMoveOutOfDatastructure(element, stageToAddTo){
-        super.animationMoveOutOfDatastructure(element, stageToAddTo);
+    animationMoveOutOfDatastructure(element){
+        let sequence = super.animationMoveOutOfDatastructure(element);
 
         // If data structure is full, do not move tail
         if (this.visualDatastructure.physicalDatastructure.isFull()){
@@ -127,9 +125,8 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
         headArrowEndCoordSet.setFromXY(headArrowEnd.getXY()[0], headArrowEnd.getXY()[1]);
         headArrowEndCoordSet.setToXY(headElement.getXY()[0], headArrowEnd.getXY()[1]);
 
-        stageToAddTo.add(headArrowLabel, headArrowLabelCoordSet, new MoveNoFade());
-        stageToAddTo.add(headArrowEnd, headArrowEndCoordSet, new MoveNoFade());
-
+        sequence.add(headArrowLabel, headArrowLabelCoordSet, new MoveNoFade());
+        sequence.add(headArrowEnd, headArrowEndCoordSet, new MoveNoFade());
     }
 }
 
@@ -138,7 +135,9 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
         super(visualHeapArray);
     }
     animationMoveIntoDatastructure(element){
-        let sequence = super.animationMoveIntoDatastructure(element);
+        super.animationMoveIntoDatastructure(element);
+
+        let sequence = new AnimationSequence();
         sequence.executeConcurrently = true;
 
         // The newly inserted value is given to the respective element to visualize
@@ -236,7 +235,7 @@ class VisualHeapArrayAnimator extends VisualSimpleArrayAnimator{
         stageToAddTo.add(treePTemp.visualValue, treePCoordSet, new MoveNoFade());
     }
     animationMoveOutOfDatastructure(element){
-        let sequence = super.animationMoveOutOfDatastructure(element);
+        super.animationMoveOutOfDatastructure(element);
     }
 }
 
@@ -244,76 +243,29 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
     constructor(visualSinglyLinkedList){
         super(visualSinglyLinkedList);
     }
-    insertAnimation(element){
+    animationMoveIntoDatastructure(){
+        if (this.head !== null){
+            this.shiftNodes("right");
+        }
 
-        this.shiftNodes("right");
+        // New values moves into temp "dummy" element
+        this.animationMoveIntoDatastructureStep1();
 
-        let stage0 = new AnimationSequence();
-        //stage0.doNotDraw(this.visualDatastructure.head);
-        stage0.executeConcurrently = true;
+        // Real head element hovers (pause)
+        this.animationMoveIntoDatastructureStep2();
 
-        let stage0coordsSet1 = new CoordSet();
-        stage0coordsSet1.setFromXY(leftMargin + boxWidth, canvas.height / 2);
-        //stage0coordsSet1.middleXY = [leftMargin + boxWidth, canvas.height / 2];
-        stage0coordsSet1.setToXY(leftMargin + boxWidth, canvas.height / 2);
-
-        let tempElement = new VisualSinglyLinkedListElement();
-        //stage0.add(tempElement, stage0coordsSet1, new MoveFadeIn());
-        //stage0.addTempObject(tempElement);
-        stage0.add(this.visualDatastructure.head, stage0coordsSet1, new MoveFadeIn());
-
-        let headValue = new VisualValue(element.getValue());
-
-        let stage0coordsSet2 = new CoordSet();
-        stage0coordsSet2.setFromXY(leftMargin + boxWidth, canvas.height - topBottomMargin);
-        //stage0coordsSet2.middleXY = [leftMargin + boxWidth, canvas.height - topBottomMargin];
-        stage0coordsSet2.setToXY(stage0coordsSet1.toMiddleXY[0]-boxWidth/2, stage0coordsSet1.toMiddleXY[1]);
-
-        //stage0.add(headValue, stage0coordsSet2, new MoveNoFade());
-        stage0.add(this.visualDatastructure.head.visualValue, stage0coordsSet2, new MoveNoFade());
-
-        stage0.addTempObject(headValue);
-
-        animationSequencer.add(stage0);
-
-
-        let stage1 = new AnimationSequence();
-
-        let stage1coordsSetHead = new CoordSet();
-        stage1coordsSetHead.fromMiddleXY = [leftMargin + boxWidth, canvas.height / 2];
-        //stage1coordsSet.middleXY = [leftMargin + boxWidth, canvas.height / 2];
-        stage1coordsSetHead.toMiddleXY =  [leftMargin + boxWidth, canvas.height / 2];
-        stage1.add(this.visualDatastructure.head, stage1coordsSetHead, new MoveNoFade());
-
-        animationSequencer.add(stage1);
-
-
-        let stage2 = new AnimationSequence();
-
-        let stage2coordsSet = new CoordSet();
-        stage2coordsSet.fromMiddleXY = [stage1coordsSetHead.toMiddleXY[0], stage1coordsSetHead.toMiddleXY[1]];
-        //stage1coordsSet.middleXY = [leftMargin + boxWidth, canvas.height / 2];
-        stage2coordsSet.toMiddleXY =  [leftMargin + boxWidth, this.visualDatastructure.elementBoxY+(boxHeight/2)];
-
-        stage2.add(this.visualDatastructure.head, stage2coordsSet, new MoveNoFade());
-
-        console.log("Add send");
-        console.log("THE SEQUENCE: ");
-        console.log(stage1);
-        animationSequencer.add(stage2);
-        animationSequencer.go();
-    }
-    animationMoveIntoDatastructure(element, stageToAddTo){
-
+        // Real head element moves into data structure
+        this.animationMoveIntoDatastructureStep3();
     }
     shiftNodes(direction){
         let curr = null;
 
         if (direction==="right"){
-            if (this.visualDatastructure.datastructure.numElements===1){return;}
+            if (this.visualDatastructure.physicalDatastructure.numElements===1){return;}
             curr = this.visualDatastructure.head.getNext();
+
         }else if(direction==="left"){
-            if (this.visualDatastructure.datastructure.numElements===0){return;}
+            if (this.visualDatastructure.physicalDatastructure.numElements===0){return;}
             curr = this.visualDatastructure.head;
         }
 
@@ -321,19 +273,182 @@ class VisualSinglyLinkedListAnimator extends VisualDatastructureAnimator{
         sequence.executeConcurrently = true;
         sequence.doNotDraw(this.visualDatastructure.head);
 
+        let sequenceTailLabelCoordSet = new CoordSet();
+        sequenceTailLabelCoordSet.setFromXY(this.visualDatastructure.tailArrowLabel.getXY()[0], this.visualDatastructure.tailArrowLabel.getXY()[1]);
+
         while (curr!==null){
-            curr.setOldMiddleXY(curr.getStaticMiddleXY()[0], curr.getStaticMiddleXY()[1]);
+            let sequenceCurrCoordSet = new CoordSet();
+            sequenceCurrCoordSet.setFromXY(curr.getXY()[0], curr.getXY()[1]);
+
             if (direction === "right"){
-                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]+(3*boxWidth), curr.getStaticMiddleXY()[1]);
+                sequenceCurrCoordSet.setToXY(curr.getXY()[0] + (3*boxWidth), curr.getXY()[1]);
+                if (curr === this.visualDatastructure.tail){
+                    sequenceTailLabelCoordSet.setToXY(curr.getXY()[0] + (3*boxWidth), this.visualDatastructure.tailArrowLabel.getXY()[1]);
+                }
             }else{
-                curr.setStaticMiddleXY(curr.getStaticMiddleXY()[0]-(3*boxWidth), curr.getStaticMiddleXY()[1]);
+                sequenceCurrCoordSet.setToXY(curr.getXY()[0] - (3*boxWidth), curr.getXY()[1]);
+                if (curr === this.visualDatastructure.tail){
+                    sequenceTailLabelCoordSet.setToXY(curr.getXY()[0] - (3*boxWidth), this.visualDatastructure.tailArrowLabel.getXY()[1]);
+                }
             }
-            sequence.add(curr, curr.coordSet, new MoveNoFade());
+            sequence.add(curr, sequenceCurrCoordSet, new MoveNoFade());
 
             curr = curr.getNext();
         }
+        sequence.add(this.visualDatastructure.tailArrowLabel, sequenceTailLabelCoordSet, new MoveNoFade());
 
-        console.log("HELLO HELLO");
         animationSequencer.add(sequence);
+    }
+    animationMoveIntoDatastructureStep1(){
+        let sequence1 = new AnimationSequence();
+        sequence1.doNotDraw(this.visualDatastructure.head);
+        sequence1.executeConcurrently = true;
+
+        let tempElement = new VisualSinglyLinkedListElement();
+        tempElement.updateElementValue("");
+        sequence1.addTempObject(tempElement);
+
+        let sequence1TempElementCoordSet = new CoordSet();
+        sequence1TempElementCoordSet.setFromXY(leftMargin + boxWidth, canvas.height / 2);
+        sequence1TempElementCoordSet.setToXY(leftMargin + boxWidth, canvas.height / 2);
+
+        sequence1.add(tempElement, sequence1TempElementCoordSet, new MoveFadeIn());
+
+        let headValue = new VisualValue(this.visualDatastructure.head.visualValue.value);
+        sequence1.addTempObject(headValue);
+
+        let sequence1HeadValueCoordSet = new CoordSet();
+        sequence1HeadValueCoordSet.setFromXY(leftMargin + boxWidth, canvas.height - topBottomMargin);
+        sequence1HeadValueCoordSet.setToXY(sequence1TempElementCoordSet.toMiddleXY[0]-boxWidth/2, sequence1TempElementCoordSet.toMiddleXY[1]);
+
+        sequence1.add(headValue, sequence1HeadValueCoordSet, new MoveNoFade());
+
+        animationSequencer.add(sequence1);
+    }
+    animationMoveIntoDatastructureStep2(){
+        let sequence2 = new AnimationSequence();
+
+        let sequence2HeadHoverCoordSet = new CoordSet();
+        sequence2HeadHoverCoordSet.setFromXY(leftMargin + boxWidth, canvas.height / 2);
+        sequence2HeadHoverCoordSet.setToXY(leftMargin + boxWidth, canvas.height / 2);
+
+        sequence2.add(this.visualDatastructure.head, sequence2HeadHoverCoordSet, new MoveNoFade());
+
+        animationSequencer.add(sequence2);
+    }
+    animationMoveIntoDatastructureStep3(){
+        let sequence3 = new AnimationSequence();
+
+        let sequence3HeadMoveInCoordSet = new CoordSet();
+        sequence3HeadMoveInCoordSet.setFromXY(leftMargin + boxWidth, canvas.height / 2);
+        sequence3HeadMoveInCoordSet.setToXY(leftMargin + boxWidth, this.visualDatastructure.elementBoxY+(boxHeight/2));
+
+        sequence3.add(this.visualDatastructure.head, sequence3HeadMoveInCoordSet, new MoveNoFade());
+
+        animationSequencer.add(sequence3);
+    }
+
+    animationMoveOutOfDatastructure(element){
+        let headElement = this.visualDatastructure.head;
+
+        let sequence = new AnimationSequence();
+        sequence.doNotDraw(headElement);
+
+        let sequenceHeadDummy = new VisualSinglyLinkedListElement();
+        sequenceHeadDummy.updateElementValue(element.value);
+        sequence.addTempObject(sequenceHeadDummy);
+
+        let sequenceHeadDummyCoordSet = new CoordSet();
+        sequenceHeadDummyCoordSet.setFromXY(headElement.getXY()[0], headElement.getXY()[1]);
+        sequenceHeadDummyCoordSet.setToXY(leftMargin + boxWidth, canvas.height / 2);
+
+        sequence.add(sequenceHeadDummy, sequenceHeadDummyCoordSet, new MoveFadeOut());
+
+        animationSequencer.add(sequence);
+
+        this.shiftNodes("left");
+    }
+}
+
+class VisualDoublyLinkedListAnimator extends VisualDatastructureAnimator{
+    constructor(visualDoublyLinkedList){
+        super(visualDoublyLinkedList);
+    }
+    animationMoveIntoDatastructure(){
+        this.animationMoveIntoDatastructureStep1();
+        this.animationMoveIntoDatastructureStep2();
+        this.animationMoveIntoDatastructureStep3()
+    }
+    animationMoveIntoDatastructureStep1(){
+        let tailElement = this.visualDatastructure.tail;
+
+        let sequence1 = new AnimationSequence();
+        sequence1.doNotDraw(tailElement);
+        sequence1.executeConcurrently = true;
+
+        let tempElement = new VisualDoublyLinkedListElement();
+        tempElement.updateElementValue("");
+        sequence1.addTempObject(tempElement);
+
+        let sequence1TempElementCoordSet = new CoordSet();
+        sequence1TempElementCoordSet.setFromXY(tailElement.getXY()[0], canvas.height / 2);
+        sequence1TempElementCoordSet.setToXY(tailElement.getXY()[0], canvas.height / 2);
+
+        sequence1.add(tempElement, sequence1TempElementCoordSet, new MoveFadeIn());
+
+        let headValue = new VisualValue(this.visualDatastructure.tail.visualValue.value);
+        sequence1.addTempObject(headValue);
+
+        let sequence1HeadValueCoordSet = new CoordSet();
+        sequence1HeadValueCoordSet.setFromXY(leftMargin + boxWidth, canvas.height - topBottomMargin);
+        sequence1HeadValueCoordSet.setToXY(sequence1TempElementCoordSet.toMiddleXY[0], sequence1TempElementCoordSet.toMiddleXY[1]);
+
+        sequence1.add(headValue, sequence1HeadValueCoordSet, new MoveNoFade());
+
+        animationSequencer.add(sequence1);
+    }
+    animationMoveIntoDatastructureStep2(){
+        let tailElement = this.visualDatastructure.tail;
+
+        let sequence2 = new AnimationSequence();
+
+        let sequence2HeadHoverCoordSet = new CoordSet();
+        sequence2HeadHoverCoordSet.setFromXY(tailElement.getXY()[0], canvas.height / 2);
+        sequence2HeadHoverCoordSet.setToXY(tailElement.getXY()[0], canvas.height / 2);
+
+        sequence2.add(tailElement, sequence2HeadHoverCoordSet, new MoveNoFade());
+
+        animationSequencer.add(sequence2);
+    }
+    animationMoveIntoDatastructureStep3(){
+        let tailElement = this.visualDatastructure.tail;
+
+        let sequence3 = new AnimationSequence();
+        sequence3.executeConcurrently = true;
+
+        let sequence3HeadMoveInCoordSet = new CoordSet();
+        sequence3HeadMoveInCoordSet.setFromXY(tailElement.getXY()[0], canvas.height / 2);
+        sequence3HeadMoveInCoordSet.setToXY(tailElement.getXY()[0], this.visualDatastructure.elementBoxY+(boxHeight/2));
+
+        sequence3.add(tailElement, sequence3HeadMoveInCoordSet, new MoveNoFade());
+
+        let tailLabel = this.visualDatastructure.tailArrowLabel;
+
+        let sequence3TailLabelCoordSet = new CoordSet();
+        sequence3TailLabelCoordSet.setFromXY(tailLabel.getXY()[0], tailLabel.getXY()[1]);
+        sequence3TailLabelCoordSet.setToXY(tailElement.getXY()[0], tailLabel.getXY()[1]);
+
+        sequence3.add(tailLabel, sequence3TailLabelCoordSet, new MoveNoFade());
+
+        animationSequencer.add(sequence3);
+    }
+    animationMoveOutOfDatastructure(element){
+
+    }
+}
+
+class VisualLinkedListAnimator extends VisualDatastructureAnimator{
+    constructor(visualLinkedList){
+        super(visualLinkedList);
     }
 }

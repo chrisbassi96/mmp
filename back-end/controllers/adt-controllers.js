@@ -9,8 +9,8 @@ class StackController extends AdtController{
     constructor(adt, visualDatastructure){
         super(adt, visualDatastructure);
     }
-    push(value){
-        let pushedElement = this.adt.push(value);
+    push(elementValue){
+        let pushedElement = this.adt.push(elementValue);
 
         if (pushedElement==null){
             outputLabel.innerText = "Stack is full";
@@ -44,9 +44,8 @@ class QueueController extends AdtController{
     constructor(adt, visualDatastructure){
         super(adt, visualDatastructure);
     }
-    enqueue(value){
-        console.log("hello");
-        let enqueuedElement = this.adt.enqueue(value);
+    enqueue(elementValue){
+        let enqueuedElement = this.adt.enqueue(elementValue);
 
         if (enqueuedElement==null){
             outputLabel.innerText = "Queue is full";
@@ -80,13 +79,13 @@ class PriorityQueueController extends  AdtController{
     constructor(adt, visualDatastructure){
         super(adt, visualDatastructure);
     }
-    insert(element){
-        let insertedElement = this.adt.insert(element);
+    insert(elementValue){
+        let insertedElement = this.adt.insert(elementValue);
 
         if (insertedElement == null){
 
         }else{
-            outputLabel.innerText = "Insert " + element;
+            outputLabel.innerText = "Insert " + elementValue;
             this.visualDatastructure.insert(insertedElement);
         }
     }

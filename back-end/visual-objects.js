@@ -81,7 +81,7 @@ class VisualObject{
     }
     addIncomingArrow(visualArrow){
         visualArrow.setEndXY(this.middleXY[0], this.middleXY[1]);
-        console.log(this.getXY());
+
         this.incomingArrows.push(visualArrow);
     }
     addOutgoingArrow(visualArrow){

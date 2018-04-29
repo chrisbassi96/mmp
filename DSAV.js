@@ -37,6 +37,8 @@ function createADT(type){
             break;
         case "doubly-linked-list-queue":
             adt = new DoublyLinkedListQueue();
+            visualDatastructure = new VisualDoublyLinkedList(adt.datastructure);
+            adtController = new QueueController(adt, visualDatastructure);
             break;
         case "heap-array-priority-queue":
             adt = new HeapArrayPriorityQueue(size);
