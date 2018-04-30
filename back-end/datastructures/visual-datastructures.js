@@ -158,25 +158,33 @@ class VisualDoublyLinkedListElement extends VisualSinglyLinkedListElement{
         this.visualPrevBox.crossedThrough = true;
         this.visualPrev = new VisualValue("prev");
 
+        // Create next arrow, pass to the value
+        this.prevArrow = new VisualArrow(0, boxWidth*1.5);
+        this.visualPrev.addOutgoingArrow(this.prevArrow);
+
         this.visualObjects.push(this.visualPrevBox);
         this.visualObjects.push(this.visualPrev);
-
-        this.nextArrow = new VisualArrow(0, boxWidth/2);
-        this.addOutgoingArrow(this.nextArrow);
     }
     getPrev(){
         return this.prevVisualElement;
     }
     setPrev(prevVisualElement){
         this.prevVisualElement = prevVisualElement;
+        if (prevVisualElement !== null){
+            prevVisualElement.addIncomingArrow(this.prevArrow);
+            this.visualPrevBox.crossedThrough = false;
+        }else{
+            this.visualPrev.outgoingArrows = [];
+            this.visualPrevBox.crossedThrough = true;
+        }
 
-        this.visualNext.crossedThrough = this.nextVisualElement === null;
+        //this.visualPrev.crossedThrough = this.prevVisualElement === null;
     }
     setNext(nextVisualElement){
         this.nextVisualElement = nextVisualElement;
-        nextVisualElement.addIncomingArrow(this.nextArrow);
-
-        this.visualNext.crossedThrough = this.nextVisualElement === null;
+        if (nextVisualElement !== null){
+            nextVisualElement.addIncomingArrow(this.nextArrow);
+        }
     }
     setAllXY(){
         this.visualPrevBox.setXY(this.getXY()[0]-this.visualValueBox.width, this.getXY()[1]);
@@ -218,12 +226,10 @@ class VisualDoublyLinkedListElement extends VisualSinglyLinkedListElement{
     }
     draw() {
         super.draw();
-        return;
-        if(!this.notDrawn && this.nextVisualElement !== null){
-            this.visualNextBox.crossedThrough = false;
-            drawLabelledArrow("next", 0, this.getXY()[0]+(boxWidth/2), this.getXY()[1], this.nextVisualElement.visualValue.getXY()[0]-(boxWidth/2), this.nextVisualElement.visualValue.getXY()[1]);
+        if(!this.notDrawn && this.prevVisualElement !== null){
+            //this.visualPrevBox.crossedThrough = false;
+            //drawLabelledArrow("next", 0, this.getXY()[0]+(boxWidth/2), this.getXY()[1], this.nextVisualElement.visualValue.getXY()[0]-(boxWidth/2), this.nextVisualElement.visualValue.getXY()[1]);
         }
-
     }
 }
 
@@ -231,11 +237,41 @@ class VisualTreeNode extends VisualElement{
     constructor(physicalElement, radius){
         super(physicalElement);
         //this.parentNode = null;
+        this.parent = null;
+        this.left = null;
+        this.right = null;
         this.leftArrow = null;
         this.rightArrow = null;
 
         this.visualCircle = new VisualCircle(radius);
         this.visualObjects.push(this.visualCircle);
+    }
+    setParent(visualTreeNode){
+        this.parent = visualTreeNode;
+
+    }
+    setLeft(visualTreeNode){
+        this.left = visualTreeNode;
+        if (visualTreeNode !== null){
+            this.leftArrow = new VisualArrow(circleRadius, circleRadius);
+            this.leftArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
+            visualTreeNode.addIncomingArrow(this.leftArrow);
+            //this.leftArrow.setEndXY(visualTreeNode.getXY()[0], visualTreeNode.getXY()[1]);
+        }else{
+            this.leftArrow = null;
+        }
+    }
+    setRight(visualTreeNode){
+        console.log(visualTreeNode);
+        this.right = visualTreeNode;
+        if (visualTreeNode !== null){
+            this.rightArrow = new VisualArrow(circleRadius, circleRadius);
+            this.rightArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
+            visualTreeNode.addIncomingArrow(this.rightArrow);
+            //this.rightArrow.setEndXY(visualTreeNode.getXY()[0], visualTreeNode.getXY()[1]);
+        }else{
+            this.rightArrow = null;
+        }
     }
     setXY(x, y){
         super.setXY(x, y);
@@ -267,6 +303,13 @@ class VisualTreeNode extends VisualElement{
         for (let i=0; i<this.incomingArrows.length; i++){
             this.incomingArrows[i].setEndXY(x, y);
         }
+
+        if (this.left !== null){
+            this.leftArrow.setEndXY(this.left.getXY()[0], this.left.getXY()[1]);
+        }
+        if (this.right !== null){
+            this.rightArrow.setEndXY(this.right.getXY()[0], this.right.getXY()[1]);
+        }
     }
     draw(){
         super.draw();
@@ -274,9 +317,9 @@ class VisualTreeNode extends VisualElement{
         //this.visualCircle.draw();
         //this.visualValue.draw();
         //}
-        for (let i =0; i<this.outgoingArrows.length; i++){
-            this.outgoingArrows[i].draw();
-        }
+        if (this.leftArrow !== null){ this.leftArrow.draw(); }
+        if (this.rightArrow !== null){ this.rightArrow.draw(); }
+
     }
 
 }
@@ -285,11 +328,9 @@ class VisualDatastructure{
     constructor(datastructure, elementBoxY=topBottomMargin+boxHeight){
         this.physicalDatastructure = datastructure;
         this.elementBoxY = elementBoxY;
-
     }
     draw(){
         clearCanvas();
-
     }
 }
 
@@ -326,7 +367,7 @@ class VisualSimpleArray extends VisualDatastructure{
         return null;
     }
     draw() {
-        clearCanvas();
+        super.draw();
         for (let i=0; i<this.physicalDatastructure.size; i++){
             this.content[i].draw();
         }
@@ -430,7 +471,27 @@ class VisualHeapArray extends VisualSimpleArray{
 
         this.createNodeArrows(element.index);
 
-        clearCanvas();
+        this.draw();
+    }
+    remove(element){
+        this.updateTreeNodeCoords();
+
+        for (let i=0; i<this.physicalDatastructure.numElements+1; i++){
+            this.getElement(i).updateElementValue();
+            this.getTreeElement(i).updateElementValue();
+        }
+
+        if (!this.physicalDatastructure.isEmpty()){
+            if (element.index % 2 === 0){
+                // Removed element was right child of parent
+                //this.getTreeElement(HeapArray.parent(element.index)).rightArrow = null;
+                this.getTreeElement(HeapArray.parent(element.index)).setRight(null);
+            }else{
+                //this.getTreeElement(HeapArray.parent(element.index)).leftArrow = null;
+                this.getTreeElement(HeapArray.parent(element.index)).setLeft(null);
+            }
+        }
+
         this.draw();
     }
     getTreeElement(index){
@@ -448,41 +509,46 @@ class VisualHeapArray extends VisualSimpleArray{
                 let leftArrow = new VisualArrow(this.treeNodeRadius, this.treeNodeRadius);
                 let rightArrow = new VisualArrow(this.treeNodeRadius, this.treeNodeRadius);
 
-                parentTreeNode.addOutgoingArrow(leftArrow);
-                parentTreeNode.leftArrow = leftArrow;
-                parentTreeNode.addOutgoingArrow(rightArrow);
-                parentTreeNode.rightArrow = rightArrow;
-                this.contentTree[index].addIncomingArrow(parentTreeNode.leftArrow);
+                parentTreeNode.setLeft(this.getTreeElement(index));
+                //this.getTreeElement(index).setParent(parentTreeNode);
+
+                //parentTreeNode.addOutgoingArrow(leftArrow);
+                //parentTreeNode.leftArrow = leftArrow;
+                //parentTreeNode.addOutgoingArrow(rightArrow);
+                //parentTreeNode.rightArrow = rightArrow;
+                //this.contentTree[index].addIncomingArrow(parentTreeNode.leftArrow);
             } else {
-                this.contentTree[index].addIncomingArrow(parentTreeNode.rightArrow);
+                //this.getTreeElement(index).setParent(parentTreeNode);
+                parentTreeNode.setRight(this.getTreeElement(index));
+                //this.contentTree[index].addIncomingArrow(parentTreeNode.rightArrow);
             }
         }
     }
     updateTreeNodeCoords(){
         let numLevels = Math.floor(Math.log2(this.physicalDatastructure.numElements));
 
-        let totalExtraGap = (Math.pow(2, numLevels)*treeNodeSpacingFactorX);
+        let totalExtraGap = (Math.pow(2, numLevels) * treeNodeSpacingFactorX);
         let unitsToStart = (Math.pow(2, numLevels)) + totalExtraGap;
 
         let startingX = canvas.width / 2 - (unitsToStart * circleRadius);
         let startingY = (canvas.height / 2);
 
         for (let i=0; i<this.physicalDatastructure.numElements; i++){
-            let currLevel = Math.floor(Math.log2(i+1));
+            let currLevel = Math.floor(Math.log2(i + 1));
             let nodesOnCurrLevel = Math.pow(2, currLevel);
-            let nodePosOnLevel = Math.abs((nodesOnCurrLevel-i)-1);
+            let nodePosOnLevel = Math.abs((nodesOnCurrLevel - i) - 1);
 
-            let reverseCurrLevel = (numLevels+1) - currLevel;
-            let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel)*treeNodeSpacingFactorX);
-            let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel)-1)+currLevelExtraNodeGap;
-            let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel-1)-1))+(currLevelExtraNodeGap/2);
+            let reverseCurrLevel = (numLevels + 1) - currLevel;
+            let currLevelExtraNodeGap = (Math.pow(2, reverseCurrLevel) * treeNodeSpacingFactorX);
+            let distanceBetweenNodes = (Math.pow(2, reverseCurrLevel) - 1) + currLevelExtraNodeGap;
+            let distanceFromLeftToFirstNode = ((Math.pow(2, reverseCurrLevel - 1) - 1)) + (currLevelExtraNodeGap / 2);
 
             let x = startingX;
             x += (distanceFromLeftToFirstNode * circleRadius) + circleRadius;
-            x += nodePosOnLevel * (distanceBetweenNodes * circleRadius) + circleRadius;
+            x += nodePosOnLevel * (circleRadius + (distanceBetweenNodes * circleRadius));
 
             let y = startingY;
-            y += (currLevel * (circleRadius*2)) + (circleRadius * treeNodeSpacingFactorY * currLevel);
+            y += (currLevel * (circleRadius * 2)) + (circleRadius * treeNodeSpacingFactorY * currLevel);
 
             this.contentTree[i].setXY(x, y);
         }
@@ -571,8 +637,8 @@ class VisualSinglyLinkedList extends VisualDatastructure{
         this.head = this.head.getNext();
     }
     draw(){
-        clearCanvas();
-
+        //clearCanvas();
+        super.draw();
         if(this.physicalDatastructure.isEmpty()){
             this.headArrowLabel.setValue("head / tail");
             this.headArrowLabel.draw();
@@ -665,7 +731,10 @@ class VisualDoublyLinkedList extends VisualDatastructure{
 
             this.tail.setNext(newNode);
 
+            console.log(this.tail.getXY());
+
             this.tail = newNode;
+
             this.tail.addIncomingArrow(this.tailArrow);
 
 /*            node.setPrev(prev);
@@ -697,11 +766,18 @@ class VisualDoublyLinkedList extends VisualDatastructure{
 
         this.animator.removeAnimation(element);
 
+        //this.head.getNext().setPrev(null);
         this.head = this.head.getNext();
+        if (this.head !== null){
+            this.head.setPrev(null);
+        }else{
+            this.tail = null;
+        }
+
     }
     draw(){
-        clearCanvas();
-
+        //clearCanvas();
+        super.draw();
         if(this.physicalDatastructure.isEmpty()){
             this.headArrowLabel.setValue("head / tail");
             this.headArrowLabel.draw();

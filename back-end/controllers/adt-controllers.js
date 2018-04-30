@@ -15,7 +15,7 @@ class StackController extends AdtController{
         if (pushedElement==null){
             outputLabel.innerText = "Stack is full";
         }else{
-            outputLabel.innerText = "Push " + pushedElement.value;
+            outputLabel.innerText = "Push: " + pushedElement.value;
             this.visualDatastructure.insert(pushedElement);
         }
     }
@@ -25,17 +25,17 @@ class StackController extends AdtController{
         if (poppedElement==null){
             outputLabel.innerText = "Stack is empty";
         }else{
-            outputLabel.innerText = "Pop " + poppedElement.value;
+            outputLabel.innerText = "Pop: " + poppedElement.value;
             this.visualDatastructure.remove(poppedElement);
         }
     }
     peek(){
-        let result = this.adt.peek();
+        let peekElementValue = this.adt.peek();
 
-        if (result==null){
+        if (peekElementValue==null){
             outputLabel.innerText = "Stack is empty";
         }else{
-            outputLabel.innerText = result;
+            outputLabel.innerText = "Peek: " + peekElementValue;
         }
     }
 }
@@ -50,7 +50,7 @@ class QueueController extends AdtController{
         if (enqueuedElement==null){
             outputLabel.innerText = "Queue is full";
         }else{
-            outputLabel.innerText = "Enqueue " + enqueuedElement.value;
+            outputLabel.innerText = "Enqueue: " + enqueuedElement.value;
             this.visualDatastructure.insert(enqueuedElement);
         }
     }
@@ -60,17 +60,17 @@ class QueueController extends AdtController{
         if (dequeuedElement==null){
             outputLabel.innerText = "Queue is empty";
         }else{
-            outputLabel.innerText = "Dequeue " + dequeuedElement.value;
+            outputLabel.innerText = "Dequeue: " + dequeuedElement.value;
             this.visualDatastructure.remove(dequeuedElement);
         }
     }
     peek(){
-        let peek = this.adt.peek();
+        let peekElementValue = this.adt.peek();
 
-        if (peek == null){
+        if (peekElementValue == null){
             outputLabel.innerText = "Queue is empty";
         }else{
-            outputLabel.innerText = peek;
+            outputLabel.innerText = "Peek: " + peekElementValue;
         }
     }
 }
@@ -85,7 +85,7 @@ class PriorityQueueController extends  AdtController{
         if (insertedElement == null){
 
         }else{
-            outputLabel.innerText = "Insert " + elementValue;
+            outputLabel.innerText = "Insert: " + elementValue;
             this.visualDatastructure.insert(insertedElement);
         }
     }
@@ -95,7 +95,8 @@ class PriorityQueueController extends  AdtController{
         if (removedMinElement == null){
             outputLabel.innerText = "Priority Queue is empty";
         }else{
-
+            outputLabel.innerText = "Remove min: " + removedMinElement.value;
+            this.visualDatastructure.remove(removedMinElement);
         }
     }
 }

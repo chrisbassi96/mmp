@@ -442,8 +442,66 @@ class VisualDoublyLinkedListAnimator extends VisualDatastructureAnimator{
 
         animationSequencer.add(sequence3);
     }
-    animationMoveOutOfDatastructure(element){
+    shiftNodes(direction){
+        let curr = null;
 
+        if (direction==="right"){
+            if (this.visualDatastructure.physicalDatastructure.numElements===1){return;}
+            curr = this.visualDatastructure.head.getNext();
+        }else if(direction==="left"){
+            if (this.visualDatastructure.physicalDatastructure.numElements===0){return;}
+            curr = this.visualDatastructure.head;
+        }
+
+        let sequence = new AnimationSequence();
+        sequence.executeConcurrently = true;
+        sequence.doNotDraw(this.visualDatastructure.head);
+
+        let sequenceTailLabelCoordSet = new CoordSet();
+        sequenceTailLabelCoordSet.setFromXY(this.visualDatastructure.tailArrowLabel.getXY()[0], this.visualDatastructure.tailArrowLabel.getXY()[1]);
+
+        while (curr!==null){
+            let sequenceCurrCoordSet = new CoordSet();
+            sequenceCurrCoordSet.setFromXY(curr.getXY()[0], curr.getXY()[1]);
+
+            if (direction === "right"){
+                sequenceCurrCoordSet.setToXY(curr.getXY()[0] + (4*boxWidth), curr.getXY()[1]);
+                if (curr === this.visualDatastructure.tail){
+                    sequenceTailLabelCoordSet.setToXY(curr.getXY()[0] + (4*boxWidth), this.visualDatastructure.tailArrowLabel.getXY()[1]);
+                }
+            }else{
+                sequenceCurrCoordSet.setToXY(curr.getXY()[0] - (4*boxWidth), curr.getXY()[1]);
+                if (curr === this.visualDatastructure.tail){
+                    sequenceTailLabelCoordSet.setToXY(curr.getXY()[0] - (4*boxWidth), this.visualDatastructure.tailArrowLabel.getXY()[1]);
+                }
+            }
+            sequence.add(curr, sequenceCurrCoordSet, new MoveNoFade());
+
+            curr = curr.getNext();
+        }
+        sequence.add(this.visualDatastructure.tailArrowLabel, sequenceTailLabelCoordSet, new MoveNoFade());
+
+        animationSequencer.add(sequence);
+    }
+    animationMoveOutOfDatastructure(element){
+        let headElement = this.visualDatastructure.head;
+
+        let sequence = new AnimationSequence();
+        sequence.doNotDraw(headElement);
+
+        let sequenceHeadDummy = new VisualDoublyLinkedListElement();
+        sequenceHeadDummy.updateElementValue(element.value);
+        sequence.addTempObject(sequenceHeadDummy);
+
+        let sequenceHeadDummyCoordSet = new CoordSet();
+        sequenceHeadDummyCoordSet.setFromXY(headElement.getXY()[0], headElement.getXY()[1]);
+        sequenceHeadDummyCoordSet.setToXY(leftMargin + (boxWidth*1.5), canvas.height / 2);
+
+        sequence.add(sequenceHeadDummy, sequenceHeadDummyCoordSet, new MoveFadeOut());
+
+        animationSequencer.add(sequence);
+
+        this.shiftNodes("left");
     }
 }
 

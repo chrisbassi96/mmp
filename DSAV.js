@@ -7,13 +7,13 @@ function createADT(type){
     let dtSelect = document.getElementById("datastructure");
     let selected = dtSelect.options[dtSelect.selectedIndex].value;
     // below might set size as a String type...
-    let size = document.getElementById("adt_size").value === ""?20:parseInt(document.getElementById("adt_size").value);
+    let size = document.getElementById("adt_size").value === ""?5:parseInt(document.getElementById("adt_size").value);
     console.log(size);
-    //ctx.textAlign = "center";
     let adt = null;
-    let datastructureController = null;
     let visualDatastructure = null;
     animationSequencer = new AnimationSequencer();
+
+    clearCanvas();
 
     switch (selected + "-" + type){
         case "simple-array-stack":

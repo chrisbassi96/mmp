@@ -149,15 +149,13 @@ class HeapArray extends SimpleArray{
         return 2*index + 2;
     }
     hasLeft(index){
-        return HeapArray.left(index) < this.size;
+        return HeapArray.left(index) < this.numElements;
     }
     hasRight(index){
-        return HeapArray.right(index) < this.size;
+        return HeapArray.right(index) < this.numElements;
     }
     swap(i, j){
         let temp = this.content[i].getValue();
-        console.log(temp);
-        console.log(this.content[j].getValue());
         this.content[i].setValue(this.content[j].getValue());
         this.content[j].setValue(temp);
     }

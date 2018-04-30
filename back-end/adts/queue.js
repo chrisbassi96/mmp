@@ -55,11 +55,14 @@ class DoublyLinkedListQueue{
     }
     dequeue(){
         if (this.datastructure.isEmpty()) {
-            outputLabel.innerText = "Stack is empty";
-            return;
+            return null;
         }
+
+        let dequeuedElementValue = this.datastructure.head.getValue();
+
         this.datastructure.removeFirst();
-        this.datastructure.draw();
+
+        return {value: dequeuedElementValue};
     }
     peek(){
         outputLabel.innerText = this.datastructure.getFirst();
