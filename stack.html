@@ -56,7 +56,7 @@
         <main role="main" class="col pt-1 px-4">
             <form class="form-inline row mb-2" id="creation-panel">
                 <input class="btn btn-primary mr-1" type="button"
-                       onclick="createADT('stack'); document.getElementById('null_toggle').disabled = false;"
+                       onclick="createADT('stack');"
                        value="Create Stack" id="create_adt" disabled/>
                 <div class="form-group">
                     <label class="mr-1" for="datastructure">using</label>
@@ -77,7 +77,7 @@
 
             <form class="form-inline row mt-2" id="interaction-panel">
                 <input class="btn mr-1" type="button" onclick="adtController.push(+document.getElementById('add_value').value);" value="Push" />
-                <input class="form-control mr-1" type="number" name="add_value" id="add_value" title="value to insert"/>
+                <input class="form-control mr-1" type="number" name="add_value" id="add_value" title="value to insert" placeholder="Numeric element value"/>
                 <input class="btn mr-1" type="button" onclick="adtController.pop();" value="Pop"/>
                 <input class="btn mr-1" type="button" onclick="adtController.peek();" value="Peek"/>
                 <label class="mr-1" id="output_msg"></label>
@@ -87,17 +87,7 @@
                         <label for="anim_speed">Animation speed</label>
                         <input class="input-control" type="range" min="2" max="200" id="anim_speed" onchange="animationSteps=this.value;" style="direction: rtl"/>
                     </div>
-
-                    <div class="form-group">
-                        <div class="form-check">
-                            <label class="form-check-label" for="null_toggle">Show null values</label>
-                            <input class="form-check-input" type="checkbox" id="null_toggle" onclick="showNulls = !showNulls" disabled/>
-                        </div>
-                    </div>
                 </form>
-
-
-
         </main>
     </div>
 </div>

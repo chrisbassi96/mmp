@@ -64,10 +64,8 @@ class HeapArrayPriorityQueue{
     }
     getMin(){
         if (this.datastructure.isEmpty()) {
-            outputLabel.innerText = "Queue is empty";
-            return;
+            return null;
         }
-        outputLabel.innerText = this.datastructure.getElement(this.datastructure.getHead());
-        this.datastructure.draw();
+        return this.datastructure.getElement(0).getValue();
     }
 }

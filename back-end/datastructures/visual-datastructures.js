@@ -305,9 +305,11 @@ class VisualTreeNode extends VisualElement{
         }
 
         if (this.left !== null){
+            this.leftArrow.setStartXY(x, y);
             this.leftArrow.setEndXY(this.left.getXY()[0], this.left.getXY()[1]);
         }
         if (this.right !== null){
+            this.rightArrow.setStartXY(x, y);
             this.rightArrow.setEndXY(this.right.getXY()[0], this.right.getXY()[1]);
         }
     }
@@ -503,7 +505,7 @@ class VisualHeapArray extends VisualSimpleArray{
     }
     createNodeArrows(index){
         if (index !== 0){
-            let parentTreeNode = this.contentTree[HeapArray.parent(index)];
+            let parentTreeNode = this.getTreeElement(HeapArray.parent(index));
             if (index % 2 !== 0) {
                 // Has parent
                 let leftArrow = new VisualArrow(this.treeNodeRadius, this.treeNodeRadius);

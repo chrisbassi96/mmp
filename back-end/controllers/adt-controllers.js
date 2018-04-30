@@ -99,5 +99,14 @@ class PriorityQueueController extends  AdtController{
             this.visualDatastructure.remove(removedMinElement);
         }
     }
+    getMin(){
+        let minElementValue = this.adt.getMin();
+
+        if (minElementValue == null){
+            outputLabel.innerText = "Priority Queue is empty";
+        }else{
+            outputLabel.innerText = "Peek: " + minElementValue;
+        }
+    }
 }
 
