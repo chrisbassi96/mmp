@@ -115,8 +115,6 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator{
 
         let headElement = this.visualDatastructure.getElement(this.visualDatastructure.physicalDatastructure.head);
 
-        console.log(this.visualDatastructure.physicalDatastructure.head);
-
         let headArrowLabelCoordSet = new CoordSet();
         headArrowLabelCoordSet.setFromXY(headArrowLabel.getXY()[0], headArrowLabel.getXY()[1]);
         headArrowLabelCoordSet.setToXY(headElement.getXY()[0], headArrowLabel.getXY()[1]);

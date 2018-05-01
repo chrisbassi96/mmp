@@ -1,172 +1,172 @@
-class Element{
-    constructor(value=null){
+class Element {
+    constructor(value = null) {
         this.value = value;
     }
-    getValue(){
+
+    getValue() {
         return this.value;
     }
-    setValue(value){
+
+    setValue(value) {
         this.value = value;
     }
 }
 
-class SinglyLinkedListElement extends Element{
-    constructor(elementValue, next){
+class SinglyLinkedListElement extends Element {
+    constructor(elementValue, next) {
         super(elementValue);
         this.next = next;
     }
-    getNext(){
+
+    getNext() {
         return this.next;
     }
-    setNext(newNext){
+
+    setNext(newNext) {
         this.next = newNext;
     }
 }
 
-class DoublyLinkedListElement extends Element{
-    constructor(elementValue){
+class DoublyLinkedListElement extends Element {
+    constructor(elementValue) {
         super(elementValue);
         this.next = null;
         this.prev = null;
     }
-    equals(otherNode){
-        return (this.middleX === otherNode.getX()) && (this.middleY === otherNode.getY());
-    }
-    draw(){
-        // Draw the actual box
-        ctx.strokeRect(this.middleX-boxWidth, this.middleY-(boxHeight/2), boxWidth, boxHeight);
-        // Draw the box for "visualNext"
-        ctx.strokeRect(this.middleX, this.middleY-(boxHeight/2), boxWidth, boxHeight);
 
-        if (this.element==null){
-            // Draw a slanted line to indicate no object referenced
-            ctx.beginPath();
-            ctx.moveTo(this.middleX - (boxWidth/2), this.middleY + (boxHeight/2)); // Margin of 5 pixels
-            ctx.lineTo(this.middleX + (boxWidth/2), this.middleY - (boxHeight/2));
-            ctx.closePath();
-            ctx.stroke();
-        }else {
-            // Draw the actual visualValue
-            ctx.fillText(this.element, this.middleX-(boxWidth/2), this.middleY);
-            // Draw the "visualNext"
-            ctx.fillText("next", this.middleX+(boxWidth/2), this.middleY);
-            drawLabelledArrow("next", 0, this.middleX+(boxWidth/2), this.middleY, this.middleX+(boxWidth*2), this.middleY);
-        }
-
-    }
-    getNext(){
+    getNext() {
         return this.next;
     }
-    setNext(newNext){
+
+    setNext(newNext) {
         this.next = newNext;
     }
-    getPrev(){
+
+    getPrev() {
         return this.prev;
     }
-    setPrev(newPrev){
+
+    setPrev(newPrev) {
         this.prev = newPrev;
     }
 }
 
 class Datastructure {
-    constructor(){
+    constructor() {
         this.numElements = 0;
     }
-    getNumElements(){
+
+    getNumElements() {
         return this.numElements;
     }
-    isEmpty(){
+
+    isEmpty() {
         return this.numElements === 0;
     }
 }
 
-class SimpleArray extends Datastructure{
-    constructor(size=20){
+class SimpleArray extends Datastructure {
+    constructor(size = 5) {
         super();
         this.size = size;
         this.content = [];
-        for (let i=0; i<size; i++){
+
+        for (let i = 0; i < size; i++) {
             this.content[i] = new Element(null);
         }
     }
-    getSize(){
-        return this.size;
-    }
-    isFull(){
+
+    isFull() {
         return this.numElements === this.size;
     }
-    getElement(index){
-        if (index >= 0 && index < this.content.length){
+
+    getElement(index) {
+        if (index >= 0 && index < this.content.length) {
             return this.content[index];
         }
-        // Give some sort of error
-        return null;
     }
-    setElementValue(index, value){
+
+    setElementValue(index, value) {
         this.content[index].setValue(value);
     }
-    // Perhaps I should use an if...else... statement here instead, to make it easier to understand?
-    expand(){
-        this.size = this.size*2;
-        for (let i=this.size/2; i<this.size; i++){
-            this.content[i] = new Element(null);
-            //this.content[i].setIndex(i);
-        }
+
+    getSize() {
+        return this.size;
     }
 }
 
-class CircularArray extends SimpleArray{
-    constructor(size=20, showIndex=false){
-        super(size, topBottomMargin+90, showIndex);
+class CircularArray extends SimpleArray {
+    constructor(size = 5) {
+        super(size);
         this.head = 0;
         this.tail = 0;
     }
-    getHead(){
+
+    getHead() {
         return this.head;
     }
-    setHead(head){
+
+    setHead(head) {
         this.head = head;
     }
-    getTail(){
+
+    getTail() {
         return this.tail;
     }
-    setTail(tail){
+
+    setTail(tail) {
         this.tail = tail;
     }
 }
 
-class HeapArray extends SimpleArray{
-    constructor(size=20, elementBoxY=topBottomMargin+boxHeight, showIndex=true){
-        super(size, elementBoxY, showIndex);
+class HeapArray extends SimpleArray {
+    constructor(size = 5) {
+        super(size);
     }
-    static parent(index){
-        return Math.floor((index-1) / 2);
+
+    static parent(index) {
+        return Math.floor((index - 1) / 2);
     }
-    static left(index){
-        return 2*index + 1;
+
+    static left(index) {
+        return 2 * index + 1;
     }
-    static right(index){
-        return 2*index + 2;
+
+    static right(index) {
+        return 2 * index + 2;
     }
-    hasLeft(index){
+
+    hasLeft(index) {
         return HeapArray.left(index) < this.numElements;
     }
-    hasRight(index){
+
+    hasRight(index) {
         return HeapArray.right(index) < this.numElements;
     }
-    swap(i, j){
+
+    swap(i, j) {
         let temp = this.content[i].getValue();
+
         this.content[i].setValue(this.content[j].getValue());
         this.content[j].setValue(temp);
     }
+
+    expand() {
+        this.size = this.size * 2;
+
+        for (let i = this.size / 2; i < this.size; i++) {
+            this.content[i] = new Element(null);
+        }
+    }
 }
 
-class SinglyLinkedList extends Datastructure{
-    constructor(){
+class SinglyLinkedList extends Datastructure {
+    constructor() {
         super();
         this.head = null;
         this.tail = null;
     }
+
     addFirst(node) {
         if (this.head == null) {
             node.setNext(null);
@@ -176,81 +176,60 @@ class SinglyLinkedList extends Datastructure{
             node.setNext(this.head);
             this.head = node;
         }
+
         this.numElements++;
     }
-    getFirst(){
-        return this.head.getValue();
+
+    getFirst() {
+        return this.head;
     }
+
     removeFirst() {
         let first = this.head;
         this.head = first.getNext();
 
         // Added to make this work in JavaScript
-        if (this.head===null){this.tail = null;}
+        if (this.head === null) {
+            this.tail = null;
+        }
 
-        this.numElements = this.numElements - 1;
-    }
-    addLast(node){
-
-    }
-    removeLast(){
-
-    }
-    removeNext(){
-
+        this.numElements--;
     }
 }
 
-class DoublyLinkedList extends Datastructure{
-    constructor(){
+class DoublyLinkedList extends Datastructure {
+    constructor() {
         super();
         this.head = null;
         this.tail = null;
+    }
 
+    getFirst() {
+        return this.head;
     }
-    find(element){
 
-    }
-    addFirst(node){
-
-    }
-    getFirst(){
-        return this.head.getValue();
-    }
-    removeFirst(){
+    removeFirst() {
         let first = this.head;
         this.head = first.getNext();
 
         // Added to make this work in JavaScript
-        if (this.head===null){this.tail = null;}
+        if (this.head === null) {
+            this.tail = null;
+        }
 
-        this.numElements = this.numElements - 1;
+        this.numElements--;
     }
-    addLast(node){
-        console.log(node);
-        //this.addAfter(this.tail, node);
-        if (this.tail == null){
-            if (this.head == null){
-                this.head = node;
-                this.tail = node;
-            }else{
-                node.setNext(this.head);
-                this.head = node;
-            }
-        }else{
+
+    addLast(node) {
+        if (this.tail == null) {
+            this.head = node;
+            this.tail = node;
+        } else {
             node.setPrev(this.tail);
             this.tail.setNext(node);
             this.tail = node;
         }
-        this.numElements++;
-    }
-    removeLast(){
 
-    }
-    addAfter(prev, node){
-        node.setPrev(prev);
-        node.setNext(prev.getNext());
-        prev.setNext(node);
-        node.getNext().setPrev(node);
+        this.numElements++;
     }
 }

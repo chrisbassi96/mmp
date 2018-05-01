@@ -83,7 +83,7 @@ class PriorityQueueController extends  AdtController{
         let insertedElement = this.adt.insert(elementValue);
 
         if (insertedElement == null){
-
+            // Nothing, as the heap array expands when it becomes full
         }else{
             outputLabel.innerText = "Insert: " + elementValue;
             this.visualDatastructure.insert(insertedElement);

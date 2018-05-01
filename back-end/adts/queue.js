@@ -1,38 +1,42 @@
-class CircularArrayQueue{
-    constructor(size){
+class CircularArrayQueue {
+    constructor(size) {
         this.datastructure = new CircularArray(size);
     }
-    enqueue(elementValue){
-        if (this.datastructure.getNumElements() < this.datastructure.getSize()){
-            console.log(this.datastructure.getNumElements() + " " + this.datastructure.getSize());
-            let avail = (this.datastructure.getHead() + this.datastructure.getNumElements()) % this.datastructure.getSize();
-            this.datastructure.setTail(avail);
-            //console.log(avail);
-            //this.adts.setElementValue(avail, elementValue);
-            this.datastructure.setElementValue(avail, elementValue);
-            this.datastructure.numElements += 1;
-            this.datastructure.setTail((this.datastructure.getHead() + this.datastructure.getNumElements()) % this.datastructure.getSize());
 
-            return {value: elementValue, index: avail};
-        }
-        return null;
-    }
-    dequeue(){
-        if (this.datastructure.isEmpty()){
+    enqueue(elementValue) {
+        if (this.datastructure.isFull()) {
             return null;
         }
 
-        let element = this.datastructure.getElement(this.datastructure.getHead()).getValue();
-        let oldHead = this.datastructure.getHead();
+        let avail = (this.datastructure.getHead() + this.datastructure.getNumElements()) % this.datastructure.getSize();
 
-        this.datastructure.setElementValue(this.datastructure.getHead(), null);
+        this.datastructure.setTail(avail);
+        this.datastructure.setElementValue(avail, elementValue);
 
-        this.datastructure.setHead((this.datastructure.getHead()+1)%this.datastructure.getSize());
+        this.datastructure.numElements++;
+
+        this.datastructure.setTail((this.datastructure.getHead() + this.datastructure.getNumElements()) % this.datastructure.getSize());
+
+        return {value: elementValue, index: avail};
+    }
+
+    dequeue() {
+        if (this.datastructure.isEmpty()) {
+            return null;
+        }
+
+        let headIndex = this.datastructure.getHead();
+        let headElementValue = this.datastructure.getElement(headIndex).getValue();
+
+        this.datastructure.setElementValue(headIndex, null);
+
+        this.datastructure.setHead((headIndex + 1) % this.datastructure.getSize());
         this.datastructure.numElements--;
 
-        return {value: element, index: oldHead};
+        return {value: headElementValue, index: headIndex};
     }
-    peek(){
+
+    peek() {
         if (this.datastructure.isEmpty()) {
             return null;
         }
@@ -41,19 +45,20 @@ class CircularArrayQueue{
     }
 }
 
-class DoublyLinkedListQueue{
-    constructor(){
+class DoublyLinkedListQueue {
+    constructor() {
         this.datastructure = new DoublyLinkedList();
     }
-    enqueue(elementValue){
+
+    enqueue(elementValue) {
         let newNode = new DoublyLinkedListElement(elementValue);
 
         this.datastructure.addLast(newNode);
-        console.log(newNode);
 
         return newNode;
     }
-    dequeue(){
+
+    dequeue() {
         if (this.datastructure.isEmpty()) {
             return null;
         }
@@ -64,7 +69,12 @@ class DoublyLinkedListQueue{
 
         return {value: dequeuedElementValue};
     }
-    peek(){
-        outputLabel.innerText = this.datastructure.getFirst();
+
+    peek() {
+        if (this.datastructure.isEmpty()){
+            return null;
+        }
+
+        return this.datastructure.getFirst().getValue();
     }
 }

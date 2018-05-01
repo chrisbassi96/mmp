@@ -1,39 +1,42 @@
-class HeapArrayPriorityQueue{
-    constructor(size){
+class HeapArrayPriorityQueue {
+    constructor(size) {
         this.datastructure = new HeapArray(size);
     }
-    insert(elementValue){
-        if (this.datastructure.getNumElements()===this.datastructure.getSize()){ this.datastructure.expand(); }
+
+    insert(elementValue) {
+        if (this.datastructure.isFull()) {
+            this.datastructure.expand();
+        }
 
         this.datastructure.content[this.datastructure.getNumElements()].setValue(elementValue);
-        this.datastructure.numElements = this.datastructure.numElements + 1;
+        this.datastructure.numElements++;
 
-        let j = this.datastructure.getNumElements()-1;
+        let j = this.datastructure.getNumElements() - 1;
 
-        while (j > 0){
+        while (j > 0) {
             let p = HeapArray.parent(j);
 
-            console.log("parent: " + p);
-            // This won't work with strings...
-            if (this.datastructure.content[j].getValue() >= this.datastructure.content[p].getValue()){
+            if (this.datastructure.content[j].getValue() >= this.datastructure.content[p].getValue()) {
                 break;
             }
+
             this.datastructure.swap(j, p);
             j = p;
         }
 
-        return {value: elementValue, index: this.datastructure.getNumElements()-1};
+        return {value: elementValue, index: this.datastructure.getNumElements() - 1};
     }
-    removeMin(){
-        if (this.datastructure.isEmpty()){
+
+    removeMin() {
+        if (this.datastructure.isEmpty()) {
             return null;
         }
 
         let min = this.datastructure.getElement(0);
 
-        this.datastructure.swap(0, this.datastructure.numElements-1);
+        this.datastructure.swap(0, this.datastructure.numElements - 1);
 
-        this.datastructure.setElementValue(this.datastructure.numElements-1, null);
+        this.datastructure.setElementValue(this.datastructure.numElements - 1, null);
         this.datastructure.numElements--;
 
         let j = 0;
@@ -50,22 +53,23 @@ class HeapArrayPriorityQueue{
         }
 
         while ((j > 0) && (this.datastructure.getElement(0).getValue() <= this.datastructure.getElement(j).getValue())) {
-            j = Math.floor((j - 1) / 2);
+            j = HeapArray.parent(j);
         }
-        console.log(this.datastructure.getElement(0).getValue() + " " + this.datastructure.getElement(j).getValue());
+
         let root = this.datastructure.getElement(0);
         while (j > 0) {
-            console.log(j);
             this.datastructure.swap(0, j);
-            j = Math.floor((j - 1) / 2);
+            j = HeapArray.parent(j);
         }
 
         return {value: min.getValue(), index: this.datastructure.numElements};
     }
-    getMin(){
+
+    getMin() {
         if (this.datastructure.isEmpty()) {
             return null;
         }
+
         return this.datastructure.getElement(0).getValue();
     }
 }

@@ -1,5 +1,5 @@
 class AnimationProperties{
-    constructor(isMoving, isFading, highlighter){
+    constructor(isMoving=false, isFading=false, highlighter){
         this.isMoving = isMoving;
         this.isFading = isFading;
         this.highlighter = highlighter;
