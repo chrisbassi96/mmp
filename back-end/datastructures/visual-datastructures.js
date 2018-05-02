@@ -18,6 +18,12 @@ class VisualElement extends VisualObject {
 
         this.setAllXY();
     }
+
+    update(x, y, progress) {
+        super.update(x, y, progress);
+
+        this.updateAll(x, y, progress);
+    }
 }
 
 class VisualArrayElement extends VisualElement {
@@ -38,24 +44,22 @@ class VisualArrayElement extends VisualElement {
         this.visualIndexNum.setValue(index);
     }
 
-    update(x, y, progress) {
-        super.update(x, y, progress);
-
-        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualValue.update(x, y, progress);
-        }
-        if (this.visualElementBox.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualElementBox.update(x, y, progress);
-        }
-        if (this.visualIndexNum.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualIndexNum.update(x, y + boxHeight, progress);
-        }
-    }
-
     setAllXY() {
         this.visualElementBox.setXY(this.getXY()[0], this.getXY()[1]);
         this.visualValue.setXY(this.getXY()[0], this.getXY()[1]);
-        this.visualIndexNum.setXY(this.getXY()[0], this.getXY()[1] + boxHeight);
+        this.visualIndexNum.setXY(this.getXY()[0], this.getXY()[1] + this.visualElementBox.height);
+    }
+
+    updateAll(x, y, progress) {
+        if (this.visualElementBox.isBeingAnimated() || this.isBeingAnimated()) {
+            this.visualElementBox.update(x, y, progress);
+        }
+        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()) {
+            this.visualValue.update(x, y, progress);
+        }
+        if (this.visualIndexNum.isBeingAnimated() || this.isBeingAnimated()) {
+            this.visualIndexNum.update(x, y + this.visualElementBox.width, progress);
+        }
     }
 }
 
@@ -65,11 +69,12 @@ class VisualSinglyLinkedListElement extends VisualElement {
         this.next = null;
 
         this.visualValueBox = new VisualBox();
+
         this.visualNextBox = new VisualBox();
         this.visualNextBox.crossedThrough = true;
         this.visualNext = new VisualValue("next");
 
-        this.nextArrow = new VisualArrow(0, boxWidth);
+        this.nextArrow = new VisualArrow(0, this.visualNextBox.width);
         this.visualNext.addOutgoingArrow(this.nextArrow);
 
         this.visualObjects.push(this.visualValueBox);
@@ -83,9 +88,14 @@ class VisualSinglyLinkedListElement extends VisualElement {
 
     setNext(next) {
         this.next = next;
-        next.addIncomingArrow(this.nextArrow);
 
-        this.visualNext.crossedThrough = this.next == null;
+        if (next !== null) {
+            next.addIncomingArrow(this.nextArrow);
+        } else {
+            this.visualNext.outgoingArrows = [];
+        }
+
+        this.visualNextBox.crossedThrough = this.next === null;
     }
 
     setAllXY() {
@@ -95,26 +105,7 @@ class VisualSinglyLinkedListElement extends VisualElement {
         this.visualNext.setXY(this.getXY()[0] + (this.visualValueBox.width / 2), this.getXY()[1]);
     }
 
-    update(x, y, progress) {
-        // Only update the coords of element visual tempObjects IF they are being animated
-        // This allows us to control which visual tempObjects of the element are animated and which are not
-        super.update(x, y, progress);
-        console.log(this.isBeingAnimated());
-/*        if (this.visualValueBox.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualValueBox.update(x - (this.visualValueBox.width / 2), y, progress);
-        }
-        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualValue.update(x - (this.visualValueBox.width / 2), y, progress);
-        }
-        if (this.visualNextBox.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualNextBox.update(x + (this.visualValueBox.width / 2), y, progress);
-        }
-        if (this.visualNext.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualNext.update(x + (this.visualValueBox.width / 2), y, progress);
-        }*/
-    }
-
-    updateAll(x, y, progress){
+    updateAll(x, y, progress) {
         if (this.visualValueBox.isBeingAnimated() || this.isBeingAnimated()) {
             this.visualValueBox.update(x - (this.visualValueBox.width / 2), y, progress);
         }
@@ -129,19 +120,12 @@ class VisualSinglyLinkedListElement extends VisualElement {
         }
     }
 
-    draw() {
-        super.draw();
-        if (!this.notDrawn && this.next !== null) {
-            this.visualNextBox.crossedThrough = false;
-            //drawLabelledArrow("next", 0, this.getXY()[0]+(boxWidth/2), this.getXY()[1], this.next.visualValue.getXY()[0]-(boxWidth/2), this.next.visualValue.getXY()[1]);
-        }
-    }
 }
 
 class VisualDoublyLinkedListElement extends VisualSinglyLinkedListElement {
     constructor(physicalElement) {
         super(physicalElement);
-        this.prevVisualElement = null;
+        this.prev = null;
 
         this.visualPrevBox = new VisualBox();
         this.visualPrevBox.crossedThrough = true;
@@ -156,27 +140,19 @@ class VisualDoublyLinkedListElement extends VisualSinglyLinkedListElement {
     }
 
     getPrev() {
-        return this.prevVisualElement;
+        return this.prev;
     }
 
-    setPrev(prevVisualElement) {
-        this.prevVisualElement = prevVisualElement;
-        if (prevVisualElement !== null) {
-            prevVisualElement.addIncomingArrow(this.prevArrow);
-            this.visualPrevBox.crossedThrough = false;
+    setPrev(prev) {
+        this.prev = prev;
+
+        if (prev !== null) {
+            prev.addIncomingArrow(this.prevArrow);
         } else {
             this.visualPrev.outgoingArrows = [];
-            this.visualPrevBox.crossedThrough = true;
         }
 
-        //this.visualPrev.crossedThrough = this.prevVisualElement === null;
-    }
-
-    setNext(nextVisualElement) {
-        this.next = nextVisualElement;
-        if (nextVisualElement !== null) {
-            nextVisualElement.addIncomingArrow(this.nextArrow);
-        }
+        this.visualPrevBox.crossedThrough = this.prev === null;
     }
 
     setAllXY() {
@@ -188,7 +164,7 @@ class VisualDoublyLinkedListElement extends VisualSinglyLinkedListElement {
         this.visualNext.setXY(this.getXY()[0] + this.visualValueBox.width, this.getXY()[1]);
     }
 
-    updateAllXY(x, y, progress) {
+    updateAll(x, y, progress) {
         if (this.visualPrevBox.isBeingAnimated() || this.isBeingAnimated()) {
             this.visualPrevBox.update(x - this.visualPrevBox.width, y, progress);
         }
@@ -209,25 +185,6 @@ class VisualDoublyLinkedListElement extends VisualSinglyLinkedListElement {
         }
     }
 
-    updateArrowsXY() {
-        for (let i = 0; i < this.incomingArrows.length; i++) {
-            this.incomingArrows[i].setEndXY(this.middleXY[0], this.middleXY[1]);
-        }
-    }
-
-    addIncomingArrow(arrow) {
-        super.addIncomingArrow(arrow);
-
-        arrow.setEndXY(this.middleXY[0], this.middleXY[1]);
-    }
-
-    draw() {
-        super.draw();
-        if (!this.notDrawn && this.prevVisualElement !== null) {
-            //this.visualPrevBox.crossedThrough = false;
-            //drawLabelledArrow("next", 0, this.getXY()[0]+(boxWidth/2), this.getXY()[1], this.next.visualValue.getXY()[0]-(boxWidth/2), this.next.visualValue.getXY()[1]);
-        }
-    }
 }
 
 class VisualTreeNode extends VisualElement {
@@ -236,6 +193,7 @@ class VisualTreeNode extends VisualElement {
         this.parent = null;
         this.left = null;
         this.right = null;
+
         this.leftArrow = null;
         this.rightArrow = null;
 
@@ -249,69 +207,54 @@ class VisualTreeNode extends VisualElement {
 
     setLeft(visualTreeNode) {
         this.left = visualTreeNode;
+
         if (visualTreeNode !== null) {
             this.leftArrow = new VisualArrow(circleRadius, circleRadius);
             this.leftArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
             visualTreeNode.addIncomingArrow(this.leftArrow);
-            //this.leftArrow.setEndXY(visualTreeNode.getXY()[0], visualTreeNode.getXY()[1]);
         } else {
             this.leftArrow = null;
         }
     }
 
     setRight(visualTreeNode) {
-        console.log(visualTreeNode);
         this.right = visualTreeNode;
+
         if (visualTreeNode !== null) {
             this.rightArrow = new VisualArrow(circleRadius, circleRadius);
             this.rightArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
             visualTreeNode.addIncomingArrow(this.rightArrow);
-            //this.rightArrow.setEndXY(visualTreeNode.getXY()[0], visualTreeNode.getXY()[1]);
         } else {
             this.rightArrow = null;
         }
-    }
-
-    setXY(x, y) {
-        super.setXY(x, y);
-
-        this.setAllXY();
     }
 
     setAllXY() {
         for (let i = 0; i < this.visualObjects.length; i++) {
             this.visualObjects[i].setXY(this.middleXY[0], this.middleXY[1]);
         }
-        this.updateArrowXY(this.middleXY[0], this.middleXY[1]);
+
+        this.updateArrowXY();
     }
 
-    update(x, y, progress) {
-        super.update(x, y, progress);
-
+    updateAll(x, y, progress) {
         if (this.visualCircle.isBeingAnimated() || this.isBeingAnimated()) {
             this.visualCircle.update(x, y, progress)
         }
         if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()) {
             this.visualValue.update(x, y, progress);
         }
-
-        this.updateArrowXY(x, y);
     }
 
     updateArrowXY(x, y) {
-        for (let i = 0; i < this.outgoingArrows.length; i++) {
-            this.outgoingArrows[i].setStartXY(x, y);
-        }
-        for (let i = 0; i < this.incomingArrows.length; i++) {
-            this.incomingArrows[i].setEndXY(x, y);
-        }
+        super.updateArrowsXY();
 
         if (this.left !== null) {
-            this.leftArrow.setStartXY(x, y);
+            this.leftArrow.setStartXY(this.getXY()[0], this.getXY()[1]);
             this.leftArrow.setEndXY(this.left.getXY()[0], this.left.getXY()[1]);
         }
         if (this.right !== null) {
-            this.rightArrow.setStartXY(x, y);
+            this.rightArrow.setStartXY(this.getXY()[0], this.getXY()[1]);
             this.rightArrow.setEndXY(this.right.getXY()[0], this.right.getXY()[1]);
         }
     }
@@ -341,11 +284,13 @@ class VisualDatastructure {
 }
 
 class VisualSimpleArray extends VisualDatastructure {
-    constructor(datastructure, elementBoxY = topBottomMargin + boxHeight, showIndex = true) {
+    constructor(datastructure, elementBoxY, showIndex = true) {
         super(datastructure, elementBoxY);
+
+        this.animator = new VisualSimpleArrayAnimator(this);
+
         this.content = [];
         this.showIndex = showIndex;
-        this.animator = new VisualSimpleArrayAnimator(this);
 
         for (let i = 0; i < datastructure.size; i++) {
             this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
@@ -355,8 +300,7 @@ class VisualSimpleArray extends VisualDatastructure {
     }
 
     insert(element) {
-        this.content[element.index].updateElementValue(); // Get the current visualValue from physical datastructure
-        //this.visualDatastructure[index].update();
+        this.content[element.index].updateElementValue();
         this.content[element.index].setIndex(element.index); // Update index
 
         this.animator.insertAnimation(element);
@@ -364,6 +308,7 @@ class VisualSimpleArray extends VisualDatastructure {
 
     remove(element) {
         this.getElement(element.index).updateElementValue("null");
+
         this.animator.removeAnimation(element);
     }
 
@@ -371,12 +316,11 @@ class VisualSimpleArray extends VisualDatastructure {
         if (index >= 0 && index < this.content.length) {
             return this.content[index];
         }
-        // Give some sort of error
-        return null;
     }
 
     draw() {
         super.draw();
+
         for (let i = 0; i < this.physicalDatastructure.size; i++) {
             this.content[i].draw();
         }
@@ -441,10 +385,8 @@ class VisualCircularArray extends VisualSimpleArray {
     draw() {
         super.draw();
 
-        // Draw the common parts of any array structure
         this.headArrowLabel.draw();
 
-        let numElements = this.physicalDatastructure.getNumElements();
         let head = this.physicalDatastructure.getHead();
         let tail = this.physicalDatastructure.getTail();
 
@@ -457,10 +399,12 @@ class VisualCircularArray extends VisualSimpleArray {
 class VisualHeapArray extends VisualSimpleArray {
     constructor(datastructure, elementBoxY, showIndex) {
         super(datastructure, elementBoxY, showIndex);
+
+        this.animator = new VisualHeapArrayAnimator(this);
+
         this.originalSize = datastructure.size;
         this.contentTree = [];
         this.treeNodeRadius = circleRadius;
-        this.animator = new VisualHeapArrayAnimator(this);
 
         for (let i = 0; i < this.physicalDatastructure.size; i++) {
             this.contentTree[i] = new VisualTreeNode(this.physicalDatastructure.getElement(i));
@@ -497,11 +441,8 @@ class VisualHeapArray extends VisualSimpleArray {
 
         if (!this.physicalDatastructure.isEmpty()) {
             if (element.index % 2 === 0) {
-                // Removed element was right child of parent
-                //this.getTreeElement(HeapArray.parent(element.index)).rightArrow = null;
                 this.getTreeElement(HeapArray.parent(element.index)).setRight(null);
             } else {
-                //this.getTreeElement(HeapArray.parent(element.index)).leftArrow = null;
                 this.getTreeElement(HeapArray.parent(element.index)).setLeft(null);
             }
         }
@@ -513,30 +454,16 @@ class VisualHeapArray extends VisualSimpleArray {
         if (index >= 0 && index < this.contentTree.length) {
             return this.contentTree[index];
         }
-        // Give some sort of error
-        return null;
     }
 
     createNodeArrows(index) {
-        if (index !== 0) {
+        if (index !== 0) { // Has parent
             let parentTreeNode = this.getTreeElement(HeapArray.parent(index));
+
             if (index % 2 !== 0) {
-                // Has parent
-                let leftArrow = new VisualArrow(this.treeNodeRadius, this.treeNodeRadius);
-                let rightArrow = new VisualArrow(this.treeNodeRadius, this.treeNodeRadius);
-
                 parentTreeNode.setLeft(this.getTreeElement(index));
-                //this.getTreeElement(index).setParent(parentTreeNode);
-
-                //parentTreeNode.addOutgoingArrow(leftArrow);
-                //parentTreeNode.leftArrow = leftArrow;
-                //parentTreeNode.addOutgoingArrow(rightArrow);
-                //parentTreeNode.rightArrow = rightArrow;
-                //this.contentTree[index].addIncomingArrow(parentTreeNode.leftArrow);
             } else {
-                //this.getTreeElement(index).setParent(parentTreeNode);
                 parentTreeNode.setRight(this.getTreeElement(index));
-                //this.contentTree[index].addIncomingArrow(parentTreeNode.rightArrow);
             }
         }
     }
@@ -573,17 +500,18 @@ class VisualHeapArray extends VisualSimpleArray {
 
     expand() {
         for (let i = this.originalSize; i < this.physicalDatastructure.size; i++) {
-            console.log(i);
             this.content[i] = new VisualArrayElement(this.physicalDatastructure.getElement(i), i, this.showIndex);
             this.content[i].setXY(leftMargin + (boxWidth / 2) + (boxWidth * i), this.elementBoxY + (boxHeight / 2));
 
             this.contentTree[i] = new VisualTreeNode(this.physicalDatastructure.getElement(i), this.treeNodeRadius);
         }
+
         this.originalSize = this.physicalDatastructure.size;
     }
 
     draw() {
         super.draw();
+
         for (let i = 0; i < this.physicalDatastructure.numElements; i++) {
             this.contentTree[i].draw();
         }
@@ -593,7 +521,11 @@ class VisualHeapArray extends VisualSimpleArray {
 class VisualSinglyLinkedList extends VisualDatastructure {
     constructor(datastructure, elementBoxY = topBottomMargin + 90) {
         super(datastructure, elementBoxY);
+
         this.animator = new VisualSinglyLinkedListAnimator(this);
+
+        this.head = null;
+        this.tail = null;
 
         this.headArrowLabel = new VisualValue("head / tail");
         this.headArrow = new VisualArrow(0, 10 + boxHeight / 2);
@@ -612,9 +544,6 @@ class VisualSinglyLinkedList extends VisualDatastructure {
 
         this.tailArrowLabel.addOutgoingArrow(this.tailArrow);
 
-        this.head = null;
-        this.tail = null;
-
         this.draw();
     }
 
@@ -632,6 +561,7 @@ class VisualSinglyLinkedList extends VisualDatastructure {
         }
 
         if (this.physicalDatastructure.numElements === 2) {
+            // If there are two elements, give the tail element the tail arrow
             this.tail = this.head.getNext();
             this.tail.addIncomingArrow(this.tailArrow);
         }
@@ -658,12 +588,11 @@ class VisualSinglyLinkedList extends VisualDatastructure {
     }
 
     draw() {
-        //clearCanvas();
         super.draw();
+
         if (this.physicalDatastructure.isEmpty()) {
             this.headArrowLabel.setValue("head / tail");
             this.headArrowLabel.draw();
-            //drawLabelledArrow("head / tail", 5, leftMargin+boxWidth, elementBoxLabelY, leftMargin+boxWidth, this.elementBoxY-10);
             return;
         }
 
@@ -677,7 +606,6 @@ class VisualSinglyLinkedList extends VisualDatastructure {
 
         this.headArrowLabel.draw();
 
-
         let cur = this.head;
         while (cur != null) {
             cur.draw();
@@ -689,7 +617,11 @@ class VisualSinglyLinkedList extends VisualDatastructure {
 class VisualDoublyLinkedList extends VisualDatastructure {
     constructor(datastructure, elementBoxY = topBottomMargin + 90) {
         super(datastructure, elementBoxY);
+
         this.animator = new VisualDoublyLinkedListAnimator(this);
+
+        this.head = null;
+        this.tail = null;
 
         this.headArrowLabel = new VisualValue("head / tail");
         this.headArrow = new VisualArrow(0, 10 + boxHeight / 2);
@@ -703,25 +635,10 @@ class VisualDoublyLinkedList extends VisualDatastructure {
 
         this.tailArrowLabel = new VisualValue("tail");
         this.tailArrow = new VisualArrow(0, 10 + boxHeight / 2);
-        //this.tailArrowEnd = new VisualObject(); // Create dummy end point object so that the arrow follows during anim
 
         this.tailArrowLabel.setXY(leftMargin + (boxWidth * 1.5), elementBoxLabelY);
-        //this.tailArrowEnd.setXY(leftMargin+boxWidth, elementBoxY);
 
         this.tailArrowLabel.addOutgoingArrow(this.tailArrow);
-        //this.tailArrowEnd.addIncomingArrow(this.tailArrow);
-
-        /*        this.headArrowLabel = new VisualValue("head / tail");
-                this.headArrow = new VisualArrow();
-                this.headArrow.setStartXY(leftMargin+boxWidth, elementBoxLabelY);
-                this.headArrow.setEndXY(leftMargin+boxWidth, this.elementBoxY);
-
-                this.tailArrow = new VisualArrow();
-                this.tailArrow.setStartXY(leftMargin+boxWidth, elementBoxLabelY);
-                this.tailArrow.setEndXY(leftMargin+boxWidth, this.elementBoxY);*/
-
-        this.head = null;
-        this.tail = null;
 
         this.draw();
     }
@@ -742,37 +659,14 @@ class VisualDoublyLinkedList extends VisualDatastructure {
                 this.head = newNode;
             }
         } else {
-            //this.head.incomingArrows = [];
-
-
             newNode.setPrev(this.tail);
-
-            /*            newNode.setNext(this.tail.getNext());
-                        this.tail.getNext().setPrev(newNode);*/
-
             this.tail.setNext(newNode);
-
-            console.log(this.tail.getXY());
-
             this.tail = newNode;
-
             this.tail.addIncomingArrow(this.tailArrow);
-
-            /*            node.setPrev(prev);
-                        node.setNext(prev.getNext());
-                        prev.setNext(node);
-                        node.getNext().setPrev(node);*/
         }
 
-        /*        if (this.physicalDatastructure.numElements === 2){
-                    this.tail = this.head.getNext();
-                    this.tail.addIncomingArrow(this.tailArrow);
-                }*/
-
-        /*        this.head.addIncomingArrow(this.headArrow);
-                this.head.updateElementValue();*/
-
         this.tail.updateElementValue();
+
         this.animator.insertAnimation(element);
     }
 
@@ -788,23 +682,21 @@ class VisualDoublyLinkedList extends VisualDatastructure {
 
         this.animator.removeAnimation(element);
 
-        //this.head.getNext().setPrev(null);
         this.head = this.head.getNext();
+
         if (this.head !== null) {
             this.head.setPrev(null);
         } else {
             this.tail = null;
         }
-
     }
 
     draw() {
-        //clearCanvas();
         super.draw();
+
         if (this.physicalDatastructure.isEmpty()) {
             this.headArrowLabel.setValue("head / tail");
             this.headArrowLabel.draw();
-            //drawLabelledArrow("head / tail", 5, leftMargin+boxWidth, elementBoxLabelY, leftMargin+boxWidth, this.elementBoxY-10);
             return;
         }
 
@@ -817,7 +709,6 @@ class VisualDoublyLinkedList extends VisualDatastructure {
         }
 
         this.headArrowLabel.draw();
-
 
         let cur = this.head;
         while (cur != null) {

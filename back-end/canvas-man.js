@@ -21,3 +21,5 @@ let treeNodeSpacingFactorY = 0.5;
 let animationSteps = 200; // animation speed, lower is faster
 
 let outputLabel = document.getElementById("output_msg");
+
+toggleControlInputs(false);

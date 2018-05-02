@@ -17,6 +17,7 @@ function createADT(type) {
     animationSequencer = new AnimationSequencer();
 
     clearCanvas();
+    toggleControlInputs(true);
 
     switch (selected + "-" + type) {
         case "simple-array-stack":
@@ -51,16 +52,26 @@ function createADT(type) {
 }
 
 // Code for this function adapted from https://stackoverflow.com/questions/1202087/how-do-i-disable-all-input-buttons-without-using-jquery
-function toggleControlInputs() {
+function toggleControlInputs(state) {
     let inputsInteractionPanel = document.getElementById("interaction-panel").getElementsByTagName("INPUT");
     let inputsVisualizationControlPanel = document.getElementById("visualization-control-panel").getElementsByTagName("INPUT");
 
     for (let i = 0; i < inputsInteractionPanel.length; i++) {
-        inputsInteractionPanel[i].disabled = !inputsInteractionPanel[i].disabled;
+        inputsInteractionPanel[i].disabled = !state;
     }
 
     for (let i = 0; i < inputsVisualizationControlPanel.length; i++) {
-        inputsVisualizationControlPanel[i].disabled = !inputsVisualizationControlPanel[i].disabled;
+        inputsVisualizationControlPanel[i].disabled = !state;
+    }
+}
+
+function handleImplementationDropdownChange(dropdown){
+    document.getElementById('create_adt').disabled = dropdown.options[dropdown.selectedIndex].value==='select';
+
+    if (dropdown.options[dropdown.selectedIndex].value.includes("linked-list")){
+        document.getElementById('adt_size').disabled = true;
+    }else{
+        document.getElementById('adt_size').disabled = false;
     }
 }
 

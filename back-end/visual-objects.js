@@ -61,7 +61,7 @@ class VisualObject {
         console.log(this);
 
         if (this.animationProperties.isMoving) {
-            this.updateAll(x, y, progress);
+            this.middleXY = [x, y];
             //this.setXY(x, y);
         }
         if (this.animationProperties.isFading) {
@@ -69,10 +69,6 @@ class VisualObject {
         }
 
         this.updateArrowsXY();
-    }
-
-    updateAll(x, y, progress){
-        this.setXY(x, y);
     }
 
     updateArrowsXY() {

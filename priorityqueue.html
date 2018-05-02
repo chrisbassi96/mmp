@@ -26,7 +26,7 @@
 </head>
 <body>
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-1">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">DSAV</a>
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="index.html">DSAV</a>
 </nav>
 
 <div class="container-fluid">
@@ -62,7 +62,7 @@
                 <div class="form-group">
                     <label class="mr-1" for="datastructure">using</label>
                     <select class="form-control mr-1" id="datastructure"
-                            onchange="document.getElementById('create_adt').disabled = this.options[this.selectedIndex].value==='select';">
+                            onchange="handleImplementationDropdownChange(this);">
                         <option value="select">Select implementation</option>
                         <option value="heap-array">Heap array</option>
                     </select>
