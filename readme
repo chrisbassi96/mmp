@@ -1,0 +1,77 @@
+The tool can be used by opening index.html and navigating to an ADT page with a browser, or by opening the respective
+ADT HTML page directly in the browser.
+
+
+DSAV.js three functions
+    clearCanvas()
+    createADT(type)
+    toggleControlInputs(state)
+
+back-end\canvas-man.js holds the constants used in the visualizations and sets up properties of the canvas area
+
+back-end\adt-controllers.js contains the classes:
+    AdtController
+    StackController
+    QueueController
+    PriorityQueueController
+
+back-end\visual-objects.js contains the classes:
+    CoordSet
+    VisualObject
+    VisualArrow
+    VisualCircle
+    VisualBox
+    VisualValue
+
+back-end\adts\priority-queue.js contains the class:
+    HeapArrayPriorityQueue
+
+back-end\adts\queue.js contains the classes:
+    CircularArrayQueue
+    DoublyLinkedListQueue
+
+back-end\adts\stack.js contains the class:
+    SimpleArrayStack
+    SinglyLinkedListStack
+
+back-end\animations\animation-properties.js contains the classes:
+    AnimationProperties
+    MoveNoFade
+    MoveFadeIn
+    MoveFadeOut
+
+back-end\animations\animations.js contains the classes:
+    AnimationSequencer
+    AnimationSequence
+
+back-end\animations\animators.js contains the classes:
+    VisualDatastructureAnimator
+    VisualSimpleArrayAnimator
+    VisualCircularArrayAnimator
+    VisualHeapArrayAnimator
+    VisualSinglyLinkedListAnimator
+    VisualDoublyLinkedListAnimator
+
+back-end\datastructures\physical-datastructures.js contains the classes:
+    Element
+    SinglyLinkedListElement
+    DoublyLinkedListElement
+    Datastructure
+    SimpleArray
+    CircularArray
+    HeapArray
+    SinglyLinkedList
+    DoublyLinkedList
+
+back-end\datastructures\visual-datastructures.js contains the classes:
+    VisualElement
+    VisualArrayElement
+    VisualTreeNode
+    VisualSinglyLinkedListElement
+    VisualDoublyLinkedListElement
+    VisualDatastructure
+    VisualSimpleArray
+    VisualCircularArray
+    VisualHeapArray
+    VisualSinglyLinkedList
+    VisualDoublyLinkedList

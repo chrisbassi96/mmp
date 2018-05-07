@@ -1,7 +1,6 @@
 class CoordSet {
     constructor() {
         this.fromMiddleXY = [0, 0];
-        //this.middleXY = [0, 0];
         this.toMiddleXY = [0, 0];
     }
 

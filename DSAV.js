@@ -52,6 +52,7 @@ function createADT(type) {
 }
 
 // Code for this function adapted from https://stackoverflow.com/questions/1202087/how-do-i-disable-all-input-buttons-without-using-jquery
+// Sets the inputs withing the interaction panel as enabled or disabled, depending on the state given
 function toggleControlInputs(state) {
     let inputsInteractionPanel = document.getElementById("interaction-panel").getElementsByTagName("INPUT");
     let inputsVisualizationControlPanel = document.getElementById("visualization-control-panel").getElementsByTagName("INPUT");

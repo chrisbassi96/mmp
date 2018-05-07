@@ -12,6 +12,12 @@ class AnimationProperties{
     }
 }
 
+class MoveNoFade extends AnimationProperties{
+    constructor(){
+        super(true, false);
+    }
+}
+
 class MoveFadeIn extends AnimationProperties{
     constructor(){
         super(true, true);
@@ -23,11 +29,5 @@ class MoveFadeOut extends AnimationProperties{
     constructor(){
         super(true, true);
         this.fade = "out";
-    }
-}
-
-class MoveNoFade extends AnimationProperties{
-    constructor(){
-        super(true, false);
     }
 }

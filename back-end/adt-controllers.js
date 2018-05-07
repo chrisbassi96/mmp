@@ -82,12 +82,10 @@ class PriorityQueueController extends  AdtController{
     insert(elementValue){
         let insertedElement = this.adt.insert(elementValue);
 
-        if (insertedElement == null){
-            // Nothing, as the heap array expands when it becomes full
-        }else{
-            outputLabel.innerText = "Insert: " + elementValue;
-            this.visualDatastructure.insert(insertedElement);
-        }
+        // The heap array expands if it becomes full, therefore no need to check for null (full data strucutre)
+
+        outputLabel.innerText = "Insert: " + elementValue;
+        this.visualDatastructure.insert(insertedElement);
     }
     removeMin(){
         let removedMinElement = this.adt.removeMin();

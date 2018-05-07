@@ -63,6 +63,90 @@ class VisualArrayElement extends VisualElement {
     }
 }
 
+class VisualTreeNode extends VisualElement {
+    constructor(physicalElement, radius) {
+        super(physicalElement);
+        this.parent = null;
+        this.left = null;
+        this.right = null;
+
+        this.leftArrow = null;
+        this.rightArrow = null;
+
+        this.visualCircle = new VisualCircle(radius);
+        this.visualObjects.push(this.visualCircle);
+    }
+
+    setParent(visualTreeNode) {
+        this.parent = visualTreeNode;
+    }
+
+    setLeft(visualTreeNode) {
+        this.left = visualTreeNode;
+
+        if (visualTreeNode !== null) {
+            this.leftArrow = new VisualArrow(circleRadius, circleRadius);
+            this.leftArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
+            visualTreeNode.addIncomingArrow(this.leftArrow);
+        } else {
+            this.leftArrow = null;
+        }
+    }
+
+    setRight(visualTreeNode) {
+        this.right = visualTreeNode;
+
+        if (visualTreeNode !== null) {
+            this.rightArrow = new VisualArrow(circleRadius, circleRadius);
+            this.rightArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
+            visualTreeNode.addIncomingArrow(this.rightArrow);
+        } else {
+            this.rightArrow = null;
+        }
+    }
+
+    setAllXY() {
+        for (let i = 0; i < this.visualObjects.length; i++) {
+            this.visualObjects[i].setXY(this.middleXY[0], this.middleXY[1]);
+        }
+
+        this.updateArrowXY();
+    }
+
+    updateAll(x, y, progress) {
+        if (this.visualCircle.isBeingAnimated() || this.isBeingAnimated()) {
+            this.visualCircle.update(x, y, progress)
+        }
+        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()) {
+            this.visualValue.update(x, y, progress);
+        }
+    }
+
+    updateArrowXY(x, y) {
+        super.updateArrowsXY();
+
+        if (this.left !== null) {
+            this.leftArrow.setStartXY(this.getXY()[0], this.getXY()[1]);
+            this.leftArrow.setEndXY(this.left.getXY()[0], this.left.getXY()[1]);
+        }
+        if (this.right !== null) {
+            this.rightArrow.setStartXY(this.getXY()[0], this.getXY()[1]);
+            this.rightArrow.setEndXY(this.right.getXY()[0], this.right.getXY()[1]);
+        }
+    }
+
+    draw() {
+        super.draw();
+
+        if (this.leftArrow !== null) {
+            this.leftArrow.draw();
+        }
+        if (this.rightArrow !== null) {
+            this.rightArrow.draw();
+        }
+    }
+}
+
 class VisualSinglyLinkedListElement extends VisualElement {
     constructor(physicalElement) {
         super(physicalElement);
@@ -180,91 +264,6 @@ class VisualDoublyLinkedListElement extends VisualSinglyLinkedListElement {
         }
         if (this.visualNext.isBeingAnimated() || this.isBeingAnimated()) {
             this.visualNext.update(x + this.visualValueBox.width, y, progress);
-        }
-    }
-
-}
-
-class VisualTreeNode extends VisualElement {
-    constructor(physicalElement, radius) {
-        super(physicalElement);
-        this.parent = null;
-        this.left = null;
-        this.right = null;
-
-        this.leftArrow = null;
-        this.rightArrow = null;
-
-        this.visualCircle = new VisualCircle(radius);
-        this.visualObjects.push(this.visualCircle);
-    }
-
-    setParent(visualTreeNode) {
-        this.parent = visualTreeNode;
-    }
-
-    setLeft(visualTreeNode) {
-        this.left = visualTreeNode;
-
-        if (visualTreeNode !== null) {
-            this.leftArrow = new VisualArrow(circleRadius, circleRadius);
-            this.leftArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
-            visualTreeNode.addIncomingArrow(this.leftArrow);
-        } else {
-            this.leftArrow = null;
-        }
-    }
-
-    setRight(visualTreeNode) {
-        this.right = visualTreeNode;
-
-        if (visualTreeNode !== null) {
-            this.rightArrow = new VisualArrow(circleRadius, circleRadius);
-            this.rightArrow.setStartXY(this.middleXY[0], this.middleXY[1]);
-            visualTreeNode.addIncomingArrow(this.rightArrow);
-        } else {
-            this.rightArrow = null;
-        }
-    }
-
-    setAllXY() {
-        for (let i = 0; i < this.visualObjects.length; i++) {
-            this.visualObjects[i].setXY(this.middleXY[0], this.middleXY[1]);
-        }
-
-        this.updateArrowXY();
-    }
-
-    updateAll(x, y, progress) {
-        if (this.visualCircle.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualCircle.update(x, y, progress)
-        }
-        if (this.visualValue.isBeingAnimated() || this.isBeingAnimated()) {
-            this.visualValue.update(x, y, progress);
-        }
-    }
-
-    updateArrowXY(x, y) {
-        super.updateArrowsXY();
-
-        if (this.left !== null) {
-            this.leftArrow.setStartXY(this.getXY()[0], this.getXY()[1]);
-            this.leftArrow.setEndXY(this.left.getXY()[0], this.left.getXY()[1]);
-        }
-        if (this.right !== null) {
-            this.rightArrow.setStartXY(this.getXY()[0], this.getXY()[1]);
-            this.rightArrow.setEndXY(this.right.getXY()[0], this.right.getXY()[1]);
-        }
-    }
-
-    draw() {
-        super.draw();
-
-        if (this.leftArrow !== null) {
-            this.leftArrow.draw();
-        }
-        if (this.rightArrow !== null) {
-            this.rightArrow.draw();
         }
     }
 

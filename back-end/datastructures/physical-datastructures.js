@@ -76,10 +76,6 @@ class SimpleArray extends Datastructure {
         }
     }
 
-    isFull() {
-        return this.numElements === this.size;
-    }
-
     getElement(index) {
         if (index >= 0 && index < this.content.length) {
             return this.content[index];
@@ -92,6 +88,10 @@ class SimpleArray extends Datastructure {
 
     getSize() {
         return this.size;
+    }
+
+    isFull() {
+        return this.numElements === this.size;
     }
 }
 
