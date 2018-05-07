@@ -7,6 +7,7 @@ class AnimationProperties{
         this.opacity = 1;
     }
     isBeingAnimated(){
+        // An object is being animated if it is moving or fading
         return this.isMoving || this.isFading;
     }
 }

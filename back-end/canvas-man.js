@@ -4,7 +4,7 @@ canvas.width = 1200;
 canvas.height = 600;
 ctx.textAlign = "center";
 ctx.textBaseline = "middle";
-ctx.font="15px Arial";
+ctx.font = "15px Arial";
 
 let topBottomMargin = 50;
 let leftMargin = 75;
@@ -22,4 +22,4 @@ let animationSteps = 200; // animation speed, lower is faster
 
 let outputLabel = document.getElementById("output_msg");
 
-toggleControlInputs(false);
+toggleControlInputs(false); // When page is loaded, disable visualization controls

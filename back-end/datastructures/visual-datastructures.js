@@ -91,8 +91,6 @@ class VisualSinglyLinkedListElement extends VisualElement {
 
         if (next !== null) {
             next.addIncomingArrow(this.nextArrow);
-        } else {
-            this.visualNext.outgoingArrows = [];
         }
 
         this.visualNextBox.crossedThrough = this.next === null;
@@ -292,6 +290,7 @@ class VisualSimpleArray extends VisualDatastructure {
         this.content = [];
         this.showIndex = showIndex;
 
+        // Populate content with VisualArrayElements and draw
         for (let i = 0; i < datastructure.size; i++) {
             this.content[i] = new VisualArrayElement(datastructure.getElement(i), i, this.showIndex);
             this.content[i].setXY(leftMargin + (boxWidth / 2) + (boxWidth * i), this.elementBoxY + (boxHeight / 2));
@@ -300,16 +299,16 @@ class VisualSimpleArray extends VisualDatastructure {
     }
 
     insert(element) {
-        this.content[element.index].updateElementValue();
+        this.content[element.index].updateElementValue(); // Fetch physical element value
         this.content[element.index].setIndex(element.index); // Update index
 
-        this.animator.insertAnimation(element);
+        this.animator.insertAnimation(element); // Execute animations
     }
 
     remove(element) {
         this.getElement(element.index).updateElementValue("null");
 
-        this.animator.removeAnimation(element);
+        this.animator.removeAnimation(element); // Execute animations
     }
 
     getElement(index) {
@@ -328,7 +327,7 @@ class VisualSimpleArray extends VisualDatastructure {
 }
 
 class VisualCircularArray extends VisualSimpleArray {
-    constructor(datastructure, elementBoxY = topBottomMargin + 90, showIndex) {
+    constructor(datastructure, elementBoxY = topBottomMargin + 90, showIndex = false) {
         super(datastructure, elementBoxY, showIndex);
         this.animator = new VisualCircularArrayAnimator(this);
 
@@ -343,6 +342,7 @@ class VisualCircularArray extends VisualSimpleArray {
         this.headArrowLabel.addOutgoingArrow(this.headArrow);
         this.headArrowEnd.addIncomingArrow(this.headArrow);
 
+        // Set up for the head arrow
         this.tailArrowLabel = new VisualValue("tail");
         this.tailArrow = new VisualArrow(0, 10);
         this.tailArrowEnd = new VisualObject(); // Create dummy end point object so that the arrow follows during anim
@@ -397,7 +397,7 @@ class VisualCircularArray extends VisualSimpleArray {
 }
 
 class VisualHeapArray extends VisualSimpleArray {
-    constructor(datastructure, elementBoxY, showIndex) {
+    constructor(datastructure, elementBoxY, showIndex = false) {
         super(datastructure, elementBoxY, showIndex);
 
         this.animator = new VisualHeapArrayAnimator(this);
@@ -406,6 +406,7 @@ class VisualHeapArray extends VisualSimpleArray {
         this.contentTree = [];
         this.treeNodeRadius = circleRadius;
 
+        // Populate contentTree with VisualTreeNodes (for the tree representation)
         for (let i = 0; i < this.physicalDatastructure.size; i++) {
             this.contentTree[i] = new VisualTreeNode(this.physicalDatastructure.getElement(i));
         }
@@ -434,12 +435,14 @@ class VisualHeapArray extends VisualSimpleArray {
     remove(element) {
         this.updateTreeNodeCoords();
 
+        // Update values for elements in both the "flat" and tree representations
         for (let i = 0; i < this.physicalDatastructure.numElements + 1; i++) {
             this.getElement(i).updateElementValue();
             this.getTreeElement(i).updateElementValue();
         }
 
-        if (!this.physicalDatastructure.isEmpty()) {
+        // Remove the respective child from the parent of the element being removed
+        if (element.index !== 0) {
             if (element.index % 2 === 0) {
                 this.getTreeElement(HeapArray.parent(element.index)).setRight(null);
             } else {
@@ -457,13 +460,14 @@ class VisualHeapArray extends VisualSimpleArray {
     }
 
     createNodeArrows(index) {
-        if (index !== 0) { // Has parent
-            let parentTreeNode = this.getTreeElement(HeapArray.parent(index));
+        if (index !== 0) { // Element at given index has a parent (not root)
+            let parentTreeNode = this.getTreeElement(HeapArray.parent(index)); // Parent element
 
-            if (index % 2 !== 0) {
-                parentTreeNode.setLeft(this.getTreeElement(index));
-            } else {
+            // If node index even, the node is the right child of parent. If odd, then left child.
+            if (index % 2 === 0) {
                 parentTreeNode.setRight(this.getTreeElement(index));
+            } else {
+                parentTreeNode.setLeft(this.getTreeElement(index));
             }
         }
     }
@@ -499,6 +503,7 @@ class VisualHeapArray extends VisualSimpleArray {
     }
 
     expand() {
+        // Populate the empty half of content and contentTree with elements
         for (let i = this.originalSize; i < this.physicalDatastructure.size; i++) {
             this.content[i] = new VisualArrayElement(this.physicalDatastructure.getElement(i), i, this.showIndex);
             this.content[i].setXY(leftMargin + (boxWidth / 2) + (boxWidth * i), this.elementBoxY + (boxHeight / 2));
@@ -510,8 +515,10 @@ class VisualHeapArray extends VisualSimpleArray {
     }
 
     draw() {
-        super.draw();
+        super.draw(); // Draw "flat" array representation
 
+        // Draw tree representation
+        // numElements used so that tree nodes are only drawn for elements with a value, effectively
         for (let i = 0; i < this.physicalDatastructure.numElements; i++) {
             this.contentTree[i].draw();
         }
@@ -573,18 +580,20 @@ class VisualSinglyLinkedList extends VisualDatastructure {
     }
 
     remove(element) {
+        // Update head and tail references
         this.head.physicalElement = this.physicalDatastructure.head;
         this.tail.physicalElement = this.physicalDatastructure.tail;
 
+        // If removing the last element, give the head arrow to another VisualObject so it remains drawn
         if (this.head.getNext() === null) {
             this.headArrowEnd.addIncomingArrow(this.headArrow);
         } else {
             this.head.getNext().addIncomingArrow(this.headArrow);
         }
 
-        this.animator.removeAnimation(element);
+        this.animator.removeAnimation(element); // Execute removal animation
 
-        this.head = this.head.getNext();
+        this.head = this.head.getNext(); // We remove from the head, so set head as the next element
     }
 
     draw() {

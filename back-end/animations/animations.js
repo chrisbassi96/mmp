@@ -6,25 +6,28 @@ class AnimationSequencer {
     }
 
     add(animationSequence) {
-        this.sequenceQueue[this.numSequences] = animationSequence;
+        // Add an AnimationSequence to be executed
+        this.sequenceQueue.push(animationSequence);
         this.numSequences++;
     }
 
     go() {
-        toggleControlInputs(false);
-        this.sequenceQueue[0].go();
+        toggleControlInputs(false); // Disable visualization control inputs
+        this.doNext();
     }
 
     doNext() {
-        this.currSequence++;
+        // Execute the next AnimationSequence or finish
         if (this.numSequences === this.currSequence) {
             // Finished animating sequences
-            toggleControlInputs(true);
+            toggleControlInputs(true); // Enable visualization control inputs
             this.sequenceQueue = [];
             this.numSequences = 0;
             this.currSequence = 0;
         } else {
+            // Execute next AnimationSequence
             this.sequenceQueue[this.currSequence].go();
+            this.currSequence++;
         }
     }
 }
@@ -48,18 +51,20 @@ class AnimationSequence {
             coordSet: coordSet,
             animationProperties: animationProperties
         });
+
         this.numAnimations++;
     }
 
     go() {
-        this.setObjectDrawStates(true);
+        this.setObjectDrawStates(true); // Set flags to stop VisualObjects from being drawn
 
         if (this.executeConcurrently) {
             for (let i = 0; i < this.numAnimations; i++) {
                 this.animationQueue[i].canvasObject.setCoordSet(this.animationQueue[i].coordSet);
                 this.animationQueue[i].canvasObject.setAnimationProperties(this.animationQueue[i].animationProperties);
             }
-            this.animate(this.animationQueue, this.numAnimations)
+
+            this.animate(this.animationQueue, this.numAnimations) // Execute everything at once
         } else {
             this.doNext();
         }
@@ -69,16 +74,19 @@ class AnimationSequence {
         if (this.numAnimations === (this.currObject) || this.executeConcurrently) {
             this.finish();
         } else {
+            // Apply the respective CoordSet and Animationproperties to the next object to animate
             this.animationQueue[this.currObject].canvasObject.setCoordSet(this.animationQueue[this.currObject].coordSet);
             this.animationQueue[this.currObject].canvasObject.setAnimationProperties(this.animationQueue[this.currObject].animationProperties);
-            this.animate([this.animationQueue[this.currObject]], 1);
+            this.animate([this.animationQueue[this.currObject]], 1); // Execute animation
             this.currObject++;
         }
     }
 
     animate(visualObjects, numVisualObjects) {
-        let stopID = 0;
-        let progress = 0;
+        // Code loosely takes inspiration from https://codepen.io/beaucarnes/pen/ybzpZE?editors=1010
+
+        let stopID = 0; // Will hold the current animation frame ID
+        let progress = 0; // Progress of animation, is iterated by one each loop
         let sequenceReference = this;
 
         window.requestAnimationFrame(step);
@@ -97,6 +105,7 @@ class AnimationSequence {
                 let newX = currObject.getXY()[0] + (Math.cos(trajectoryAngle) * lineSegment);
                 let newY = currObject.getXY()[1] + (Math.sin(trajectoryAngle) * lineSegment);
 
+                // Update the VisualObject being animated with new vector and progress for animation effects
                 currObject.update(newX, newY, progress);
             }
 
@@ -105,11 +114,11 @@ class AnimationSequence {
 
             if (progress !== animationSteps - 1) {
                 progress += 1;
-                stopID = window.requestAnimationFrame(step);
+                stopID = window.requestAnimationFrame(step); // stopID becomes the next frame's ID
             } else {
-                sequenceReference.doNext();
                 adtController.visualDatastructure.draw();
                 window.cancelAnimationFrame(stopID);
+                sequenceReference.doNext();
             }
         }
     }
@@ -119,12 +128,11 @@ class AnimationSequence {
         for (let i = 0; i < this.numAnimations; i++) {
             this.animationQueue[i].canvasObject.resetAnimationProperties();
         }
-        this.setObjectDrawStates(false);
+        this.setObjectDrawStates(false); // VisualObjects set as not being drawn during sequence can be drawn again
         this.animationSequencer.doNext();
     }
 
     setObjectDrawStates(setNotDrawObjects) {
-        console.log(setNotDrawObjects);
         for (let i = 0; i < this.doNotDrawObjects.length; i++) {
             this.doNotDrawObjects[i].setNotDrawnState(setNotDrawObjects);
         }
@@ -138,12 +146,14 @@ class AnimationSequence {
     }
 
     drawObjects() {
+        // Draws "temporary" VisualObjects belonging only to this sequence
         for (let i = 0; i < this.numSequenceObjects; i++) {
             this.sequenceObjects[i].draw();
         }
     }
 
     doNotDraw(visualObject) {
+        // Add a VisualObject that is not to be drawn during this sequence
         this.doNotDrawObjects.push(visualObject);
     }
 }

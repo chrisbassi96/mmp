@@ -99,6 +99,7 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator {
             tailArrowLabel.setXY(headArrowLabel.getXY()[0], headArrowLabel.getXY()[1]);
             tailArrowEnd.setXY(headArrowEnd.getXY()[0], headArrowEnd.getXY()[1]);
         } else {
+            // If not, just move the tail
             sequence.add(tailArrowLabel, tailArrowLabelCoordSet, new MoveNoFade());
             sequence.add(tailArrowEnd, sequenceTailArrowEndCoordSet, new MoveNoFade());
         }
