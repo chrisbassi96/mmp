@@ -9,7 +9,7 @@ function createADT(type) {
     let dtSelect = document.getElementById("datastructure");
     let selected = dtSelect.options[dtSelect.selectedIndex].value;
 
-    // below might set size as a String type...
+    // parseInt used to prevent non-numeric values from entering the system
     let size = document.getElementById("adt_size").value === "" ? 5 : parseInt(document.getElementById("adt_size").value);
     let adt = null;
     let visualDatastructure = null;
@@ -57,6 +57,8 @@ function toggleControlInputs(state) {
     let inputsInteractionPanel = document.getElementById("interaction-panel").getElementsByTagName("INPUT");
     let inputsVisualizationControlPanel = document.getElementById("visualization-control-panel").getElementsByTagName("INPUT");
 
+    // The state is inverted, so that if the state is "true", then objects are enabled (more intuitive)
+
     for (let i = 0; i < inputsInteractionPanel.length; i++) {
         inputsInteractionPanel[i].disabled = !state;
     }
@@ -69,6 +71,7 @@ function toggleControlInputs(state) {
 function handleImplementationDropdownChange(dropdown){
     document.getElementById('create_adt').disabled = dropdown.options[dropdown.selectedIndex].value==='select';
 
+    // Disable size input box when a linked list structure has been selected
     if (dropdown.options[dropdown.selectedIndex].value.includes("linked-list")){
         document.getElementById('adt_size').disabled = true;
     }else{

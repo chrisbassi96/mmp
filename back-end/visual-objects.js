@@ -172,6 +172,8 @@ class VisualArrow {
     draw() {
         let lineAngle = Math.atan2(this.endXY[1] - this.startXY[1], this.endXY[0] - this.startXY[0]);
 
+        // Adjusted start and end take the start and end margins respectively into account
+
         let adjustedStartX = this.startXY[0] + Math.cos(lineAngle) * this.startMargin;
         let adjustedStartY = this.startXY[1] + Math.sin(lineAngle) * this.startMargin;
 
@@ -181,11 +183,13 @@ class VisualArrow {
         let angleFromShaftToArrowHeadCorner = Math.PI / 8;
         let lengthOfArrowHeadSide = 10;
 
+        // Draw the line
         ctx.beginPath();
         ctx.moveTo(adjustedStartX, adjustedStartY);
         ctx.lineTo(adjustedEndX, adjustedEndY);
         ctx.stroke();
 
+        // Calculate the vectors at which the pointer arrow head corners should be
         let angleFromShaftToArrowHeadCornerTop = lineAngle + Math.PI + angleFromShaftToArrowHeadCorner;
         let arrowHeadCornerTopX = adjustedEndX + Math.cos(angleFromShaftToArrowHeadCornerTop) * lengthOfArrowHeadSide;
         let arrowHeadCornerTopY = adjustedEndY + Math.sin(angleFromShaftToArrowHeadCornerTop) * lengthOfArrowHeadSide;
@@ -194,6 +198,7 @@ class VisualArrow {
         let arrowHeadCornerBottomX = adjustedEndX + Math.cos(angleFromShaftToArrowHeadCornerBottom) * lengthOfArrowHeadSide;
         let arrowHeadCornerBottomY = adjustedEndY + Math.sin(angleFromShaftToArrowHeadCornerBottom) * lengthOfArrowHeadSide;
 
+        // Draw the pointer head at the end of the line
         ctx.beginPath();
         ctx.moveTo(arrowHeadCornerTopX, arrowHeadCornerTopY);
         ctx.lineTo(adjustedEndX, adjustedEndY);

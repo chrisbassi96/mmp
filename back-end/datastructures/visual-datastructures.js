@@ -341,7 +341,7 @@ class VisualCircularArray extends VisualSimpleArray {
         this.headArrowLabel.addOutgoingArrow(this.headArrow);
         this.headArrowEnd.addIncomingArrow(this.headArrow);
 
-        // Set up for the head arrow
+        // Set up for the tail arrow
         this.tailArrowLabel = new VisualValue("tail");
         this.tailArrow = new VisualArrow(0, 10);
         this.tailArrowEnd = new VisualObject(); // Create dummy end point object so that the arrow follows during anim

@@ -2,7 +2,7 @@ The tool can be used by opening index.html and navigating to an ADT page with a 
 ADT HTML page directly in the browser.
 
 
-DSAV.js three functions
+DSAV.js contains three functions
     clearCanvas()
     createADT(type)
     toggleControlInputs(state)
