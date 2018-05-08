@@ -122,7 +122,7 @@ class VisualTreeNode extends VisualElement {
         }
     }
 
-    updateArrowXY(x, y) {
+    updateArrowXY() {
         super.updateArrowsXY();
 
         if (this.left !== null) {
@@ -667,6 +667,7 @@ class VisualDoublyLinkedList extends VisualDatastructure {
                 this.head = newNode;
             }
         } else {
+            // Adding last, therefore tail becomes the new element
             newNode.setPrev(this.tail);
             this.tail.setNext(newNode);
             this.tail = newNode;

@@ -216,15 +216,14 @@ class VisualCircle extends VisualObject {
     }
 
     draw() {
-        ctx.save();
+        ctx.save(); // Save canvas context, i.e. settings such as opacity
 
         ctx.globalAlpha = this.animationProperties.opacity;
-        ctx.lineWidth = this.animationProperties.lineWidth;
         ctx.beginPath();
         ctx.arc(this.middleXY[0], this.middleXY[1], this.radius, 0, 2 * Math.PI);
         ctx.stroke();
 
-        ctx.restore();
+        ctx.restore(); // Restore canvas context settings
     }
 }
 
