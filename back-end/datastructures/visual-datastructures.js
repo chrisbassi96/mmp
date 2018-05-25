@@ -16,12 +16,14 @@ class VisualElement extends VisualObject {
     setXY(x, y) {
         super.setXY(x, y);
 
+        // Set the XY coordinates of all contained VisualObjects, such as VisualBox, VisualValue, etc.
         this.setAllXY();
     }
 
     update(x, y, progress) {
         super.update(x, y, progress);
 
+        // Update all contained VisualObjects, such as VisualBox, VisualValue, etc.
         this.updateAll(x, y, progress);
     }
 }
@@ -419,6 +421,7 @@ class VisualHeapArray extends VisualSimpleArray {
         this.updateTreeNodeCoords();
 
         for (let i = 0; i < this.content.length; i++) {
+            // Fetch the physical element's value for the new element
             this.getElement(i).updateElementValue();
             this.getTreeElement(i).updateElementValue();
         }

@@ -117,7 +117,7 @@ class VisualCircularArrayAnimator extends VisualSimpleArrayAnimator {
 
         let headElement = this.visualDatastructure.getElement(this.visualDatastructure.physicalDatastructure.head);
 
-        // Move the head arrow to its new position
+        // Move the head arrow to its new position after removal
 
         let sequenceHeadArrowLabelCoordSet = new CoordSet();
         sequenceHeadArrowLabelCoordSet.setFromXY(headArrowLabel.getXY()[0], headArrowLabel.getXY()[1]);

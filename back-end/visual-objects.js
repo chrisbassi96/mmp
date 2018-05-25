@@ -108,6 +108,7 @@ class VisualObject {
         this.notDrawn = state;
 
         for (let i = 0; i < this.visualObjects; i++) {
+            // Apply not drawn state to all contained VisualObjects
             this.visualObjects[i].setNotDrawnState(state);
         }
     }
@@ -144,9 +145,11 @@ class VisualObject {
     draw() {
         if (!this.notDrawn) {
             for (let i = 0; i < this.visualObjects.length; i++) {
+                // Draw all VisualObjects contained within this VisualObject
                 this.visualObjects[i].draw();
             }
             for (let i = 0; i < this.outgoingArrows.length; i++) {
+                // Draw all outoing arrows
                 this.outgoingArrows[i].draw();
             }
         }
